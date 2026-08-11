@@ -230,7 +230,7 @@
 
 ## 진행 체크리스트
 
-- [ ] Day 0: 시작일 역산(Day 20 = 화~목) + 세팅 완료 (플러그인 정리 + 문서 5종 + backlog.md + GA4/배포/비용 상한 + 도메인 구매 준비 + `/setup-matt-pocock-skills` + Notion DB + Obsidian 폴더)
+- [x] Day 0: 시작일 역산(Day 20 = 화~목) + 세팅 완료 (플러그인 정리 + 문서 5종 + backlog.md + GA4/배포/비용 상한 + 도메인 구매 준비 + `/setup-matt-pocock-skills` + Notion DB + Obsidian 폴더) — 2026-08-11 완료, 런칭 9/1(화). 잔여: Notion 개발 로그 DB(Day 1 EOD 전까지)
 - [ ] 매일: EOD 기록 블록 / TODO.md 갱신
 - [ ] 수시: 반복 패턴 3회 → skill-creator 스킬화
 - [ ] Day 1 오전: **아이디어 발산 15개 → 수렴 2~3개**

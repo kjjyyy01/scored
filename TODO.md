@@ -16,7 +16,7 @@
 - [x] Next.js 스캐폴드(웹 기본값) + git init + GitHub 리포 생성·push (kjjyyy01/second-project, private)
 - [x] Vercel 연결 완료 (홈페이지에서 직접 처리) — main 자동 배포는 다음 push로 확인
 - [x] 월 고정비 상한: 4만원/월 (런칭 시 Vercel Pro $20 전환 판단 포함)
-- [ ] GA4 속성 추가 (사용자 — 기존 계정에 속성만 추가하면 됨, 서비스명 확정 후 권장)
+- [x] GA4 속성 추가 완료
 - [x] Obsidian dev-notes/ + TIL 템플릿 (~/obsidian/resume/dev-notes/)
 - [ ] Notion "개발 로그" DB 생성 (사용자)
 
