@@ -18,7 +18,7 @@
 - [x] 월 고정비 상한: 4만원/월 (런칭 시 Vercel Pro $20 전환 판단 포함)
 - [x] GA4 속성 추가 완료
 - [x] Obsidian dev-notes/ + TIL 템플릿 (~/obsidian/resume/dev-notes/)
-- [ ] Notion "개발 로그" DB 생성 (Claude — Day 1 EOD 기록 세션에서: notion 플러그인 enable → DB 생성 → disable. 첫 실행 시 Notion 인증 프롬프트만 사용자 승인)
+- [x] Notion "개발 로그" DB 생성 + Day 0 기록 (EOD 세션 때만 notion 플러그인 enable 후 세션 시작)
 
 ## Day 1 (8/12 수) — 아이디어 발굴·검증·확정
 
