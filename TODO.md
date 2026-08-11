@@ -9,14 +9,16 @@
 - [x] 필수 문서 5종 작성 (CLAUDE.md / DESIGN.md / ARCHITECTURE.md / ANIMATION.md / TODO.md)
 - [x] backlog.md 생성
 - [x] ecc code-reviewer 에이전트 ~/.claude/agents/ 확인 (기복사됨)
-- [ ] 플러그인 정리: ecc·omc·superpowers-ecc disable, pm-* 8종·sentry·playwright·미사용 미학 스킬 off (사용자)
-- [ ] notion·obsidian 구현 세션 off 설정 (사용자)
+- [x] 플러그인 정리: ecc·omc·superpowers-ecc·pm-*·sentry·playwright·ui-ux-pro-max 전부 disabled 확인
+- [x] notion·obsidian 플러그인 disabled (EOD 기록 세션에서만 enable)
 - [x] /setup-matt-pocock-skills 실행 (GitHub Issues 트래커, docs/agents/ 생성)
 - [ ] 도메인 구매 준비 (사용자 — 실구매는 Day 1 종료 직후)
 - [ ] GA4 계정 생성 (사용자)
-- [ ] Vercel 연결 + main 자동 배포 확인 (사용자 — git init/GitHub 리포 선행 필요)
+- [x] Next.js 스캐폴드(웹 기본값) + git init + GitHub 리포 생성·push (kjjyyy01/second-project, private)
+- [ ] Vercel 연결 + main 자동 배포 확인 (사용자 — `! vercel login` 후 요청 시 연결 대행 가능)
 - [ ] 월 고정비 상한 결정 (사용자)
-- [ ] Notion "개발 로그" DB + Obsidian dev-notes/ + TIL 템플릿 (사용자)
+- [x] Obsidian dev-notes/ + TIL 템플릿 (~/obsidian/resume/dev-notes/)
+- [ ] Notion "개발 로그" DB 생성 (사용자)
 
 ## Day 1 (8/13 목) — 아이디어 발굴·검증·확정
 
