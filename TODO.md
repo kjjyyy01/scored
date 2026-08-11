@@ -12,11 +12,11 @@
 - [x] 플러그인 정리: ecc·omc·superpowers-ecc·pm-*·sentry·playwright·ui-ux-pro-max 전부 disabled 확인
 - [x] notion·obsidian 플러그인 disabled (EOD 기록 세션에서만 enable)
 - [x] /setup-matt-pocock-skills 실행 (GitHub Issues 트래커, docs/agents/ 생성)
-- [ ] 도메인 구매 준비 (사용자 — 실구매는 Day 1 종료 직후)
-- [ ] GA4 계정 생성 (사용자)
+- [x] 도메인: 아이디어 확정(Day 1) 직후 구매하기로 결정
 - [x] Next.js 스캐폴드(웹 기본값) + git init + GitHub 리포 생성·push (kjjyyy01/second-project, private)
-- [ ] Vercel 연결 + main 자동 배포 확인 (사용자 — `! vercel login` 후 요청 시 연결 대행 가능)
-- [ ] 월 고정비 상한 결정 (사용자)
+- [x] Vercel 연결 완료 (홈페이지에서 직접 처리) — main 자동 배포는 다음 push로 확인
+- [x] 월 고정비 상한: 4만원/월 (런칭 시 Vercel Pro $20 전환 판단 포함)
+- [ ] GA4 속성 추가 (사용자 — 기존 계정에 속성만 추가하면 됨, 서비스명 확정 후 권장)
 - [x] Obsidian dev-notes/ + TIL 템플릿 (~/obsidian/resume/dev-notes/)
 - [ ] Notion "개발 로그" DB 생성 (사용자)
 
