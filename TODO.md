@@ -39,6 +39,12 @@
 
 ## Day 2 (8/13 목) — MVP 기획서
 
-- [ ] SCR 5~7개 (성적표·공유 카드 화면 포함) + 범위 판정 3종 (백엔드 無 확정 / 콘텐츠=유형·문구 풀 / 외부 API 無)
-- [ ] JSONL 파싱 스펙: `~/.claude/projects/*.jsonl` 구조 분석 → 추출 지표 목록 확정
-- [ ] /grill-me 스코프 방어 1회
+- [x] SCR 5~7개 초안 v2 (SCR 6개 — 성적표+대시보드+공유 카드, 재미 장치 1개 포함) + 범위 판정 3종 (백엔드 無 / 콘텐츠=Day 7 배정 / 외부 API 無 / CLI 개발 1일 배정) → docs/MVP.md
+- [x] JSONL 파싱 스펙: 실데이터 263개 파일 구조 분석 → 성적표·대시보드 지표 확정 → docs/MVP.md
+- [x] 진입 방식 확정: `npx vibe-scorecard` CLI → URL 해시로 결과 전달 (사용자 결정, 드래그&드롭은 발동 조건부 backlog)
+- [x] /grill-me 스코프 방어 3라운드(Q1~Q11) 통과 → 기획서 v3 확정 (원문: docs/grill-log.md)
+- [x] grill 반영: 유형 6종 / 발췌 웹 승인 / 킬 지표 데스크톱 모수(도달률 20%·공유 10%·표본 150) / 대시보드 컷 탈출구 / 명령어 나에게 보내기
+- [x] 레포 public 전환 (사용자) + git 이력 시크릿 스캔 통과 확인 (Claude)
+- [x] npm 패키지명 확인: `vibe-scorecard`·`vibescore` 둘 다 미등록 — 첫 publish로 선점 (계정만 준비)
+- [ ] **도메인 vibescore.kr 결제 (사용자) — 지금이 결제 시점 (Day 2 기획 확정 완료)**
+- [ ] EOD: Notion 기록 세션 (notion 플러그인 별도 세션)
