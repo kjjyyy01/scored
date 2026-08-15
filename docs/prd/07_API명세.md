@@ -14,6 +14,6 @@
 | `g` | string | ✓ | 등급 (OQ-002) |
 | `s1`~`s3` | string | — | 요약 스탯 3개 (라벨:값) |
 
-- 응답: `image/png` 1200×630. 캐시: `immutable` (동일 쿼리 = 동일 이미지)
+- 응답: `image/png` 1200×630. 캐시: `Cache-Control: public, s-maxage=86400, stale-while-revalidate=604800` — CDN 1일 재사용 + 백그라운드 갱신. `immutable` 금지: 쿼리는 등급 *코드*뿐이라 라벨·디자인(서버 코드) 변경 시 이미지가 달라져야 함 (2026-08-16 수정, BR-001 부작용 검토에서 발견)
 - 실패: 정적 OG 폴백 (ERR-OG-001)
 - 금지: 발췌·원문·PII 쿼리 전달 (BR-006 강제 지점 = SCR-005 URL 생성 코드)
