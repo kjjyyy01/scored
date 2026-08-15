@@ -63,5 +63,6 @@
 - [ ] EOD: Notion 기록 세션 (notion 플러그인 별도 세션)
 
 ### Day 3 → Day 4 인계
-- 미해결(OQ) 5건: 유형 6종·문구 풀(Day 7) / 등급 체계(Day 7) / 도메인 결제 / 페이로드 실측 크기(Day 4~5) / GA4 ID
+- 미해결(OQ) 4건: 유형 6종·문구 풀(Day 7) / 등급 체계(Day 7) / 페이로드 실측 크기(Day 4~5) / GA4 ID (도메인은 완료)
 - Day 4 첫 작업 권장: CLI(F-007) 1일 배정분 — 페이로드 스키마(05)가 CLI·웹 공용 계약이므로 먼저 고정
+- PRD 피드백 반영(2026-08-15): ① 00에 v1/v1.x/v2 버전 규약 ② 라우트 `/r`→`/report` ③ shadcn/ui 채택 — Day 4 첫 세팅에 `npx shadcn@latest init` 포함 (DESIGN.md 매핑표 참조)
