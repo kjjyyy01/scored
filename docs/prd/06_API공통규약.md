@@ -4,7 +4,7 @@
 
 ## 해시 페이로드 규약
 
-- 인코딩: `JSON → deflate-raw → base64url` → `vibe-scorecard.kr/r#<data>`
+- 인코딩: `JSON → deflate-raw → base64url` → `scored.kr/r#<data>`
 - 해시 프래그먼트는 HTTP 요청에 포함되지 않는다 = 무업로드의 기술적 근거 (SCR-006에서 고지)
 - 디코딩 실패 → ERR-HASH-001, 버전 초과 → ERR-HASH-002 (BR-003)
 - 버저닝: 페이로드 `v` 필드 (05 참조). URL 경로 버저닝 없음

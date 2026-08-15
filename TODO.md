@@ -46,7 +46,7 @@
 - [x] grill 반영: 유형 6종 / 발췌 웹 승인 / 킬 지표 데스크톱 모수(도달률 20%·공유 10%·표본 150) / 대시보드 컷 탈출구 / 명령어 나에게 보내기
 - [x] 레포 public 전환 (사용자) + git 이력 시크릿 스캔 통과 확인 (Claude)
 - [x] npm 패키지명 확인: `vibe-scorecard`·`vibescore` 둘 다 미등록 — 첫 publish로 선점 (계정만 준비)
-- [ ] ~~도메인 vibescore.kr 결제~~ → Day 3에서 `vibe-scorecard.kr`로 변경 (아래 참조)
+- [x] ~~도메인 vibescore.kr 결제~~ → Day 3 `vibe-scorecard.kr` → 2026-08-15 **`scored.kr`로 최종 변경·구매 완료** (아래 참조)
 - [ ] EOD: Notion 기록 세션 (notion 플러그인 별도 세션)
 
 ## Day 3 (8/14 금) — PRD + GA4 이벤트 스펙
@@ -56,8 +56,9 @@
 - [x] 핵심 설계 결정 기록: 유형·등급 판정은 웹(BR-001, CLI 재배포 없이 문구 수정), 발췌 승인 흐름(BR-004), OG 쿼리 범위(BR-006)
 - [x] 정합성 검사 통과 (예외 1건: 화면↔API 매핑 — 무백엔드라 해당 없음 처리)
 - [ ] **사용자 승인 → 화면 문서 status Draft→Approved 전환** (Approved만 구현 대상)
-- [x] 도메인 이름 결정: **`vibe-scorecard.kr`** — npm 패키지·레포명과 통일 (Day 2 npx 진입 확정으로 vibescore.kr과 이름이 갈라진 문제 발견 → A안 채택). 미등록 확인 2026-08-15
-- [ ] **도메인 vibe-scorecard.kr 결제 (사용자)** — Day 4 전 (CLI가 URL 하드코딩)
+- [x] 도메인 이름 결정: `vibe-scorecard.kr`(npm·레포명 통일안) → 레포명 `scored` 변경에 따라 **`scored.kr`로 최종 확정** 2026-08-15
+- [x] **도메인 scored.kr 결제 (사용자)** — 2026-08-15 완료. 잔여: Vercel 프로젝트 연결 + DNS 설정
+- [ ] **npm 패키지명 재결정** — `scored` 미등록 확인(2026-08-15). 도메인·레포와 통일하려면 `npx scored`로 변경 필요 (사용자 결정)
 - [ ] GA4 측정 ID 발급 확인 (사용자 — OQ-005, Day 15 전이면 됨)
 - [ ] EOD: Notion 기록 세션 (notion 플러그인 별도 세션)
 
