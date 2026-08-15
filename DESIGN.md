@@ -7,12 +7,46 @@
 - 반응형: 모바일~데스크톱 대응이 완료 조건 — 모바일 퍼스트로 구현
 - 간격: 넉넉하고 일관된 스페이싱 (design-taste-frontend 방향: 밋밋한 UI 금지)
 
-## 서비스 확정 후 기입
+## 서비스 확정 토큰 (2026-08-15 기입 — sequential-thinking 5단계로 결정)
 
-- 스페이싱 스케일: (Day 1 확정 후 기입)
-- 타이포그래피(서체·스케일): (Day 1 확정 후 기입)
-- next/font 설정: (Day 1 확정 후 기입)
-- 컬러 팔레트: (Day 1 확정 후 기입)
+> 원칙: 커스텀 토큰은 최소. Tailwind 내장 스케일 중 **쓸 단계만 지정**하고, 색은 shadcn CSS 변수만 쓴다. 아래 표 밖의 값을 쓰면 리뷰에서 지적.
+
+### 서체 (`next/font`)
+| 역할 | 서체 | 설정 |
+|---|---|---|
+| sans (본문·헤드라인·숫자) | **Pretendard Variable** — `next/font/local`, `pretendard` npm 패키지의 `PretendardVariable.woff2` 1개 | `display: "swap"`, `preload: true`, `adjustFontFallback` 기본(자동 size-adjust), CSS 변수 `--font-sans` |
+| mono (npx 명령어 코드 블록) | Geist Mono (`next/font/google`, 현재 템플릿 유지) | latin subset만 — 소용량 |
+| 숫자 | sans + `tabular-nums` | 지표 카드·등급·대시보드 수치 정렬 |
+
+- 디스플레이 전용 서체 추가 금지 (YAGNI) — 과감함은 크기·굵기(Pretendard 700~800)로 낸다.
+- LCP: 웹폰트는 위 2개뿐. 히어로 텍스트는 swap으로 즉시 페인트.
+
+### 타이포 스케일 (역할 5개만)
+| 역할 | 클래스 | 용도 |
+|---|---|---|
+| display | `text-6xl md:text-8xl font-extrabold tracking-tight leading-none` | 등급 글자·유형명 (성적표 주인공) |
+| h1 | `text-4xl md:text-5xl font-bold tracking-tight` | 랜딩 헤드라인·화면 제목 |
+| h2 | `text-2xl font-semibold` | 섹션·카드 제목 |
+| body | `text-base leading-7` | 본문 (한글 행간 1.75) |
+| caption | `text-sm text-muted-foreground` | 보조 설명·고지 |
+
+### 스페이싱 (4px 그리드, 사용 단계 고정)
+- 허용 단계: `2 · 3 · 4 · 6 · 8 · 12 · 16 · 24` (0.5rem~6rem). 그 밖 값 사용 금지.
+- 컨테이너: `mx-auto px-4 md:px-6` + `max-w-3xl`(성적표·대시보드·안내 — 읽기 폭) / `max-w-5xl`(랜딩). **정렬 축 = 이 px 값 하나**.
+- 섹션 간격 `py-16 md:py-24`, 카드 내부 `p-6`, 요소 간 `gap-4` / `gap-6`, 지표 카드 그리드 `grid gap-4 md:grid-cols-2`.
+
+### 컬러 팔레트 (shadcn CSS 변수가 SSOT)
+| 항목 | 값 |
+|---|---|
+| base color (`shadcn init`) | **stone** — 성적표 = 종이 느낌, zinc 대시보드 클리셰 회피 |
+| `--primary` (유일한 커스텀 색) | 형광 오렌지 계열 (도장·형광펜) — 후보 `oklch(0.70 0.19 45)`. 대안 딥 그린 `oklch(0.55 0.15 150)`(채점 펜). **Day 4 shadcn init 직후 실물 카드 위에서 30분 내 1개 확정 → 이 칸에 hex/oklch 기입** |
+| 등급·유형 색 | **없음** — 등급은 색이 아니라 크기·굵기·연출로 (팔레트 폭발 방지, 재미 장치 1개 규칙과 정합) |
+| 차트(SCR-004) | primary 단색 + 농도(opacity)만. 색상 추가 금지 (dataviz 스킬은 SCR-004 구현 시점에 로드) |
+| 공유 카드·OG 이미지 | 테마 무관 **라이트 고정** (미리보기 일관성) |
+| 반경·그림자 | shadcn 기본 (`--radius: 0.625rem`) 유지 |
+
+### 다크모드
+- v1: **시스템 추종만** — shadcn 다크 변수를 `@media (prefers-color-scheme: dark)`에 정의 (스크립트 0, JS 없이 동작 — 마크업 위생 규칙). 토글 UI·`.dark` 클래스 방식은 v2 backlog.
 
 ## 컴포넌트 라이브러리: shadcn/ui (2026-08-15 PRD 피드백 Q3)
 
