@@ -4,7 +4,7 @@
 
 - 매 세션 시작 시 docs/PLAN.md의 현재 Day 섹션을 확인할 것
 - **PLAN.md 구간별 지정 스킬(make-plan/make-prd/grill-me/sequential-thinking 등)은 작성·수정 모두 필수** — 운용 원칙 4번. 건너뛴 작업은 해당 스킬로 재검증.
-- 서비스: **바이브 성적표** — AI 코딩 세션 데이터를 브라우저 로컬 분석해 재미 성적표 생성 (비로그인·무업로드)
+- 서비스: **scored** (바이브 성적표) — AI 코딩 세션 데이터를 브라우저 로컬 분석해 재미 성적표 생성 (비로그인·무업로드)
 - 스택: Next.js·Tailwind·shadcn/ui·Vercel — Day 1 웹 확정 (앱·위젯은 판정 통과 후 후속)
 - Git: main 자동 배포, 매일 배포
 - 성능 예산: LCP 2.5초
