@@ -1,7 +1,7 @@
 # TODO.md
 
-> 일정 (2026-08-16 조정): Day 0 = 8/11(화), Day 1~2 = 8/12~13, Day 3 = 8/14~8/16(일) → Day 4 = 8/17(월), **Day 20 런칭 = 9/2(수)**, Day 21 = 9/3(목) 버퍼, 판정일 9/16(수)
-> 조정: Day 3 PRD 범위 확대로 +2일 캘린더 확장 (실작업일 불변, 버퍼 보존 — PLAN 상단 조정 이력)
+> 일정 (2026-08-19 재조정): Day 0 = 8/11(화), Day 1~2 = 8/12~13, Day 3 = 8/14~8/16(일) → **Day 4 = 8/18(화), Day 5 = 8/19(수)**, Day 9 = 8/23(일), Day 14 = 8/28(금), **Day 20 런칭 = 9/3(목)**, Day 21 = 9/4(금) 버퍼, 판정일 9/17(목)
+> 조정 2회: ① Day 3 PRD 범위 확대 +2일 ② Day 4 착수 1일 지연 +1일 — 둘 다 캘린더 확장(실작업일 21 불변, 버퍼 보존 — PLAN 상단 조정 이력)
 
 ## Day 0 — 사전 세팅
 
@@ -69,7 +69,7 @@
 - Day 4 첫 작업 권장: CLI(F-007) 1일 배정분 — 페이로드 스키마(05)가 CLI·웹 공용 계약이므로 먼저 고정
 - PRD 피드백 반영(2026-08-15): ① 00에 v1/v1.x/v2 버전 규약 ② 라우트 `/r`→`/report` ③ shadcn/ui 채택 — Day 4 첫 세팅 순서: `npx shadcn@latest init`(base **stone**) → Pretendard `next/font/local` → `--primary` 실물 카드 위에서 30분 내 확정해 DESIGN.md 기입 (토큰·다크모드 결정은 DESIGN.md 2026-08-15 기입분)
 
-## Day 4 (8/17 계획 → **8/18 실착수**, 1일 지연 — 버퍼 흡수/재매핑은 사용자 결정) — 세팅 + CLI(F-007) 1.5일분 착수
+## Day 4 (**8/18 화** — 8/17 계획에서 1일 지연 → **캘린더 재매핑 확정** 2026-08-19 사용자 결정: Day N≥4 = 8/14+N, 런칭 9/3(목), 버퍼 보존) — 세팅 + CLI(F-007) 1.5일분 착수
 
 - [x] shadcn/ui init: `base-nova` 스타일 · baseColor **stone** · theme orange (Base UI, Tailwind v4·React 19 확인) → `components.json`, `src/lib/utils.ts`
 - [x] Pretendard `next/font/local`(pretendard npm, 가변 1파일, swap) + Geist Mono 유지 · `lang="ko"` · 다크모드 → `prefers-color-scheme` 시스템 추종(클래스 방식 제거)

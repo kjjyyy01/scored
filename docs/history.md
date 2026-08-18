@@ -75,3 +75,10 @@
 - 어떻게: sequential-thinking 5단계로 CLI 아키텍처 판단(패키지 배치·무빌드 TS·1패스 압축 보관·tz DI·심 4개) → mattpocock `/tdd` 수직 슬라이스 14사이클(테스트→최소 구현) — CLI-001 §9 TC를 심 합의로 간주, `test/analyze.test.ts`(TC-01~06·11~14 + §3 fun·models)·`encode.test.ts`(TC-07 DecompressionStream 라운드트립·TC-08)·`main.test.ts`(TC-09·10·ERR-CLI-002·--help/--version, 임시 홈 디렉터리·open 모킹) **20 tests pass**. shadcn init은 새 CLI(프리셋 코드) 규격 — `shadcn/preset` `encodePreset`로 stone/orange 코드 생성(chartColor≠stone이면 400)
 - 왜: 05 페이로드가 CLI·웹 공용 계약이라 CLI를 먼저 고정(PLAN Day 4 권장). 의존성 0·무업로드는 CLI부터 성립(CLI-001 §1). Pretendard 2MB 단일 파일은 DESIGN 결정대로 — Day 17 LCP 미달 시 dynamic-subset CSS로 교체(`ponytail:` 주석). 후보 primary `oklch(0.70 0.19 45)`는 흰 글자 대비 ≈2.7:1이라 shadcn orange 대비 검증 쌍을 임시 채택 — 확정은 카드 첫 렌더일에 사용자
 - 결과: `node cli/dist/index.js` E2E — 실로그 300파일/932MB 2.5s·RSS 280MB, `2026-08-18 세션 4개 · 프롬프트 16개` → URL 1,138자 → macOS 탭 오픈 확인. **OQ-004 완료**: 인코딩 1,104자(하이라이트 제거 880자, 최악 근사 ≈1.1K) → 8,000자 상한 확정. OQ-003 잔여(Vercel·DNS) 완료 확인(HTTPS 200). `next build` 통과. 잔여: REQ-CLI-003 로컬 리포트(Day 5, OQ-007 결정 후) · npm publish(`npm login` 필요, LICENSE 정책 결정) · make-prd 일괄(`<synthetic>` 제외·`week.tokens`=in+out·CPY-CLI-004 임시 분리) · 일정 1일 지연 처리(사용자) · `--primary` 확정(사용자)
+
+## 2026-08-19 — PLAN 일정 재조정 2회차 (make-plan Step 7)
+
+- 무엇을: Day 4 착수 1일 지연(8/17 계획 → 8/18 실착수)을 **캘린더 +1일 시프트**로 재매핑 — `Day N≥4 = 8/14+N` → Day 4 = 8/18(화), **Day 5 = 8/19(수)**, Day 9 = 8/23(일), Day 14 = 8/28(금), **Day 20 런칭 = 9/3(목)**, Day 21 = 9/4(금), 판정일 9/17(목)
+- 어떻게: make-plan Step 7(재조정) 진입 — 현재 산정값 확인(실작업일 21, 누적 조정 1회, 버퍼 잔량 Day 13~14 + Day 21 1일) → 확장 프로토콜 적용, 지렛대 0~5 **미적용**(실작업일·페이즈 배분·스코프 불변) → PLAN 상단 일정 매핑·조정 이력 갱신, TODO 헤더·Day 4 헤더, PRD 00 버전 규약 기간(9/3·9/3~9/17) 동기화. 정합성: 고정 하한 유지 · 킬 크라이테리아 표본 조건 유지 · backlog.md 존재 · 실패 조건 12항 · **런칭 요일 9/3(목) 화~목 규칙 충족** ✓
+- 왜: 사용자 결정 — 처음 "버퍼 흡수"에서 "재매핑"으로 변경. 지연 1일을 버퍼에서 빼면 Day 13~14 게릴라 테스트·Day 21 대응 여력이 줄어드는데, 이 프로젝트의 버퍼는 첫 유저 접촉 실패 시 유일한 복구 수단이라 캘린더를 늘려 **버퍼를 보존**하는 쪽이 리스크가 낮다. 확장분은 Day 4 지연에 전액 소비 → 배분·스코프·킬 크라이테리아 불변(파킨슨 방지)
+- 결과: 누적 조정 **2회**(3회째는 조정 전 전제 재검토 3문항 필수 — PLAN 프로토콜). 실작업일 21일·버퍼 잔량 불변. 남은 실작업 16일, 런칭까지 15일. MVP-기획서·PRD 제품 정의는 불변(지렛대 4·SCR 변경 없음)
