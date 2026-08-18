@@ -51,6 +51,8 @@
 ## 컴포넌트 라이브러리: shadcn/ui (2026-08-15 PRD 피드백 Q3)
 
 - 원칙: 화면 문서(SCR)의 "컴포넌트" 열은 일반 명칭 — 구현은 아래 매핑으로 shadcn/ui 사용. 매핑에 없는 요소만 직접 작성
+- **로컬 대화 리포트 HTML**(CLI-001 REQ-CLI-003)은 웹 번들 밖 정적 파일 — shadcn 미사용, 위 토큰(stone 팔레트·Pretendard 시스템 폴백·spacing 단계)만 인라인 CSS로 재사용해 톤을 맞춘다
+- **등급 뱃지·유형 타이틀**: 색 없음 — display 타이포+굵기로. 카드 이미지·OG도 동일 컴포넌트에서 렌더(SCR-003 REQ-RPT-002)
 - 도입: Day 4 `npx shadcn@latest init` (Tailwind v4·React 19 호환 확인) → 필요한 컴포넌트만 `add` (전체 설치 금지)
 - 팔레트·타이포는 shadcn CSS 변수(`--background`·`--primary` 등)를 SSOT로 — 위 "서비스 확정 후 기입" 항목은 이 변수값으로 기입
 
