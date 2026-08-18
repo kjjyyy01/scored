@@ -11,6 +11,7 @@
 - 보안: 시크릿 커밋 금지, 사용자 입력은 서버 측 검증
 - 마크업 위생: 서버 렌더링 HTML·시맨틱 마크업·메타데이터 — JS 없이도 콘텐츠가 보여야 함
 - 재미 장치는 v1에 1개. 두 번째 재미 아이디어는 구현 금지, backlog행
+- CLI: `cd cli && npm test`(node:test, 무빌드) · `npm run build`(tsc→dist) · `node dist/index.js` — 의존성 0 유지
 
 ## Agent skills
 

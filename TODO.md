@@ -68,3 +68,16 @@
 - **2026-08-16~17 grill 확정 (PRD 검토 8항)**: 성적표 = **하루 단위**(마지막 활동일, 경계 05:00) **스탯 카드 + 등급 뱃지**(Readme Stats 은유) + 7일 컨텍스트 / `/report` 한 스크롤 페이지(카드→대시보드 섹션) / 대화 원문은 CLI가 **로컬 HTML 리포트**(`~/.scored/{day}.html`)로 두 번째 탭 오픈(URL·서버 무관) / 등급 = 프롬프트·토큰·활동 시간 3지표 6단계(BR-009), 오늘의 유형 6종+폴백(BR-010) / 연출 = 카운트업→등급 릴→카드 / 재방문 = 문구+alias 안내. **CLI 배정 1일 → 1.5일**(리포트 +0.5). 05·CLI-001·SCR 전부 갱신됨 — Day 4 착수 전 CLI-001·05 재독 필수
 - Day 4 첫 작업 권장: CLI(F-007) 1일 배정분 — 페이로드 스키마(05)가 CLI·웹 공용 계약이므로 먼저 고정
 - PRD 피드백 반영(2026-08-15): ① 00에 v1/v1.x/v2 버전 규약 ② 라우트 `/r`→`/report` ③ shadcn/ui 채택 — Day 4 첫 세팅 순서: `npx shadcn@latest init`(base **stone**) → Pretendard `next/font/local` → `--primary` 실물 카드 위에서 30분 내 확정해 DESIGN.md 기입 (토큰·다크모드 결정은 DESIGN.md 2026-08-15 기입분)
+
+## Day 4 (8/17 계획 → **8/18 실착수**, 1일 지연 — 버퍼 흡수/재매핑은 사용자 결정) — 세팅 + CLI(F-007) 1.5일분 착수
+
+- [x] shadcn/ui init: `base-nova` 스타일 · baseColor **stone** · theme orange (Base UI, Tailwind v4·React 19 확인) → `components.json`, `src/lib/utils.ts`
+- [x] Pretendard `next/font/local`(pretendard npm, 가변 1파일, swap) + Geist Mono 유지 · `lang="ko"` · 다크모드 → `prefers-color-scheme` 시스템 추종(클래스 방식 제거)
+- [ ] `--primary` 확정 (사용자, 실물 카드 첫 렌더일) — 임시: shadcn orange `oklch(0.553 0.195 38.402)`. 후보 형광 `oklch(0.70 0.19 45)`는 흰 글자 대비 ≈2.7:1로 버튼 배경 부적합 → DESIGN.md 참조
+- [x] CLI `cli/` 스캐폴드: `node:test`(무의존성) · TS erasable(무빌드 테스트) · `tsc` publish 빌드 — 루트 tsconfig에서 `cli` 제외
+- [x] CLI 집계 코어 `/tdd` — TC-CLI-001-01~06·11~14 + §3 fun·models 테스트 (20 tests pass) — 실로그 300파일 2.5s
+- [x] 06 인코딩·URL·크기 상한 재인코딩 — TC-CLI-001-07(DecompressionStream 라운드트립)·08 + **OQ-004 실측 1,104자 → 8,000자 상한 확정** (05·21 기입)
+- [x] `main`: 브라우저 오픈(darwin/linux/win32 PowerShell)·ERR-CLI-001~003·CPY-CLI 문구·`--help/--version` — TC-CLI-001-09·10 + E2E(`node cli/dist/index.js` → 탭 오픈 확인)
+- [ ] **make-prd 일괄 반영 대기(Day 5)**: CLI-001 §3 `stats.models`에 `<synthetic>` 제외 명시 · `week.tokens` = in+out 명시 · CPY-CLI-004 분리 출력(리포트 전 임시) — OQ-007 반영과 함께 한 번에
+- [ ] (Day 5) 로컬 대화 리포트 HTML REQ-CLI-003 — TC-CLI-003-01~03 (OQ-007 결정 후) · npm publish `scored` (사용자 `npm login` 선행)
+- [ ] EOD: ARCHITECTURE.md 디렉터리 구조 · history.md · `next build` 통과 · 커밋·push(매일 배포) · Notion·Obsidian 기록 세션(사용자)
