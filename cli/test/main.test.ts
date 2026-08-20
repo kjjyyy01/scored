@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { main, type Deps } from "../src/main.ts";
@@ -26,11 +26,12 @@ const openOk = async (u: string) => { opened.push(u); };
 
 test("REQ-CLI-001/002 정상: URL 출력 + 브라우저 오픈 + exit 0", async () => {
   const home = await fakeHome(true, [user("2026-08-17T10:00:00+09:00", "안녕"), assistant("2026-08-17T10:01:00+09:00", "m1", { usage: { input_tokens: 5, output_tokens: 1 } })]);
-  const { d, out } = deps(home, openOk);
+  const urls: string[] = [];
+  const { d, out } = deps(home, async (u) => { urls.push(u); });
   assert.equal(await main([], d), 0);
   const url = out.find((l) => l.startsWith("https://scored.kr/report?from=cli#"));
   assert.ok(url, "URL이 출력되어야 함");
-  assert.equal(opened.at(-1), url);
+  assert.equal(urls[0], url, "첫 탭은 성적표여야 함");
   assert.ok(out.some((l) => l.includes("2026-08-17 세션 1개 · 프롬프트 1개")));
 });
 
@@ -60,4 +61,35 @@ test("--help / --version", async () => {
   assert.equal(out.at(-1), "0.0.0-test");
   assert.equal(await main(["--help"], d), 0);
   assert.ok(out.at(-1)?.includes("npx scored"));
+});
+
+test("REQ-CLI-003 정상: 성적표 URL 다음 두 번째 탭으로 리포트 file:// 오픈", async () => {
+  const home = await fakeHome(true, [
+    user("2026-08-17T10:00:00+09:00", "리포트에 담길 프롬프트"),
+    assistant("2026-08-17T10:01:00+09:00", "m1", { text: "리포트에 담길 답변", usage: { input_tokens: 5, output_tokens: 1 } }),
+  ]);
+  const urls: string[] = [];
+  const { d, out } = deps(home, async (u) => { urls.push(u); });
+  assert.equal(await main([], d), 0);
+
+  assert.ok(urls[0]?.startsWith("https://scored.kr/report"), "첫 탭 = 성적표");
+  assert.ok(urls[1]?.startsWith("file://"), "둘째 탭 = 로컬 리포트");
+  assert.ok(urls[1]?.endsWith("/.scored/2026-08-17.html"), `경로 불일치: ${urls[1]}`);
+
+  const html = await readFile(join(home, ".scored", "2026-08-17.html"), "utf8");
+  assert.ok(html.includes("리포트에 담길 프롬프트") && html.includes("리포트에 담길 답변"));
+  assert.equal((await stat(join(home, ".scored", "2026-08-17.html"))).mode & 0o777, 0o600);
+  assert.ok(out.some((l) => l.includes("~/.scored/2026-08-17.html") && l.includes("7일")), "CPY-CLI-004 보관 고지 없음");
+  assert.ok(out.some((l) => l.includes('alias sc="npx scored"')), "CPY-CLI-005 재방문 안내 없음");
+});
+
+test("TC-CLI-003-03: ~/.scored 쓰기 불가 → ERR-CLI-004 경고, 성적표는 정상, exit 0", async () => {
+  const home = await fakeHome(true, [user("2026-08-17T10:00:00+09:00", "쓰기 실패 케이스"), assistant("2026-08-17T10:01:00+09:00", "m1", { text: "답변" })]);
+  await writeFile(join(home, ".scored"), "디렉터리 자리를 파일이 차지"); // mkdir 실패 유도
+  const urls: string[] = [];
+  const { d, err } = deps(home, async (u) => { urls.push(u); });
+  assert.equal(await main([], d), 0);
+  assert.ok(urls[0]?.startsWith("https://scored.kr/report"), "성적표는 정상 오픈");
+  assert.equal(urls.length, 1, "리포트 탭은 열리지 않아야 함");
+  assert.ok(err.some((l) => l.includes("리포트 파일을 만들지 못했어요")), "ERR-CLI-004 경고 없음");
 });

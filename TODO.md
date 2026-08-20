@@ -78,6 +78,19 @@
 - [x] CLI 집계 코어 `/tdd` — TC-CLI-001-01~06·11~14 + §3 fun·models 테스트 (20 tests pass) — 실로그 300파일 2.5s
 - [x] 06 인코딩·URL·크기 상한 재인코딩 — TC-CLI-001-07(DecompressionStream 라운드트립)·08 + **OQ-004 실측 1,104자 → 8,000자 상한 확정** (05·21 기입)
 - [x] `main`: 브라우저 오픈(darwin/linux/win32 PowerShell)·ERR-CLI-001~003·CPY-CLI 문구·`--help/--version` — TC-CLI-001-09·10 + E2E(`node cli/dist/index.js` → 탭 오픈 확인)
-- [ ] **make-prd 일괄 반영 대기(Day 5)**: CLI-001 §3 `stats.models`에 `<synthetic>` 제외 명시 · `week.tokens` = in+out 명시 · CPY-CLI-004 분리 출력(리포트 전 임시) — OQ-007 반영과 함께 한 번에
-- [ ] (Day 5) 로컬 대화 리포트 HTML REQ-CLI-003 — TC-CLI-003-01~03 (OQ-007 결정 후) · npm publish `scored` (사용자 `npm login` 선행)
-- [ ] EOD: ARCHITECTURE.md 디렉터리 구조 · history.md · `next build` 통과 · 커밋·push(매일 배포) · Notion·Obsidian 기록 세션(사용자)
+- [x] **make-prd 일괄 반영** → Day 5 완료 (아래)
+- [x] (Day 5) 로컬 대화 리포트 HTML REQ-CLI-003 → Day 5 완료 (아래)
+- [x] EOD: ARCHITECTURE.md 디렉터리 구조 · history.md · `next build` 통과 · 커밋·push(매일 배포) · Notion·Obsidian 기록 세션(사용자)
+
+## Day 5 (**8/20 목**) — CLI 잔여 0.5일(REQ-CLI-003) + 집계 결함 수정
+
+- [x] `npm login` (사용자) — `jong-yeon`으로 로그인 완료
+- [x] **npm 라이선스 정책 확정 (사용자)**: CLI만 MIT, 웹은 현행 All Rights Reserved → `cli/LICENSE` 신설 + `cli/package.json` `"license": "MIT"`. `npm pack --dry-run` 20파일 9.0kB, LICENSE 포함 확인
+- [x] **[결함] 프롬프트·세션 수 부풀림 발견·수정** — 세션 재개 시 `.jsonl`이 통째 복제됨. 실측 8/19: 프롬프트 28→15(46% 부풀림), 세션 파일 4개=실제 대화 2개. 미수정 시 등급 BR-009 인플레. `uuid` 중복 제거 + 부분집합 파일 제외(`liveSessions`) — TC-CLI-001-15·15b
+- [x] **OQ-007 확정 (사용자 결정)**: ① 도구 결과 원문 미포함(이름만 접힘) ② 세션 제목 `{프로젝트} · HH:MM · 첫 프롬프트 40자`, 8자 미만 시 프롬프트 수 폴백 ③ 보관 = 최근 7일 롤링 자동 삭제
+- [x] **make-prd 일괄 반영 6건** — CLI-001 v1.2.0(§2 중복 제거 2행·세션 정의·§3 4행·REQ-CLI-003 AC-5+렌더 규칙·엣지 2건·TC 6건) · 11(CPY-CLI-004 개정·005 신설·HOW-001) · 05(3행) · 14(파기 정책 신설) · 21(OQ-007 종결). 정합성 9항목 통과
+- [x] **REQ-CLI-003 구현** `/tdd` — `src/report.ts` 신설(collectSessions·renderReport·pruneOld·writeReport) + main 통합. TC-CLI-003-01·01b·02·03·04·05·06 + writeReport 0600 → **31 tests pass**
+- [x] E2E — 실데이터 5세션·23프롬프트, exit 0, 4.8초, URL 1,221자, 리포트 26.7KB/0600, 7일 롤링 삭제 동작·사용자 파일 보존 확인
+- [ ] `--primary` 확정 (사용자, 실물 카드 첫 렌더일) — Day 4 이월, 웹 착수 전 필요
+- [ ] npm publish `scored` — `cli/README.md` 없음(npm 페이지 백지) 선처리 필요
+- [ ] EOD: history.md · 커밋·push(매일 배포) · Notion·Obsidian 기록 세션(사용자)

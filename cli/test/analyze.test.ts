@@ -212,3 +212,29 @@ test("§3 models: `<synthetic>` 같은 시스템 모델명은 제외", async () 
   );
   assert.deepEqual(p?.stats.models, { "claude-fable-5": 1 });
 });
+
+test("TC-CLI-001-15: 세션 재개로 복제된 파일 — 프롬프트 uuid 중복 제거, 세션 1개", async () => {
+  // 실측(2026-08-19): 파일 A의 프롬프트가 파일 B에 통째로 복제되고 B가 이어서 씀
+  const shared = [
+    user("2026-08-17T10:00:00+09:00", "첫 프롬프트입니다"),
+    user("2026-08-17T10:05:00+09:00", "두 번째 프롬프트"),
+  ];
+  const p = await analyze(
+    [...file("a.jsonl", shared), ...file("b.jsonl", [...shared, user("2026-08-17T10:10:00+09:00", "세 번째 프롬프트")])],
+    { now: NOW, tz: SEOUL },
+  );
+  assert.equal(p?.stats.prompts, 3); // 5가 아니라 3
+  assert.equal(p?.stats.sessions, 1); // a는 b의 재개 복제본
+});
+
+test("TC-CLI-001-15b: 프롬프트가 겹치지 않는 두 파일은 각각 별개 세션", async () => {
+  const p = await analyze(
+    [
+      ...file("a.jsonl", [user("2026-08-17T10:00:00+09:00", "레포 A 작업")]),
+      ...file("b.jsonl", [user("2026-08-17T11:00:00+09:00", "레포 B 작업")]),
+    ],
+    { now: NOW, tz: SEOUL },
+  );
+  assert.equal(p?.stats.prompts, 2);
+  assert.equal(p?.stats.sessions, 2);
+});

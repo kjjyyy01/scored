@@ -8,7 +8,7 @@ export type Options = { now: Date; tz: string };
 
 // 관대한 파싱: 한 줄 → 정규화 레코드 (실패·무관 타입은 null)
 type Raw =
-  | { type: "user"; ts: number; text: string | null; results: boolean[] }
+  | { type: "user"; ts: number; uuid: string | null; text: string | null; results: boolean[] }
   | { type: "assistant"; ts: number; id: string; model?: string; usage: { in: number; out: number }; tools: [id: string, name: string][]; texts: string[] };
 
 export function parseLine(line: string): Raw | null {
@@ -31,7 +31,7 @@ export function parseLine(line: string): Raw | null {
     }
     // 프롬프트 제외 규칙: isMeta · '<' 시작 · isSidechain (CLI-001 §2)
     if (text !== null && (o.isMeta === true || o.isSidechain === true || text.startsWith("<"))) text = null;
-    return { type: "user", ts, text, results };
+    return { type: "user", ts, uuid: typeof o.uuid === "string" ? o.uuid : null, text, results };
   }
   if (o.type === "assistant") {
     const u = (msg.usage ?? {}) as Record<string, number | undefined>;
@@ -76,8 +76,32 @@ export function highlights(texts: string[]): NonNullable<Payload["highlights"]> 
   };
 }
 
-type Prompt = { file: string; ts: number; text: string };
-type ToolResult = { file: string; ts: number; isError: boolean };
+type Prompt = { file: string; ts: number; uuid: string | null; text: string };
+type ToolResult = { file: string; ts: number; uuid: string | null; isError: boolean };
+
+// §2 중복 제거(user): 세션 재개 시 .jsonl이 통째 복제된다 → uuid 1회만 (uuid 없는 레코드는 그대로 통과)
+function dedupe<T extends { uuid: string | null }>(rows: T[]): T[] {
+  const seen = new Set<string>();
+  return rows.filter((r) => {
+    if (r.uuid === null) return true;
+    if (seen.has(r.uuid)) return false;
+    seen.add(r.uuid);
+    return true;
+  });
+}
+
+// §2 세션 정의: 프롬프트 uuid 집합이 다른 파일에 완전 포함되면 재개 복제본 → 제외
+// ponytail: O(파일²) — 대상일 파일은 보통 10개 미만. 수백 개가 되면 uuid→파일 역인덱스로 교체
+export function liveSessions(byFile: Map<string, Set<string>>): Set<string> {
+  const kept: Set<string>[] = [];
+  const live = new Set<string>();
+  for (const [f, ids] of [...byFile].sort((a, b) => b[1].size - a[1].size)) {
+    if (kept.some((k) => [...ids].every((id) => k.has(id)))) continue; // 상위집합이 이미 있음
+    kept.push(ids);
+    live.add(f);
+  }
+  return live;
+}
 type Msg = { file: string; ts: number; model?: string; usage: { in: number; out: number }; tools: Map<string, string>; blocks: Map<string, number> };
 
 export async function analyze(input: Input, { now, tz }: Options): Promise<Payload | null> {
@@ -91,8 +115,8 @@ export async function analyze(input: Input, { now, tz }: Options): Promise<Paylo
     const r = parseLine(line);
     if (!r) continue;
     if (r.type === "user") {
-      if (r.text !== null) prompts.push({ file, ts: r.ts, text: r.text });
-      for (const isError of r.results) results.push({ file, ts: r.ts, isError });
+      if (r.text !== null) prompts.push({ file, ts: r.ts, uuid: r.uuid, text: r.text });
+      for (const isError of r.results) results.push({ file, ts: r.ts, uuid: r.uuid, isError });
     } else {
       let m = msgs.get(r.id);
       if (!m) msgs.set(r.id, (m = { file, ts: r.ts, model: r.model, usage: r.usage, tools: new Map(), blocks: new Map() }));
@@ -107,7 +131,17 @@ export async function analyze(input: Input, { now, tz }: Options): Promise<Paylo
   let latest = 0;
   for (const p of prompts) if (p.ts > latest) latest = p.ts;
   const day = dayOf(latest);
-  const dayPrompts = prompts.filter((p) => dayOf(p.ts) === day);
+  // 세션 판정은 중복 제거 *전* 파일별 uuid 집합으로 (제거 후엔 포함 관계가 사라진다)
+  const promptsByFile = new Map<string, Set<string>>();
+  for (const p of prompts) {
+    if (dayOf(p.ts) !== day) continue;
+    let ids = promptsByFile.get(p.file);
+    if (!ids) promptsByFile.set(p.file, (ids = new Set()));
+    ids.add(p.uuid ?? `${p.ts}:${p.text}`);
+  }
+  const sessions = liveSessions(promptsByFile).size;
+
+  const dayPrompts = dedupe(prompts.filter((p) => dayOf(p.ts) === day));
   const dayMsgs = [...msgs.values()].filter((m) => dayOf(m.ts) === day);
 
   const tokens = { in: 0, out: 0 };
@@ -124,7 +158,7 @@ export async function analyze(input: Input, { now, tz }: Options): Promise<Paylo
   const days = Array.from({ length: 7 }, (_, i) => shiftDay(day, i - 6));
   const idx = new Map(days.map((d, i) => [d, i]));
   const week = { days, prompts: Array(7).fill(0) as number[], tokens: Array(7).fill(0) as number[], heatmap: Array.from({ length: 7 }, () => Array(24).fill(0) as number[]) };
-  for (const p of prompts) {
+  for (const p of dedupe(prompts)) {
     const i = idx.get(dayOf(p.ts));
     if (i === undefined) continue;
     week.prompts[i]!++;
@@ -148,7 +182,7 @@ export async function analyze(input: Input, { now, tz }: Options): Promise<Paylo
   // 최장 연속 에러: 세션(파일)별 시간순, 세션 간 최댓값
   let maxErrorStreak = 0;
   const byFile = new Map<string, ToolResult[]>();
-  for (const r of results) if (dayOf(r.ts) === day) (byFile.get(r.file) ?? byFile.set(r.file, []).get(r.file)!).push(r);
+  for (const r of dedupe(results)) if (dayOf(r.ts) === day) (byFile.get(r.file) ?? byFile.set(r.file, []).get(r.file)!).push(r);
   for (const list of byFile.values()) {
     let streak = 0;
     for (const r of list.sort((a, b) => a.ts - b.ts)) {
@@ -185,7 +219,7 @@ export async function analyze(input: Input, { now, tz }: Options): Promise<Paylo
     inProgress: dayOf(now.getTime()) === day,
     stats: {
       prompts: dayPrompts.length,
-      sessions: new Set(dayPrompts.map((p) => p.file)).size,
+      sessions,
       tokens,
       activeMinutes: Math.round(activeMs / 60_000),
       models,

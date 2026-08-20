@@ -1,8 +1,10 @@
 // CLI 본체 — 입출력·브라우저 오픈은 주입받아 테스트 가능 (종료 코드를 반환, process.exit 없음)
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { analyze } from "./analyze.ts";
 import { listJsonl, readLines } from "./files.ts";
 import { buildUrl } from "./encode.ts";
+import { collectSessions, renderReport, writeReport, pruneOld } from "./report.ts";
 import { CPY } from "./copy.ts";
 
 export type Deps = {
@@ -44,6 +46,17 @@ export async function main(argv: string[], d: Deps): Promise<number> {
   } catch {
     d.err(CPY["ERR-008"]); // ERR-CLI-003 — 실패로 취급하지 않음
   }
-  d.out(`내일 또 뽑아보세요 — alias sc="npx scored"`); // CPY-CLI-004 전반부(로컬 리포트)는 REQ-CLI-003 구현 시 완성
+  // REQ-CLI-003 로컬 대화 리포트 — 실패해도 성적표는 유효 (ERR-CLI-004, exit 0)
+  try {
+    const dir = join(d.home, ".scored");
+    const sessions = await collectSessions(readLines(files), payload.day, d.tz);
+    const path = await writeReport(dir, payload.day, renderReport(sessions, payload.day, d.tz));
+    await pruneOld(dir, payload.day); // 최근 7일 롤링
+    d.out(CPY["CLI-004"](payload.day));
+    await d.open(pathToFileURL(path).href); // 두 번째 탭
+  } catch {
+    d.err(CPY["ERR-010"]); // ERR-CLI-004
+  }
+  d.out(CPY["CLI-005"]);
   return 0;
 }
