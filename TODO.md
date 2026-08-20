@@ -91,6 +91,8 @@
 - [x] **make-prd 일괄 반영 6건** — CLI-001 v1.2.0(§2 중복 제거 2행·세션 정의·§3 4행·REQ-CLI-003 AC-5+렌더 규칙·엣지 2건·TC 6건) · 11(CPY-CLI-004 개정·005 신설·HOW-001) · 05(3행) · 14(파기 정책 신설) · 21(OQ-007 종결). 정합성 9항목 통과
 - [x] **REQ-CLI-003 구현** `/tdd` — `src/report.ts` 신설(collectSessions·renderReport·pruneOld·writeReport) + main 통합. TC-CLI-003-01·01b·02·03·04·05·06 + writeReport 0600 → **31 tests pass**
 - [x] E2E — 실데이터 5세션·23프롬프트, exit 0, 4.8초, URL 1,221자, 리포트 26.7KB/0600, 7일 롤링 삭제 동작·사용자 파일 보존 확인
-- [ ] `--primary` 확정 (사용자, 실물 카드 첫 렌더일) — Day 4 이월, 웹 착수 전 필요
+- [x] **`--primary` 확정 (사용자)** — 딥 그린. 원안 `oklch(0.55 0.15 150)`은 foreground 토큰과 4.27:1로 SC 1.4.3 미달 → 명도 −0.05 조정해 라이트 `oklch(0.5 0.15 150)` 5.22:1 / 다크 `oklch(0.48 0.14 150)` 5.73:1 확정. DESIGN.md 임시 딱지 제거
+- [x] **`/report` 화면 착수** — `src/lib/payload.ts`(06 디코딩·BR-002·003·004, 5 tests) + `SCR-003` 스탯 카드 6줄 + SCR-002 진입 로직. 390/768px 실렌더 확인. 유형·등급은 Day 7 자리만
+- [x] 브라우저 전용 버그 2건 수정 — 손상 해시 미처리 거부 · StrictMode 이중 실행으로 해시를 두 번 읽어 정상 링크를 ERR-HASH-001로 오판정
 - [ ] npm publish `scored` — `cli/README.md` 없음(npm 페이지 백지) 선처리 필요
 - [ ] EOD: history.md · 커밋·push(매일 배포) · Notion·Obsidian 기록 세션(사용자)
