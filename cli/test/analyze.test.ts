@@ -30,7 +30,7 @@ test("TC-CLI-001-02: 동일 message.id 3줄 → usage·model 1회, 도구는 합
     ]),
     { now: NOW, tz: SEOUL },
   );
-  assert.deepEqual(p?.stats.tokens, { in: 60, out: 5 });
+  assert.deepEqual(p?.stats.tokens, { in: 30, out: 5 }); // cache_read 30은 제외 (input 10 + cache_creation 20)
   assert.deepEqual(p?.stats.models, { "claude-fable-5": 1 });
   assert.deepEqual(p?.stats.tools, [["Bash", 1], ["Edit", 1]]);
 });
@@ -237,4 +237,20 @@ test("TC-CLI-001-15b: 프롬프트가 겹치지 않는 두 파일은 각각 별�
   );
   assert.equal(p?.stats.prompts, 2);
   assert.equal(p?.stats.sessions, 2);
+});
+
+test("TC-CLI-001-17: cache_read_input_tokens는 tokens.in에 합산하지 않는다", async () => {
+  // 실측상 cache_read가 전체의 91~97%를 차지해 지표를 지배 — 세션 길이의 함수라 작업량을 못 잰다
+  const p = await analyze(
+    file("s1.jsonl", [
+      user("2026-08-17T10:00:00+09:00", "프롬프트"),
+      assistant("2026-08-17T10:01:00+09:00", "m1", {
+        usage: { input_tokens: 100, cache_creation_input_tokens: 200, cache_read_input_tokens: 9_000_000, output_tokens: 50 },
+      }),
+    ]),
+    { now: NOW, tz: SEOUL },
+  );
+  assert.deepEqual(p?.stats.tokens, { in: 300, out: 50 });
+  assert.equal(p?.week.tokens.at(-1), 350); // week·hourly도 같은 정의
+  assert.equal(p?.stats.hourly.tokens[10], 350);
 });

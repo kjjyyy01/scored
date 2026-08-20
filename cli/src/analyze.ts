@@ -44,7 +44,8 @@ export function parseLine(line: string): Raw | null {
       }
     return {
       type: "assistant", ts, id: String(msg.id ?? o.uuid ?? ts), model: typeof msg.model === "string" ? msg.model : undefined,
-      usage: { in: (u.input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0), out: u.output_tokens ?? 0 },
+      // cache_read 제외 (CLI-001 §3, 2026-08-20) — 전체의 91~97%를 차지하는데 세션 길이의 함수라 작업량을 못 잰다
+      usage: { in: (u.input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0), out: u.output_tokens ?? 0 },
       tools, texts,
     };
   }
