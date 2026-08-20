@@ -80,7 +80,7 @@
 - [x] `main`: 브라우저 오픈(darwin/linux/win32 PowerShell)·ERR-CLI-001~003·CPY-CLI 문구·`--help/--version` — TC-CLI-001-09·10 + E2E(`node cli/dist/index.js` → 탭 오픈 확인)
 - [x] **make-prd 일괄 반영** → Day 5 완료 (아래)
 - [x] (Day 5) 로컬 대화 리포트 HTML REQ-CLI-003 → Day 5 완료 (아래)
-- [x] EOD: ARCHITECTURE.md 디렉터리 구조 · history.md · `next build` 통과 · 커밋·push(매일 배포) · Notion·Obsidian 기록 세션(사용자)
+- [x] EOD: ARCHITECTURE.md 디렉터리 구조 · history.md · `next build` 통과 · 커밋·push(매일 배포) — **기록 세션은 8/20 밤 Day 5와 합산 처리**(Obsidian TIL 1건 `bin 진입점`, Notion TS-01·02)
 
 ## Day 5 (**8/20 목**) — CLI 잔여 0.5일(REQ-CLI-003) + 집계 결함 수정
 
@@ -96,4 +96,6 @@
 - [x] 브라우저 전용 버그 2건 수정 — 손상 해시 미처리 거부 · StrictMode 이중 실행으로 해시를 두 번 읽어 정상 링크를 ERR-HASH-001로 오판정
 - [x] **토큰 지표 개정 (사용자 결정)** — `stats.tokens.in`에서 `cache_read` 제외. 실측상 전체의 91~97%를 차지해 지표가 사실상 cache_read 단일 값이었고, 세션 길이의 함수라 작업량을 못 쟀다. 날짜 편차 153배→6배, 카드 표시 46.5M→1.33M. PRD(CLI-001 §3·05·08 BR-009 전제) + `analyze.ts` + TC-CLI-001-17 반영, 32 tests pass
 - [ ] npm publish `scored` — `cli/README.md` ✅ 작성됨. 웹 화면 더 붙은 뒤로 시점 보류 (사용자 합의)
-- [ ] EOD: history.md · 커밋·push(매일 배포) · Notion·Obsidian 기록 세션(사용자)
+- [x] EOD: history.md · 커밋·push(매일 배포)
+- [x] **EOD 기록 세션 (Day 4·5 합산, 2026-08-20 밤)** — Obsidian TIL **신규 6건**(jsonl 재개 복제 / cache_read 지표 / StrictMode 일회성 값 / 헤드리스 최소 뷰포트 / 파일 삭제 안전선 / bin DI) + 기존 `대비비` 노트에 `--primary` 사례 보강. 중복 주제 3건은 의도적 제외
+- [ ] **Notion「개발 로그:scored」등록 (다음 세션)** — 원고 완성됨: 진행 요약 2건 + 트러블슈팅 TS-01~07. MCP를 local 스코프에 재등록했으나 **MCP는 세션 시작 시에만 연결**되므로 새 세션 필요. 원고 백업 `~/obsidian/resume/dev-notes/_notion-원고-scored-Day4-5.md`
