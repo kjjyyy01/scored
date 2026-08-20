@@ -1,0 +1,55 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { decodeHash, strippedUrl, isPartial } from "./payload.ts";
+import type { Payload } from "../../cli/src/types.ts";
+
+// 05 예시 기준 최소 페이로드
+const sample = (over: Partial<Payload> = {}): Payload => ({
+  v: 1, generatedAt: "2026-08-20T12:00:00.000Z", day: "2026-08-20", inProgress: false,
+  stats: { prompts: 23, sessions: 5, tokens: { in: 812000, out: 41000 }, activeMinutes: 312,
+    models: { "claude-opus-5": 65 }, tools: [["Bash", 120]], hourly: { prompts: Array(24).fill(0), tokens: Array(24).fill(0) } },
+  week: { days: [], prompts: [], tokens: [], heatmap: [] },
+  fun: { nightRatio: 0, apologies: 0, maxErrorStreak: 0, retryScore: 0, promptStyle: { avgLen: 40, oneLinerRatio: 0.5, lenBuckets: [0,0,0,0,0] } },
+  ...over,
+});
+
+// CLI encode.ts와 동일 규약: JSON → deflate-raw → base64url
+async function encode(p: unknown): Promise<string> {
+  const cs = new CompressionStream("deflate-raw");
+  const w = cs.writable.getWriter();
+  void w.write(new TextEncoder().encode(JSON.stringify(p)));
+  void w.close();
+  const buf = new Uint8Array(await new Response(cs.readable).arrayBuffer());
+  return btoa(String.fromCharCode(...buf)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+test("TC-RES-001-01: 유효 해시 → 페이로드 객체 복원", async () => {
+  const p = sample();
+  const r = await decodeHash("#" + (await encode(p)));
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.ok && r.payload, p);
+});
+
+test("TC-RES-001-02: 손상 해시 → ERR-HASH-001", async () => {
+  for (const bad of ["#!!!not-base64!!!", "#YWJj", "#", ""]) {
+    const r = await decodeHash(bad);
+    assert.equal(r.ok, false, `실패해야 함: ${bad}`);
+    assert.equal(!r.ok && r.error, "ERR-HASH-001", `코드 불일치: ${bad}`);
+  }
+});
+
+test("TC-RES-001-03: v가 웹 지원 버전 초과 → ERR-HASH-002", async () => {
+  const r = await decodeHash("#" + (await encode({ ...sample(), v: 99 })));
+  assert.equal(!r.ok && r.error, "ERR-HASH-002");
+});
+
+test("TC-RES-001-04: BR-004 — 주소창에서 해시와 ?from 쿼리 제거", () => {
+  assert.equal(strippedUrl("https://scored.kr/report?from=cli#abc123"), "https://scored.kr/report");
+  assert.equal(strippedUrl("https://scored.kr/report#abc123"), "https://scored.kr/report");
+  assert.equal(strippedUrl("https://scored.kr/report?from=cli&utm=x#abc"), "https://scored.kr/report?utm=x");
+});
+
+test("TC-RES-003-01: prompts=9 → 부분 모드 (BR-002)", () => {
+  assert.equal(isPartial(sample({ stats: { ...sample().stats, prompts: 9 } })), true);
+  assert.equal(isPartial(sample({ stats: { ...sample().stats, prompts: 10 } })), false);
+});
