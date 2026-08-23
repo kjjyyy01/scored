@@ -120,8 +120,8 @@
 ### 사용자 담당
 
 - [x] **GA4 측정 ID 전달** — `.env.local` + Vercel Production `NEXT_PUBLIC_GA_ID` 등록 완료. 등록 후 빌드가 없어 프로덕션에 gtag 부재 → `vercel --prod --force` 재빌드로 베이크, `scored.kr` gtag·collect 204·내부 트래픽 `tt=internal` 확인(8/23)
-- [~] **iOS Safari 확인** — 8/23 밤 진행: 랜딩 복사·나에게 보내기 ✅(Safari). **iPhone·Xcode 없음** → 맥 Safari **응답형 디자인 모드(iPhone 프리셋)**로 대체 — WebKit 동작 + 390px 레이아웃까지 확인, 빠지는 건 터치·스와이프·iOS 공유 시트. 실기기는 아래 인계 참조
-- [ ] 배포 URL 육안 확인 (하루 종료 시)
+- [x] **Safari 확인 (맥 Safari 26.5 + 응답형 모드 iPhone 프리셋, 8/23 밤)** — 랜딩 복사·나에게 보내기 / `/how` / `/report` 해시 정리·카드·공유 바텀시트(390px)·링크 복사·뒤로가기 닫힘·데스크톱 중앙 모달·다크모드 체크박스 **전부 정상**. iPhone·Xcode 없어 실기기는 미실시 — 빠진 건 터치·스와이프·iOS 공유 시트 (대체안은 아래 인계)
+- [x] 배포 URL 육안 확인 (하루 종료 시) — 위 Safari 확인으로 갈음
 - [x] 결정: SCR-005 착수까지 진행 ✅ / **SCR-004 대시보드 Day 8 배치 확정**(컷 1순위 유지)
 - [ ] (보류 유지) npm publish `scored` 시점
 
