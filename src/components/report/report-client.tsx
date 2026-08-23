@@ -12,11 +12,18 @@ import { Button } from "@/components/ui/button";
 
 type State = { phase: "decoding" } | { phase: "ready"; payload: Payload } | { phase: "error"; code: string };
 
-// 해시는 딱 한 번만 집어온다. BR-004로 주소창을 즉시 비우기 때문에, 두 번째로 읽으면 이미 없다
+// 해시와 진입 출처는 딱 한 번만 집어온다. BR-004로 주소창을 즉시 비우기 때문에, 두 번째로 읽으면 이미 없다
 // (React StrictMode의 이펙트 이중 실행·컴포넌트 재마운트에서 실제로 터진다)
-let captured: string | null = null;
-function takeHash(): string {
-  if (captured === null) captured = window.location.hash;
+type Entry = { hash: string; entry: "cli" | "link" };
+let captured: Entry | null = null;
+function takeEntry(): Entry {
+  if (captured === null) {
+    captured = {
+      hash: window.location.hash,
+      // 도달률 분자는 entry=cli만 — 공유 링크 열람이 npx 마찰 지표를 부풀리지 않게 (15)
+      entry: new URLSearchParams(window.location.search).get("from") === "cli" ? "cli" : "link",
+    };
+  }
   return captured;
 }
 
@@ -30,7 +37,7 @@ export function ReportClient() {
   const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
-    const hash = takeHash();
+    const { hash, entry } = takeEntry();
 
     // dev 전용: ?primary=<css color> 로 실물 카드 위에서 색 후보를 갈아끼운다 (DESIGN.md --primary 확정용)
     if (process.env.NODE_ENV === "development") {
@@ -44,7 +51,14 @@ export function ReportClient() {
     let alive = true;
     decodeHash(hash).then((r: DecodeResult) => {
       if (!alive) return;
-      setState(r.ok ? { phase: "ready", payload: r.payload } : { phase: "error", code: r.error });
+      if (r.ok) {
+        // EVT-RES-001 — 킬 크라이테리아 1번(도달률)의 분자. 성적 데이터는 싣지 않는다 (14 §5)
+        track("result_reached", { entry, has_highlights: Boolean(r.payload.highlights?.sentences?.length) });
+        setState({ phase: "ready", payload: r.payload });
+      } else {
+        track("result_failed", { error_code: r.error }); // EVT-RES-003 마찰 측정
+        setState({ phase: "error", code: r.error });
+      }
     });
     return () => { alive = false; };
   }, []);

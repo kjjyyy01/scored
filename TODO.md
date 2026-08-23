@@ -111,7 +111,7 @@
 - [x] REQ-LAND-001/002 — 클립보드 복사 + ERR-CLIP-001 폴백, Web Share API + 클립보드 폴백. TC-LAND-001-01·02, TC-LAND-002-01
 - [x] **SCR-006 `/how`** — EL-HOW-001~006 전부 서버 렌더링(JS 불요). CPY-COM-001·003, CPY-HOW-001
 - [~] **SCR-005 공유 카드** — 네이티브 `<dialog>` 오버레이(바텀시트/중앙 모달)·미리보기·링크 복사·하이라이트 토글(BR-004)·OG 고지 ✅ / **카드 PNG 저장(REQ-SHARE-001)·동적 OG(REQ-SHARE-003)는 Day 8** — 클라이언트 캔버스 렌더러 필요. TC-SHARE-002-01·02 통과
-- [x] GA4 gtag 설치 + EVT-LAND-001·002 / EVT-SHARE-001~003 발화 (측정 ID는 env — 성적 데이터 파라미터 금지, 14 §5)
+- [x] GA4 gtag 설치 + **EVT 7종 실발화 검증** — EVT-LAND-001·002 / EVT-RES-001·003 / EVT-SHARE-001·003 (측정 ID `NEXT_PUBLIC_GA_ID` 등록됨, 성적 데이터 파라미터 금지 14 §5 준수). 잔여 EVT: RES-002(연출 Day 10~12) · DASH-001(SCR-004 Day 8) · SHARE-002(카드 저장 Day 8)
 - [x] 위생: 404·`error.tsx`(ERR-APP-001)·robots.ts·sitemap.ts·정적 OG(`opengraph-image.tsx`, Pretendard 임베드)
 - [x] 화면별 검수 루프 — 390/768/1280 스크린샷 → 육안 → DESIGN.md 대조 → 체크
 - [ ] EOD: history.md · 커밋 · main 머지 · push(매일 배포)
