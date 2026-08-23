@@ -47,6 +47,8 @@
 }
 
 :root {
+  /* 체크박스·스크롤바 등 브라우저 기본 컨트롤도 테마를 따라간다 */
+  color-scheme: light;
   --background: oklch(1 0 0);
   --foreground: oklch(0.147 0.004 49.25);
   --card: oklch(1 0 0);
@@ -84,6 +86,7 @@
 /* 다크모드: 시스템 추종만 (JS 0, DESIGN.md) */
 @media (prefers-color-scheme: dark) {
   :root {
+  color-scheme: dark;
   --background: oklch(0.147 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
   --card: oklch(0.216 0.006 56.043);

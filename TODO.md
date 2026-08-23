@@ -102,4 +102,25 @@
 
 ## Day 6 (**8/23 일**) — 잔여 화면 구현 (모바일 퍼스트, 애니메이션 금지)
 
-- [ ] 착수 시 작성
+> 브랜치 `feat/day6-screens`. Day 9(8/26) 스코프 컷까지 구현일은 Day 6·8 이틀뿐 (Day 7 = 콘텐츠 고정).
+> 목표: 오늘 SCR-001·006 완료, SCR-005 착수. SCR-004는 Day 8 (컷 1순위).
+
+### Claude 담당
+
+- [x] **SCR-001 랜딩** — 기본 템플릿 제거, EL-LAND-001~006 (헤드라인·npx 복사 CTA·샘플 카드·나에게 보내기·서버전송0 배지·GitHub). 모바일 퍼스트, 서버 렌더링
+- [x] REQ-LAND-001/002 — 클립보드 복사 + ERR-CLIP-001 폴백, Web Share API + 클립보드 폴백. TC-LAND-001-01·02, TC-LAND-002-01
+- [x] **SCR-006 `/how`** — EL-HOW-001~006 전부 서버 렌더링(JS 불요). CPY-COM-001·003, CPY-HOW-001
+- [~] **SCR-005 공유 카드** — 네이티브 `<dialog>` 오버레이(바텀시트/중앙 모달)·미리보기·링크 복사·하이라이트 토글(BR-004)·OG 고지 ✅ / **카드 PNG 저장(REQ-SHARE-001)·동적 OG(REQ-SHARE-003)는 Day 8** — 클라이언트 캔버스 렌더러 필요. TC-SHARE-002-01·02 통과
+- [x] GA4 gtag 설치 + EVT-LAND-001·002 / EVT-SHARE-001~003 발화 (측정 ID는 env — 성적 데이터 파라미터 금지, 14 §5)
+- [x] 위생: 404·`error.tsx`(ERR-APP-001)·robots.ts·sitemap.ts·정적 OG(`opengraph-image.tsx`, Pretendard 임베드)
+- [x] 화면별 검수 루프 — 390/768/1280 스크린샷 → 육안 → DESIGN.md 대조 → 체크
+- [ ] EOD: history.md · 커밋 · main 머지 · push(매일 배포)
+
+### 사용자 담당
+
+- [ ] **GA4 측정 ID(G-XXXXXXX) 전달** — 없으면 이벤트 코드는 붙되 발화는 비활성. Vercel 환경변수 등록도 사용자
+- [ ] **iOS Safari 실기기 확인** — 배포 후 랜딩·`/report`·공유 시트 (PLAN 주 2회 규칙, 공유 유입 착지점)
+- [ ] 배포 URL 육안 확인 (하루 종료 시)
+- [ ] 결정: 오늘 SCR-005까지 갈지 / SCR-004 대시보드 Day 8 배치 확정
+- [ ] (보류 유지) npm publish `scored` 시점
+

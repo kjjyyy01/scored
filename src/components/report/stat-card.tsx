@@ -44,20 +44,15 @@ export function StatCard({ payload }: { payload: Payload }) {
           {payload.inProgress && <Badge variant="secondary">진행 중 · {time} 기준</Badge>}
         </div>
 
-        {/* EL-RPT-001 유형·등급 — BR-009 임계값·BR-010 문구 풀은 Day 7 확정 (OQ-001·OQ-002) */}
-        <div className="flex items-end justify-between gap-3">
-          <p className="min-w-0 truncate text-3xl leading-none font-extrabold tracking-tight text-muted-foreground/50 md:text-5xl">
-            유형 미정
-          </p>
-          <Badge className="shrink-0 px-3 py-1 text-base">등급 Day 7</Badge>
-        </div>
+        {/* EL-RPT-001 유형·등급 + EL-RPT-003 유형 문구 — BR-009·BR-010 판정 모듈은 Day 7 (OQ-001·002).
+            그때까지는 자리표시를 그리지 않는다: 이 카드가 랜딩 샘플에도 그대로 나가기 때문(SCR-001 EL-LAND-003) */}
 
-        {/* EL-RPT-003 유형 문구 자리 */}
-        <p className="text-sm text-muted-foreground">
-          {partial
-            ? "오늘은 아직 채점할 만큼 안 하셨네요 — 프롬프트 10개부터 채점해요. 좀 더 하고 다시 뽑아보세요"
-            : "유형·등급 판정은 Day 7 콘텐츠일에 확정됩니다 — 지금은 지표만 보여줍니다"}
-        </p>
+        {/* BR-002 데이터 부족 모드 — ERR-DATA-001 */}
+        {partial && (
+          <p className="text-sm text-muted-foreground">
+            오늘은 아직 채점할 만큼 안 하셨네요 — 프롬프트 10개부터 채점해요. 좀 더 하고 다시 뽑아보세요
+          </p>
+        )}
       </CardHeader>
 
       <CardContent>

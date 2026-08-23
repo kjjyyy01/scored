@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { decodeHash, strippedUrl, isPartial } from "./payload.ts";
+import { decodeHash, strippedUrl, isPartial, shareUrl } from "./payload.ts";
 import type { Payload } from "../../cli/src/types.ts";
 
 // 05 예시 기준 최소 페이로드
@@ -52,4 +52,22 @@ test("TC-RES-001-04: BR-004 — 주소창에서 해시와 ?from 쿼리 제거", 
 test("TC-RES-003-01: prompts=9 → 부분 모드 (BR-002)", () => {
   assert.equal(isPartial(sample({ stats: { ...sample().stats, prompts: 9 } })), true);
   assert.equal(isPartial(sample({ stats: { ...sample().stats, prompts: 10 } })), false);
+});
+
+const WITH_HL = sample({ highlights: { sentences: [["다시 해줘", 7]], words: [["리팩터링", 12]] } });
+
+// TC-SHARE-002-01·02 — 토글에 따른 하이라이트 포함 여부 (BR-004)
+test("TC-SHARE-002-01: 토글 OFF → 해시에 highlights 부재", async () => {
+  const url = await shareUrl(WITH_HL, false, "https://scored.kr");
+  const r = await decodeHash("#" + url.split("#")[1]);
+  assert.ok(r.ok);
+  assert.equal(r.payload.highlights, undefined);
+  assert.equal(r.payload.stats.prompts, WITH_HL.stats.prompts); // 나머지는 그대로
+});
+
+test("TC-SHARE-002-02: 토글 ON → 해시에 highlights 포함", async () => {
+  const url = await shareUrl(WITH_HL, true, "https://scored.kr");
+  const r = await decodeHash("#" + url.split("#")[1]);
+  assert.ok(r.ok);
+  assert.deepEqual(r.payload.highlights, WITH_HL.highlights);
 });
