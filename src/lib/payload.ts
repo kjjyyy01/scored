@@ -50,3 +50,21 @@ export function strippedUrl(href: string): string {
 
 // BR-002: 프롬프트 10개 미만 → 유형·등급 미판정, 있는 지표만
 export const isPartial = (p: Payload): boolean => (p.stats?.prompts ?? 0) < MIN_PROMPTS;
+
+// SCR-005 REQ-SHARE-002 — 공유 URL 생성. CLI encode.ts(deflateRawSync)의 브라우저 짝
+export async function encodeHash(p: Payload): Promise<string> {
+  const cs = new CompressionStream("deflate-raw");
+  const w = cs.writable.getWriter();
+  w.write(new TextEncoder().encode(JSON.stringify(p))).then(() => w.close());
+  const buf = new Uint8Array(await new Response(cs.readable).arrayBuffer());
+  let bin = "";
+  for (const b of buf) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+// BR-004: 하이라이트는 명시 토글 ON일 때만 실린다 — 이 함수가 유일한 포함 지점
+export async function shareUrl(p: Payload, includeHighlights: boolean, origin: string): Promise<string> {
+  const { highlights, ...rest } = p;
+  const body = includeHighlights && highlights ? { ...rest, highlights } : rest;
+  return `${origin}/report#${await encodeHash(body as Payload)}`;
+}

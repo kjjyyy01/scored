@@ -6,6 +6,8 @@ import Link from "next/link";
 import type { Payload } from "../../../cli/src/types.ts";
 import { decodeHash, strippedUrl, type DecodeResult } from "@/lib/payload.ts";
 import { StatCard } from "./stat-card";
+import { ShareSheet } from "./share-sheet";
+import { track } from "@/lib/analytics.ts";
 import { Button } from "@/components/ui/button";
 
 type State = { phase: "decoding" } | { phase: "ready"; payload: Payload } | { phase: "error"; code: string };
@@ -25,6 +27,7 @@ const MESSAGE: Record<string, string> = {
 
 export function ReportClient() {
   const [state, setState] = useState<State>({ phase: "decoding" });
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     const hash = takeHash();
@@ -55,7 +58,7 @@ export function ReportClient() {
       <div className="grid grid-cols-1 gap-6" role="alert">
         <p>{MESSAGE[state.code] ?? MESSAGE["ERR-HASH-001"]}</p>
         {/* Base UI Button은 asChild가 아니라 render prop. h-11 = 44px 탭 타깃 */}
-        <Button render={<Link href="/" />} className="h-11 w-fit px-5">
+        <Button nativeButton={false} render={<Link href="/" />} className="h-11 w-fit px-5">
           처음으로
         </Button>
       </div>
@@ -65,10 +68,14 @@ export function ReportClient() {
   return (
     <div className="grid grid-cols-1 gap-6">
       <StatCard payload={state.payload} />
-      {/* EL-RPT-005 공유 CTA — SCR-005 오버레이는 후속 */}
-      <Button className="h-11 w-full px-5 sm:w-fit" disabled>
-        공유하기 (SCR-005 예정)
+      {/* EL-RPT-005 공유 CTA — EVT-SHARE-001은 이 화면 소유 */}
+      <Button
+        className="h-11 w-full px-5 sm:w-fit"
+        onClick={() => { track("share_opened"); setSharing(true); }}
+      >
+        공유하기
       </Button>
+      <ShareSheet payload={state.payload} open={sharing} onClose={() => setSharing(false)} />
       {/* EL-RPT-007 재실행 안내 — CPY-RPT-001 */}
       <p className="text-sm text-muted-foreground">내일 또 뽑아보세요 — 하루가 바뀌면 유형도 바뀝니다</p>
     </div>
