@@ -120,7 +120,7 @@
 ### 사용자 담당
 
 - [x] **GA4 측정 ID 전달** — `.env.local` + Vercel Production `NEXT_PUBLIC_GA_ID` 등록 완료. 등록 후 빌드가 없어 프로덕션에 gtag 부재 → `vercel --prod --force` 재빌드로 베이크, `scored.kr` gtag·collect 204·내부 트래픽 `tt=internal` 확인(8/23)
-- [ ] **iOS Safari 실기기 확인** — 배포 후 랜딩·`/report`·공유 시트 (PLAN 주 2회 규칙, 공유 유입 착지점). **같은 Wi-Fi에서** — 내부 트래픽 필터가 IP 기반이라 셀룰러로 열면 지표가 오염된다
+- [~] **iOS Safari 확인** — 8/23 밤 진행: 랜딩 복사·나에게 보내기 ✅(Safari). **iPhone·Xcode 없음** → 맥 Safari **응답형 디자인 모드(iPhone 프리셋)**로 대체 — WebKit 동작 + 390px 레이아웃까지 확인, 빠지는 건 터치·스와이프·iOS 공유 시트. 실기기는 아래 인계 참조
 - [ ] 배포 URL 육안 확인 (하루 종료 시)
 - [x] 결정: SCR-005 착수까지 진행 ✅ / **SCR-004 대시보드 Day 8 배치 확정**(컷 1순위 유지)
 - [ ] (보류 유지) npm publish `scored` 시점
@@ -129,4 +129,5 @@
 - **Day 7(8/24 월) = 콘텐츠 고정일** (PLAN: 개발로 전용 금지) — OQ-001 유형 6종 이름·문구 풀·불용어·임계 미세조정(BR-010) / OQ-002 등급 임계값 표(BR-009, **내 30일 로그 백분위 초안** → 08 §계산 규칙 기입) / OQ-006 `/how` 본문·랜딩 샘플 성적표 데이터·CLI 문구 톤. 세션 시작 시 30일 로그 백분위를 먼저 산출해 임계 후보를 들고 사용자 문답 시작. 문서 수정은 make-prd 경유(운용 원칙 4)
 - 웹 판정 모듈(유형·등급)은 Day 7 값이 확정되는 즉시 StatCard 블록이 켜진다 — TS-09 수정으로 값 없으면 미렌더 상태
 - **Day 8(8/25 화)** = SCR-004 대시보드 + REQ-SHARE-001 카드 PNG(클라이언트 캔버스) + REQ-SHARE-003 동적 OG + EVT-DASH-001·SHARE-002 배선. **Day 9(8/26 수) 저녁 스코프 컷 판정**(캘린더 등록됨) — 미완성 시 SCR-004부터 삭제
-- 잔여 사용자 항목: iOS Safari 실기기(같은 Wi-Fi) · npm publish 시점(보류)
+- 잔여 사용자 항목: npm publish 시점(보류)
+- **실기기 공백 대체안** (iPhone·Xcode 없음 — PLAN "주 2회 실기기/iOS Safari"의 실기기 부분 불이행): ① 주 2회 = 맥 Safari 응답형 모드(iPhone UA, 390px) ② **Day 11 테스터 섭외 시 iPhone 사용자 1명 이상 확보** → Day 13 게릴라 테스트가 실기기 검증을 겸함 ③ Day 17 전 화면 순회 = 지인 iPhone 대여 또는 Day 16 밤 Xcode 시뮬레이터 설치(10GB+). PLAN 규칙 문구 수정은 make-plan 경유 — Day 9 컷 판정 때 함께
