@@ -145,3 +145,10 @@
 - 어떻게: 사용자가 `.env.local`에 GA4 측정 ID를 넣은 뒤 실발화를 브라우저에서 확인하는 과정에서 드러났다. 랜딩·공유 이벤트 4종은 `dataLayer`에 찍히는데 `/report` 진입 이벤트만 없었다. 캡처 지점이 중요한데, **BR-004가 진입 즉시 `?from=cli`를 지우기 때문에 `history.replaceState` 이전에 읽어야 한다** — 기존 해시 캡처와 같은 이유·같은 자리라 `captured` 모듈 변수를 `{hash, entry}` 객체로 넓혔다(StrictMode 이중 실행 방어도 그대로 승계). 검증: `entry=cli` / `entry=link` / 손상 해시 3경로를 실제 로드로 확인
 - 왜: EVT-RES-001은 킬 크라이테리아 1번 지표 **"/report 도달률 20%"의 분자**다. 이게 없으면 판정일(9/22)에 분자가 0으로 나와 무조건 피벗 판정이 난다 — 제품이 아니라 계측이 실패한 건데 그걸 구분할 방법이 없어진다. Day 15~16 DebugView 검수 때 발견했으면 2주치 데이터가 이미 비어 있었을 것
 - 결과: 7종 실발화 확인 — `npx_command_copied` / `command_self_sent{method:clipboard}` / `result_reached{entry:cli|link, has_highlights}` / `result_failed{error_code:ERR-HASH-001}` / `share_opened` / `link_copied{highlight_included:false|true}`. 링크 복사 실검증에서 BR-004도 함께 확인됨 — 토글 OFF 해시 416자(하이라이트 제거) → ON 518자(포함), 주소창은 두 경우 모두 `/report` 그대로. 잔여 EVT 3종은 각 기능 구현 시점(Day 8·Day 10~12)에 배선
+
+## 2026-08-23 (3) — Day 6 EOD 기록 (Obsidian 완료 / Notion 원고 대기)
+
+- 무엇을: Day 6 한 날치 EOD. ① Obsidian TIL **신규 5건** + 기존 1건 보강 ② Notion「개발 로그:scored」Day 6 분 원고(진행 요약 1건 + 트러블슈팅 TS-08~15) 작성 ③ TODO(Day 5 Notion 잔여·Day 6 EOD·사용자 항목·Day 7 인계)·history 갱신
+- 어떻게: 기존 54개 노트와 중복 주제를 먼저 배제 — `NEXT_PUBLIC_*` 빌드타임 인라인·내부 트래픽 필터 2단계·StrictMode 캡처 위치는 이미 있어서 새로 쓰지 않고, Vercel 환경변수 등록 후 빌드 부재 건만 `프로덕션에 안 보인다` 노트에 **반대 순서 사례**("커밋은 있고 빌드가 없는")로 이어 붙였다. 신규 5건: ① 네이티브 `<dialog>` 하나가 모달 라이브러리 3종을 대체한다(닫기 경로 `history.back()` 단일화) ② 킬 크라이테리아의 분자 이벤트는 구현 당일 실발화로 검증한다(스펙≠코드≠dataLayer≠204) ③ 재사용 컴포넌트의 개발용 자리표시는 프로덕션까지 샌다 ④ `color-scheme` 한 줄이 네이티브 폼 컨트롤을 테마에 편입한다 ⑤ satori OG는 줄바꿈을 접고 oklch를 모른다. Notion은 세션 시작 시 OAuth 승인이 필요한데 이번 세션 내 승인이 안 떨어져 원고를 `_notion-원고-scored-Day6.md`로 백업 — Day 4·5 원고와 함께 다음 EOD 세션 첫 작업으로 등록
+- 왜: PLAN 기록 시스템 — 트러블슈팅 로그는 당일 필수. 오늘 8건(TS-08~15) 중 절반이 "검증 도구·환경이 제품 버그로 위장한" 유형(포트 폴백·satori 비브라우저·환경변수 빌드 시점)이고, 가장 비싼 건 TS-14(도달률 분자 누락)였다 — 이틀 뒤 Day 9 컷 판정·3주 뒤 판정일에 직접 닿는 항목이라 기억이 선명할 때 원인·캡처 위치까지 적었다
+- 결과: Obsidian `dev-notes/` 5개 신규 + 1개 보강 (54 → 59 노트). Notion 원고 86줄 대기. TODO 잔여: Notion 등록(인증 후, Day 4·5·6 합산) · iOS Safari 실기기(사용자, 같은 Wi-Fi) · Day 7 콘텐츠 고정(8/24)

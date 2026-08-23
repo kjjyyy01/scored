@@ -98,7 +98,7 @@
 - [ ] npm publish `scored` — `cli/README.md` ✅ 작성됨. 웹 화면 더 붙은 뒤로 시점 보류 (사용자 합의)
 - [x] EOD: history.md · 커밋·push(매일 배포)
 - [x] **EOD 기록 세션 (Day 4·5 합산, 2026-08-20 밤)** — Obsidian TIL **신규 6건**(jsonl 재개 복제 / cache_read 지표 / StrictMode 일회성 값 / 헤드리스 최소 뷰포트 / 파일 삭제 안전선 / bin DI) + 기존 `대비비` 노트에 `--primary` 사례 보강. 중복 주제 3건은 의도적 제외
-- [ ] **Notion「개발 로그:scored」등록 (다음 세션)** — 원고 완성됨: 진행 요약 2건 + 트러블슈팅 TS-01~07. MCP를 local 스코프에 재등록했으나 **MCP는 세션 시작 시에만 연결**되므로 새 세션 필요. 원고 백업 `~/obsidian/resume/dev-notes/_notion-원고-scored-Day4-5.md`
+- [ ] **Notion「개발 로그:scored」등록** — 원고 완성됨: 진행 요약 2건 + 트러블슈팅 TS-01~07 (`~/obsidian/resume/dev-notes/_notion-원고-scored-Day4-5.md`). 8/23 EOD 세션에서 MCP OAuth 미승인으로 재이월 — **Day 6 원고(`_notion-원고-scored-Day6.md`)와 묶어 다음 EOD 세션에 등록** (세션 시작 시 Notion 인증 먼저)
 
 ## Day 6 (**8/23 일**) — 잔여 화면 구현 (모바일 퍼스트, 애니메이션 금지)
 
@@ -114,13 +114,19 @@
 - [x] GA4 gtag 설치 + **EVT 7종 실발화 검증** — EVT-LAND-001·002 / EVT-RES-001·003 / EVT-SHARE-001·003 (측정 ID `NEXT_PUBLIC_GA_ID` 등록됨, 성적 데이터 파라미터 금지 14 §5 준수). 잔여 EVT: RES-002(연출 Day 10~12) · DASH-001(SCR-004 Day 8) · SHARE-002(카드 저장 Day 8)
 - [x] 위생: 404·`error.tsx`(ERR-APP-001)·robots.ts·sitemap.ts·정적 OG(`opengraph-image.tsx`, Pretendard 임베드)
 - [x] 화면별 검수 루프 — 390/768/1280 스크린샷 → 육안 → DESIGN.md 대조 → 체크
-- [ ] EOD: history.md · 커밋 · main 머지 · push(매일 배포)
+- [x] EOD: history.md · 커밋 · main 머지 · push(매일 배포) — 8/23 21:19 화면 머지 / 21:39 EVT 보강 머지, `scored.kr` 200·gtag 확인
+- [x] **EOD 기록 세션 (8/23 밤)** — Obsidian TIL **신규 5건**(네이티브 dialog / 킬 크라이테리아 분자 이벤트 당일 검증 / 자리표시 누출 / color-scheme / satori 제약) + 기존 `프로덕션에 안 보인다` 노트에 Vercel force 빌드 사례 보강. Notion 원고 TS-08~15 완성 — 등록은 인증 후(위 Day 5 항목과 합산)
 
 ### 사용자 담당
 
-- [ ] **GA4 측정 ID(G-XXXXXXX) 전달** — 없으면 이벤트 코드는 붙되 발화는 비활성. Vercel 환경변수 등록도 사용자
-- [ ] **iOS Safari 실기기 확인** — 배포 후 랜딩·`/report`·공유 시트 (PLAN 주 2회 규칙, 공유 유입 착지점)
+- [x] **GA4 측정 ID 전달** — `.env.local` + Vercel Production `NEXT_PUBLIC_GA_ID` 등록 완료. 등록 후 빌드가 없어 프로덕션에 gtag 부재 → `vercel --prod --force` 재빌드로 베이크, `scored.kr` gtag·collect 204·내부 트래픽 `tt=internal` 확인(8/23)
+- [ ] **iOS Safari 실기기 확인** — 배포 후 랜딩·`/report`·공유 시트 (PLAN 주 2회 규칙, 공유 유입 착지점). **같은 Wi-Fi에서** — 내부 트래픽 필터가 IP 기반이라 셀룰러로 열면 지표가 오염된다
 - [ ] 배포 URL 육안 확인 (하루 종료 시)
-- [ ] 결정: 오늘 SCR-005까지 갈지 / SCR-004 대시보드 Day 8 배치 확정
+- [x] 결정: SCR-005 착수까지 진행 ✅ / **SCR-004 대시보드 Day 8 배치 확정**(컷 1순위 유지)
 - [ ] (보류 유지) npm publish `scored` 시점
 
+### Day 6 → Day 7 인계
+- **Day 7(8/24 월) = 콘텐츠 고정일** (PLAN: 개발로 전용 금지) — OQ-001 유형 6종 이름·문구 풀·불용어·임계 미세조정(BR-010) / OQ-002 등급 임계값 표(BR-009, **내 30일 로그 백분위 초안** → 08 §계산 규칙 기입) / OQ-006 `/how` 본문·랜딩 샘플 성적표 데이터·CLI 문구 톤. 세션 시작 시 30일 로그 백분위를 먼저 산출해 임계 후보를 들고 사용자 문답 시작. 문서 수정은 make-prd 경유(운용 원칙 4)
+- 웹 판정 모듈(유형·등급)은 Day 7 값이 확정되는 즉시 StatCard 블록이 켜진다 — TS-09 수정으로 값 없으면 미렌더 상태
+- **Day 8(8/25 화)** = SCR-004 대시보드 + REQ-SHARE-001 카드 PNG(클라이언트 캔버스) + REQ-SHARE-003 동적 OG + EVT-DASH-001·SHARE-002 배선. **Day 9(8/26 수) 저녁 스코프 컷 판정**(캘린더 등록됨) — 미완성 시 SCR-004부터 삭제
+- 잔여 사용자 항목: iOS Safari 실기기(같은 Wi-Fi) · Notion 등록(인증) · npm publish 시점(보류)
