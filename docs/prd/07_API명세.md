@@ -10,7 +10,7 @@
 
 | 쿼리 | 타입 | 필수 | 예 |
 |---|---|---|---|
-| `t` | string | ✓ | 오늘의 유형 코드 (BR-010, 이름은 Day 7 — OQ-001) |
+| `t` | string | ✓ | 오늘의 유형 코드 (`night`·`swamp`·`retry`·`long`·`one`·`marathon`·`balance` — 코드↔이름 매핑은 08 §계산 규칙, 2026-08-24 확정) |
 | `g` | string | ✓ | 등급 S/A+/A/B+/B/C (BR-009) |
 | `d` | string | ✓ | 대상일 `YYYY-MM-DD` (+ `ip=1`이면 진행 중) |
 | `p`,`s`,`k`,`m` | number | — | 프롬프트·세션·토큰(in+out)·활동 분 — 카드 지표 ①~④ |
