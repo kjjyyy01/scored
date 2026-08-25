@@ -180,3 +180,10 @@
 - 어떻게: 판정·집계·검증 로직 전부 `/tdd`(BR-008) — 웹 49·CLI 33 테스트 green. 카드 PNG는 화면의 StatCard DOM을 `html-to-image`로 래스터화(REQ-RPT-002 "값 복제 금지" — 수동 캔버스 재구성 대신 실제 컴포넌트 공유). OG 쿼리는 shareUrl이 유일 생성 지점(BR-006), 서버는 parseOg 검증 통과값만 재인코딩(패스스루 금지). 대시보드 차트는 라이브러리 없이 SVG/CSS. 검증: dev 서버 + chrome-devtools로 390/768/1280·라이트/다크·실로그 페이로드 E2E(밸런스 코더·B 28점 실판정), GA collect 바디에서 result_reached·dashboard_viewed·share_opened·card_saved(method=download) 실발화 확인, PNG 산출물 육안 확인
 - 왜: Day 9(8/26) 저녁 스코프 컷 판정 전 마지막 순수 구현일 — 컷 1순위 SCR-004를 마지막 순서로 배치해 미완 시 깨끗이 잘리게 했으나 전 항목 완료로 컷 불필요 상태 진입
 - 결과: 발견·수정 3건 — ⓐ satori는 자식 2개 div에 display:flex 명시 요구(단일 문자열 병합으로 회피) ⓑ 데스크톱 Chrome도 `canShare` true → OS 공유시트가 떠서 AC-1 위반, `pointer: coarse`로 모바일만 공유시트 분기 ⓒ 전부 0인 시간대 데이터가 빈 차트로 그려짐(AC-2 "빈 껍데기 금지") → 합계 0 가드. 의존성 +1(html-to-image, 웹 전용 — CLI는 여전히 0). 사용자 결정 반영: 게릴라 테스터 섭외 대신 본인 직접 테스트 — Day 9 컷 판정 때 make-plan 경유로 PLAN 반영 예정(실패 조건 9 관련 스코프 변경)
+
+## 2026-08-25 (2) — Day 8 EOD 기록 (Obsidian·Notion 당일 완료)
+
+- 무엇을: Day 8 한 날치 EOD. ① Obsidian TIL **신규 4건** + 기존 satori 노트 보강 1건 ② Notion「개발 로그:scored」Day 8분 6건 등록(과정요약 1 + 트러블슈팅 TS-22~26) + 원고 백업 `_notion-원고-scored-Day8.md` ③ TODO(Day 8 EOD 항목)·history 갱신
+- 어떻게: 순수 구현일이라 구현 중 발견·수정 3건 + 설계 결정 1건 + 프로덕션 진단 1건을 TS로 남겼다 — TS-22 satori flex 규칙 재발(자식 div 대신 문자열 병합으로 표면 제거), TS-23 canShare는 기능 감지지 기기 감지가 아니다(`pointer: coarse` 분기), TS-24 전부 0인 배열은 존재 검사를 통과한다(합계>0 의미 검사 후 위젯 생략), TS-25 카드 PNG는 값 복제 대신 실 DOM 래스터화(REQ-RPT-002가 설계를 결정), TS-26 카톡 스크래퍼의 초장문 URL 거부(서버 전수 정상 → 대조 실험으로 확정, 이슈 #1). TIL 4건은 TS-23~26과 1:1 대응, TS-22는 기존 satori 노트 ④에 회피 패턴 보강. Notion은 기존 페이지 형식(`**Day N**` + 문제/원인/해결/소요시간/교훈) 그대로 6건 일괄 생성 — 당일 완료
+- 왜: PLAN 기록 시스템 — 트러블슈팅 로그는 당일 필수. 오늘 5건의 공통 줄기는 "기능 감지≠기기 감지, 존재≠의미, 화면과 산출물의 이중화 금지, 한계는 서버가 아니라 채널에" — Day 9 컷 판정(이슈 #1 대응 방향)과 Day 10~12 축 패스에서 재사용되는 판단 기준이다
+- 결과: Obsidian `dev-notes/` 신규 5파일(TIL 4 + 원고 1) + 보강 1. **Notion「개발 로그:scored」누적 31건**(과정요약 5 + 트러블슈팅 26). TODO 잔여: 사용자 육안 확인 2건(StatCard 첫 렌더·`npx scored` 체험) · Day 9(8/26 수) 저녁 스코프 컷 판정(안건 5건)
