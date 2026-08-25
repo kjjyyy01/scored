@@ -7,10 +7,14 @@ import type { Payload } from "../../../cli/src/types.ts";
 import { decodeHash, strippedUrl, type DecodeResult } from "@/lib/payload.ts";
 import { StatCard } from "./stat-card";
 import { ShareSheet } from "./share-sheet";
+import { Dashboard } from "./dashboard";
 import { track } from "@/lib/analytics.ts";
 import { Button } from "@/components/ui/button";
 
-type State = { phase: "decoding" } | { phase: "ready"; payload: Payload } | { phase: "error"; code: string };
+type State =
+  | { phase: "decoding" }
+  | { phase: "ready"; payload: Payload; entry: "cli" | "link" }
+  | { phase: "error"; code: string };
 
 // 해시와 진입 출처는 딱 한 번만 집어온다. BR-004로 주소창을 즉시 비우기 때문에, 두 번째로 읽으면 이미 없다
 // (React StrictMode의 이펙트 이중 실행·컴포넌트 재마운트에서 실제로 터진다)
@@ -54,7 +58,7 @@ export function ReportClient() {
       if (r.ok) {
         // EVT-RES-001 — 킬 크라이테리아 1번(도달률)의 분자. 성적 데이터는 싣지 않는다 (14 §5)
         track("result_reached", { entry, has_highlights: Boolean(r.payload.highlights?.sentences?.length) });
-        setState({ phase: "ready", payload: r.payload });
+        setState({ phase: "ready", payload: r.payload, entry });
       } else {
         track("result_failed", { error_code: r.error }); // EVT-RES-003 마찰 측정
         setState({ phase: "error", code: r.error });
@@ -90,8 +94,17 @@ export function ReportClient() {
         공유하기
       </Button>
       <ShareSheet payload={state.payload} open={sharing} onClose={() => setSharing(false)} />
+      {/* EL-RPT-006 상세 보기 앵커 — 아래 SCR-004 섹션으로 스크롤 (탭 아님) */}
+      <a href="#dashboard" className="w-fit text-sm text-muted-foreground underline-offset-4 hover:underline">
+        ↓ 오늘의 기록 자세히 보기
+      </a>
       {/* EL-RPT-007 재실행 안내 — CPY-RPT-001 */}
       <p className="text-sm text-muted-foreground">내일 또 뽑아보세요 — 하루가 바뀌면 유형도 바뀝니다</p>
+
+      {/* SCR-004 — 한 스크롤 페이지 하단 섹션. EVT-DASH-001은 이 화면(SCR-003) 소유 (15) */}
+      <div className="mt-6">
+        <Dashboard payload={state.payload} entry={state.entry} onFirstView={() => track("dashboard_viewed")} />
+      </div>
     </div>
   );
 }

@@ -71,3 +71,23 @@ test("TC-SHARE-002-02: 토글 ON → 해시에 highlights 포함", async () => {
   assert.ok(r.ok);
   assert.deepEqual(r.payload.highlights, WITH_HL.highlights);
 });
+
+// ── REQ-SHARE-003 동적 OG 쿼리 — BR-006 범위 강제 지점은 shareUrl ──
+
+test("REQ-SHARE-003: 공유 URL에 OG 쿼리 (유형·등급·날짜·숫자 4·도구만)", async () => {
+  const url = await shareUrl(sample(), false, "https://scored.kr");
+  const q = new URL(url).searchParams;
+  // sample(): balance 폴백 · 42+40.6+69.3 평균 51 → B+ (08 커브 수기 계산)
+  assert.deepEqual(
+    [q.get("t"), q.get("g"), q.get("d"), q.get("p"), q.get("s"), q.get("k"), q.get("m"), q.get("tl")],
+    ["balance", "B+", "2026-08-20", "23", "5", "853000", "312", "Bash"],
+  );
+  assert.equal(q.get("ip"), null); // inProgress=false면 미포함
+  assert.equal([...q.keys()].length, 8); // BR-006: 이 외 키 금지 (하이라이트·원문 없음)
+});
+
+test("REQ-SHARE-003: 부족 모드(prompts<10)는 쿼리 없음 → 정적 OG 폴백 (SCR-005 엣지 3)", async () => {
+  const p = sample({ stats: { ...sample().stats, prompts: 9 } });
+  const url = await shareUrl(p, false, "https://scored.kr");
+  assert.ok(!url.includes("?"));
+});

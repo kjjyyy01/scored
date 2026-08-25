@@ -1,5 +1,6 @@
 // 06 해시 페이로드 규약 — 디코딩·BR-003 버전 판정·BR-004 주소창 정리·BR-002 부분 모드
 import type { Payload } from "../../cli/src/types.ts";
+import { judge } from "./judge.ts";
 
 export const SUPPORTED_V = 1; // 이 값보다 큰 v는 구버전 웹 → ERR-HASH-002 (BR-003)
 const MIN_PROMPTS = 10; // BR-002 데이터 부족 경계
@@ -62,9 +63,26 @@ export async function encodeHash(p: Payload): Promise<string> {
   return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
+// REQ-SHARE-003·BR-006: OG 쿼리는 유형·등급·대상일·숫자 지표·도구명만 — 이 함수가 유일한 생성 지점
+// 부족 모드는 판정이 없으므로 null → 쿼리 없는 URL = 정적 OG 폴백 (SCR-005 엣지 3)
+function ogQuery(p: Payload): string | null {
+  if (isPartial(p)) return null;
+  const j = judge(p);
+  const q = new URLSearchParams({ t: j.type, g: j.grade, d: p.day });
+  if (p.inProgress) q.set("ip", "1");
+  q.set("p", String(p.stats.prompts));
+  q.set("s", String(p.stats.sessions));
+  q.set("k", String((p.stats.tokens?.in ?? 0) + (p.stats.tokens?.out ?? 0)));
+  q.set("m", String(p.stats.activeMinutes));
+  const tool = p.stats.tools?.[0]?.[0];
+  if (tool) q.set("tl", tool.slice(0, 30));
+  return q.toString();
+}
+
 // BR-004: 하이라이트는 명시 토글 ON일 때만 실린다 — 이 함수가 유일한 포함 지점
 export async function shareUrl(p: Payload, includeHighlights: boolean, origin: string): Promise<string> {
   const { highlights, ...rest } = p;
   const body = includeHighlights && highlights ? { ...rest, highlights } : rest;
-  return `${origin}/report#${await encodeHash(body as Payload)}`;
+  const og = ogQuery(p);
+  return `${origin}/report${og ? `?${og}` : ""}#${await encodeHash(body as Payload)}`;
 }
