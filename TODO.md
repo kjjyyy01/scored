@@ -175,6 +175,7 @@
 - [x] **⑥ SCR-004 대시보드** — 타임라인(05시 회전)·주간 추이(±% weekDelta `/tdd`)·히트맵·기본 스탯·도구/모델·프롬프트 스타일(lenBuckets·하이라이트)·로컬 리포트 안내(entry=cli만)·맨 위로. 차트 라이브러리 0(SVG/CSS), EVT-DASH-001(IntersectionObserver) 발화 확인
 - [x] 검증 — 웹 49·CLI 33 tests / next build·tsc 통과 / 실로그 E2E(밸런스 코더·B 28점) / GA collect 4종 실발화 / 라이트·다크
 - [x] EOD: history.md · 커밋 · main 머지 · push(매일 배포)
+- [x] **EOD 기록 세션 (8/25 저녁)** — Obsidian TIL **신규 4건**(canShare 기능≠기기 / 합계 0은 위젯 생략 / 카드는 DOM 래스터화 / 카톡 초장문 URL) + 기존 satori 노트 보강(문자열 병합 회피) · **Notion 6건 당일 등록**(과정요약 1 + TS-22~26, 누적 31건). 원고 백업 `_notion-원고-scored-Day8.md`
 
 ### 사용자 담당
 
