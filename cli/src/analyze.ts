@@ -55,6 +55,12 @@ export function parseLine(line: string): Raw | null {
 // BR-005 자격증명 패턴 — 이 목록이 SSOT (08 도메인규칙)
 const CREDENTIAL = /sk-|ghp_|AKIA|-----BEGIN|Bearer /;
 
+// §4 불용어 56개 (CLI-001이 SSOT, 2026-08-24 확정) — 소문자 비교. 다시·해줘·왜·아니는 재미 어휘라 의도적 미포함
+const STOPWORDS = new Set(
+  ("the and to with from in for is of at on by was or that as this it do no not all only if you so are be an we but can will has have " +
+    "그리고 그래서 근데 그런데 이제 그럼 일단 그냥 이거 그거 저거 이건 그건 있는 없는 같은 같아 대한 위한 경우 부분").split(" "),
+);
+
 // §4 하이라이트: 최다 사용 문장(반복 ≥2, 상위 3, ≤100자)·단어(2자 이상, 상위 10)
 export function highlights(texts: string[]): NonNullable<Payload["highlights"]> {
   const sentences = new Map<string, number>();
@@ -65,8 +71,11 @@ export function highlights(texts: string[]): NonNullable<Payload["highlights"]> 
       if (!line || CREDENTIAL.test(line)) continue;
       sentences.set(line, (sentences.get(line) ?? 0) + 1);
     }
-    for (const w of text.split(/\s+/)) {
+    for (const raw of text.split(/\s+/)) {
+      // §4: 양끝 구두점·기호 트리밍(**Claude:** → Claude) → 2자 이상·숫자/기호만 제외 → 불용어(소문자)
+      const w = raw.replace(/^[\p{P}\p{S}]+|[\p{P}\p{S}]+$/gu, "");
       if (w.length < 2 || /^[\d\p{P}\p{S}]+$/u.test(w) || CREDENTIAL.test(w)) continue;
+      if (STOPWORDS.has(w.toLowerCase())) continue;
       words.set(w, (words.get(w) ?? 0) + 1);
     }
   }

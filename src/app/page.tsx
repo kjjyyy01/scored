@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { CommandCta } from "@/components/landing/command-cta";
 import { StatCard } from "@/components/report/stat-card";
-import { SAMPLE } from "@/lib/sample.ts";
+import { SAMPLE, SAMPLE_MARATHON } from "@/lib/sample.ts";
 import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
@@ -34,6 +34,10 @@ export default function Home() {
             이런 성적표가 나옵니다 (샘플)
           </h2>
           <StatCard payload={SAMPLE} />
+          {/* 2장째는 md+ 전용 — 모바일에선 CTA가 첫 화면에서 밀린다 (SCR-001 §16) */}
+          <div className="hidden md:block">
+            <StatCard payload={SAMPLE_MARATHON} />
+          </div>
         </section>
       </div>
 

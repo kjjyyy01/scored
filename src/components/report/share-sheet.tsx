@@ -10,7 +10,9 @@ import { track } from "@/lib/analytics.ts";
 
 export function ShareSheet({ payload, open, onClose }: { payload: Payload; open: boolean; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [withHighlights, setWithHighlights] = useState(false); // BR-004 기본 OFF
+  const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
   const hasHighlights = Boolean(payload.highlights?.sentences?.length);
 
@@ -32,6 +34,35 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
   }, [open, onClose]);
 
   const requestClose = () => history.back();
+
+  // REQ-SHARE-001: 화면에 떠 있는 StatCard DOM 그대로 래스터화 — 값 복제 금지(REQ-RPT-002 AC-1)
+  async function onSaveCard() {
+    setSaving(true);
+    try {
+      const { toBlob } = await import("html-to-image"); // 저장 시점에만 로드
+      const blob = await toBlob(cardRef.current!, { pixelRatio: 2 });
+      if (!blob) throw new Error("ERR-IMG-001");
+      const file = new File([blob], `scored-${payload.day}.png`, { type: "image/png" });
+      // AC-1 모바일: 파일 공유시트 / 데스크톱: 다운로드 — 데스크톱 Chrome도 canShare가 true라 포인터로 분기
+      const mobile = matchMedia("(pointer: coarse)").matches;
+      if (mobile && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file] });
+      } else {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+      track("card_saved", { method: "download" }); // EVT-SHARE-002 — 공유·저장률 분자
+      setNotice("카드를 저장했어요");
+    } catch (e) {
+      if ((e as Error)?.name === "AbortError") return; // 공유시트 취소는 실패가 아니다
+      setNotice("카드 생성에 실패했어요 — 다시 시도하거나 링크로 공유해 보세요"); // CPY-ERR-004
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function onCopyLink() {
     try {
@@ -59,8 +90,10 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
           <Button variant="ghost" onClick={requestClose} className="h-11 px-4" aria-label="닫기">닫기</Button>
         </div>
 
-        {/* EL-SHARE-001 — SCR-003과 동일 컴포넌트·동일 값 (REQ-RPT-002) */}
-        <StatCard payload={payload} />
+        {/* EL-SHARE-001 — SCR-003과 동일 컴포넌트·동일 값 (REQ-RPT-002). ref = PNG 래스터화 대상 */}
+        <div ref={cardRef}>
+          <StatCard payload={payload} />
+        </div>
 
         {/* EL-SHARE-004 — highlights가 있을 때만. 네이티브 체크박스에 switch 역할 부여 */}
         {hasHighlights && (
@@ -77,8 +110,10 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
         )}
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          {/* EL-SHARE-002 — REQ-SHARE-001 카드 PNG는 Day 8 (클라이언트 캔버스 렌더러) */}
-          <Button variant="outline" disabled className="h-11 px-5 sm:flex-1">카드 저장 (준비 중)</Button>
+          {/* EL-SHARE-002 — REQ-SHARE-001, CPY-SHARE-001 */}
+          <Button variant="outline" onClick={onSaveCard} disabled={saving} className="h-11 px-5 sm:flex-1">
+            {saving ? "만드는 중…" : "카드 저장"}
+          </Button>
           {/* EL-SHARE-003 */}
           <Button onClick={onCopyLink} className="h-11 px-5 sm:flex-1">링크 복사</Button>
         </div>

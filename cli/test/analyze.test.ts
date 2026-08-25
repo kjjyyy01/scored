@@ -186,6 +186,16 @@ test("TC-CLI-001-11: 동일 문장 5회·유사 문장 1회 → sentences에 [�
   assert.ok(!p?.highlights?.words.some(([w]) => w === "1" || w === "!!" || w === "ㅋ"));
 });
 
+test("§4 불용어·트리밍 (2026-08-24 확정): 양끝 기호 트리밍 → 불용어 소문자 비교 제외, 재미 어휘는 잔존", async () => {
+  const lines = [
+    user("2026-08-17T10:00:00+09:00", "the THE 그리고 **Claude:** 이제 build"),
+    user("2026-08-17T10:01:00+09:00", "build 다시 build"),
+  ];
+  const p = await analyze(file("s1.jsonl", lines), { now: NOW, tz: SEOUL });
+  // the(소문자 비교로 THE도)·그리고·이제 = 불용어 제외 / **Claude:** → Claude 트리밍 / 다시 = 의도적 잔존
+  assert.deepEqual(p?.highlights?.words, [["build", 3], ["Claude", 1], ["다시", 1]]);
+});
+
 test("TC-CLI-001-06: 자격증명 패턴(BR-005)이 든 문장·단어는 하이라이트에서 제외, 문장은 100자 절단", async () => {
   const long = "가".repeat(120);
   const lines = [

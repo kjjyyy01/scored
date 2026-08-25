@@ -160,3 +160,32 @@
 - **OQ 전건 해소** (OQ-001·002·006 완료, OQ-002만 Day 13 게릴라 로그 보정 잔여) — 콘텐츠 차단이 풀렸으므로 Day 8은 순수 구현일
 - **Day 8(8/25 화) 작업**: ① 웹 판정 모듈(BR-009 등급·BR-010 유형 — 08 §계산 규칙이 명세, BR-008 `/tdd` 필수) → StatCard 유형·등급 블록 켜기 ② 랜딩 2장 레이아웃(md+ 2장/모바일 1장) ③ CLI 불용어·트리밍 반영(CLI-001 §4) ④ SCR-004 대시보드 ⑤ REQ-SHARE-001 카드 PNG ⑥ REQ-SHARE-003 동적 OG + EVT-DASH-001·SHARE-002. **Day 9(8/26 수) 저녁 컷 판정 — 미완성 시 SCR-004부터 삭제**
 - 유형 문구 변수 치환({night}·{streak}·{h}/{m} 등)은 11 CPY-TYPE 표 상단 정의 참조, 문구 선택은 day 숫자합 % 풀 크기(08)
+
+## Day 8 (**8/25 화**) — 순수 구현일: 판정 모듈·대시보드·카드 PNG·동적 OG
+
+> 브랜치 `feat/day8-implementation`. 컷 1순위 SCR-004를 마지막 순서로 배치 → 전 항목 완료.
+
+### Claude 담당
+
+- [x] **① 웹 판정 모듈** `/tdd` — `src/lib/judge.ts`: BR-009 등급 커브(앵커 선형 보간)·BR-010 유형(비율 최대·동점 순서·폴백)·CPY-TYPE 문구(day 숫자합 % 풀, 변수 치환) — 25 tests + 샘플 2장 역검증(swamp·B+ 56 / marathon·A 72) → StatCard 유형·등급·문구 블록 점등
+- [x] **② 랜딩 2장 레이아웃** — SAMPLE_MARATHON 추가, md+ 2장/모바일 1장(`hidden md:block`) — 390/768/1280 확인
+- [x] **③ CLI 불용어** `/tdd` — 56개(EN 35+KO 21)·양끝 구두점 트리밍·소문자 비교, `다시` 등 재미 어휘 잔존 — CLI 33 tests
+- [x] **④ 카드 PNG(REQ-SHARE-001)** — 화면 StatCard DOM을 html-to-image 래스터화(값 복제 금지), 모바일 공유시트(`pointer: coarse`)/데스크톱 다운로드 분기, EVT-SHARE-002 발화 확인, 실PNG 육안 확인
+- [x] **⑤ 동적 OG(REQ-SHARE-003)** — shareUrl에 BR-006 쿼리(유일 생성 지점, 부족 모드는 쿼리 없음→정적 폴백) + `/api/og`(satori, 검증 실패 시 기본 이미지, s-maxage=86400) + `/report` generateMetadata 재인코딩. 1200×630 렌더 육안 확인
+- [x] **⑥ SCR-004 대시보드** — 타임라인(05시 회전)·주간 추이(±% weekDelta `/tdd`)·히트맵·기본 스탯·도구/모델·프롬프트 스타일(lenBuckets·하이라이트)·로컬 리포트 안내(entry=cli만)·맨 위로. 차트 라이브러리 0(SVG/CSS), EVT-DASH-001(IntersectionObserver) 발화 확인
+- [x] 검증 — 웹 49·CLI 33 tests / next build·tsc 통과 / 실로그 E2E(밸런스 코더·B 28점) / GA collect 4종 실발화 / 라이트·다크
+- [x] EOD: history.md · 커밋 · main 머지 · push(매일 배포)
+
+### 사용자 담당
+
+- [x] **결정: 게릴라 테스터 → 본인 직접 테스트** (2026-08-25) — 실패 조건 9(Day 13 유저 테스트) 관련 스코프 변경이므로 **Day 9 컷 판정 때 make-plan 경유 PLAN 반영 필요**
+- [ ] StatCard 유형·등급 첫 렌더 + 배포 URL 육안 확인 (`scored.kr` 머지 후)
+- [ ] `npx scored` 실행해 카드 저장·링크 복사 직접 체험 (iPhone Safari 응답형 확인 겸)
+- [ ] (보류 유지) npm publish `scored` 시점 — Day 9 컷 판정 후 재논의
+
+### Day 8 → Day 9 인계
+
+- **Day 9(8/26 수) 저녁 = 스코프 컷 판정 (캘린더 등록됨)** — Day 8 전 항목 완료로 컷 대상 없음이 기본값. 판정 시 함께: ① 게릴라 테스터→본인 테스트 전환 PLAN 반영(make-plan) ② 실기기 공백 대체안 PLAN 문구(Day 6 인계 잔여)
+- 잔여 EVT: RES-002(공개 연출)만 — Day 10~12 축 패스에서 연출과 함께
+- 동적 OG 프로덕션 검증: 머지 후 `scored.kr` 공유 링크로 카톡/트위터 미리보기 1회 확인 권장 (satori 폰트는 node_modules 경로 의존 — Vercel 번들 포함 여부)
+- iOS Safari 리스크: `navigator.share` 파일 공유는 toBlob 지연(1~3초) 후 호출이라 transient activation 만료 가능성 — 실기기/응답형에서 카드 저장 실패 시 CPY-ERR-004 폴백 동작 확인
