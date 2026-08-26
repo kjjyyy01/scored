@@ -42,3 +42,9 @@ next-env.d.ts
 
 # scored CLI 빌드 산출물
 /cli/dist
+.dev-shots/
+
+# 에이전트 로컬 설정·캐시 (개인 환경, 공유 안 함)
+.claude/settings.local.json
+.claude/.headroom_wrap_marker.json
+.serena/
