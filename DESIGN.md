@@ -30,6 +30,12 @@
 | body | `text-base leading-7` | 본문 (한글 행간 1.75) |
 | caption | `text-sm text-muted-foreground` | 보조 설명·고지 |
 
+### 한국어 줄바꿈 (전역, 2026-08-26 신설)
+- `globals.css`의 `body`에 **`break-keep`(word-break: keep-all) + `break-words`** 전역 적용 — 요소마다 붙이지 않는다.
+- 근거: 미적용 시 어절이 쪼개진다 — 390px "내 AI 코딩 성적 / 표가 나온다", 768px "성적표 / 가 나온다", 1280px "만듭니 / 다". Day 9 반응형 순회에서 검출.
+- `break-words`는 짝으로 필수 — `keep-all` 단독이면 긴 영문·URL이 컨테이너를 넘는다.
+- `<pre>`(ASCII 다이어그램 등)는 `white-space: pre`라 영향 없음.
+
 ### 스페이싱 (4px 그리드, 사용 단계 고정)
 - 허용 단계: `2 · 3 · 4 · 6 · 8 · 12 · 16 · 24` (0.5rem~6rem). 그 밖 값 사용 금지.
 - 컨테이너: `mx-auto px-4 md:px-6` + `max-w-3xl`(성적표·대시보드·안내 — 읽기 폭) / `max-w-5xl`(랜딩). **정렬 축 = 이 px 값 하나**.
