@@ -98,8 +98,22 @@ export function ReportClient() {
       <a href="#dashboard" className="w-fit text-sm text-muted-foreground underline-offset-4 hover:underline">
         ↓ 오늘의 기록 자세히 보기
       </a>
-      {/* EL-RPT-007 재실행 안내 — CPY-RPT-001 */}
-      <p className="text-sm text-muted-foreground">내일 또 뽑아보세요 — 하루가 바뀌면 유형도 바뀝니다</p>
+      {/* EL-RPT-007 / EL-RPT-008 — 진입 경로에 따라 배타 (REQ-RPT-003 AC-2b).
+          링크 수신자는 오늘 뽑은 적이 없어 "내일 또"가 성립하지 않고, 랜딩으로 갈 출구가 여기뿐이다 */}
+      {state.entry === "cli" ? (
+        // CPY-RPT-001 재실행 안내
+        <p className="text-sm text-muted-foreground">내일 또 뽑아보세요 — 하루가 바뀌면 유형도 바뀝니다</p>
+      ) : (
+        // CPY-RPT-003 유입 CTA — from=report는 랜딩 page_view 세그먼트용 (15)
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href="/?from=report" />}
+          className="h-11 w-fit px-5"
+        >
+          내 성적표도 뽑아보기
+        </Button>
+      )}
 
       {/* SCR-004 — 한 스크롤 페이지 하단 섹션. EVT-DASH-001은 이 화면(SCR-003) 소유 (15) */}
       <div className="mt-6">

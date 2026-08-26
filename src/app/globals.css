@@ -126,7 +126,9 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    /* break-keep: 한국어는 어절 단위로 끊는다 (미적용 시 "성적표"가 "성적/표"로 쪼개짐).
+       break-words: 긴 영문·URL이 컨테이너를 넘지 않게 하는 탈출구 — keep-all과 짝으로 쓴다 */
+    @apply bg-background text-foreground break-keep break-words;
   }
   html {
     @apply font-sans;
