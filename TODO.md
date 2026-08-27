@@ -252,7 +252,7 @@
 - [x] **이슈 #1 B안 기각 처리** — 코멘트로 근거 기록, Day 18~19 채널 점검 이관, 이슈 OPEN 유지
 - [x] **npm publish 사전 검증** — 무인증 범위 전부 통과. `npm view scored` → 404(이름 가용). 상세는 history.md
 - [x] 검증 — 웹 49 · CLI 33 tests / `tsc --noEmit` · `next build` exit 0 / 빌드 CSS에 토큰 3종 실재 확인
-- [x] EOD: history.md ✅ · TODO.md ✅ · PLAN 개정(make-plan) ✅ · 커밋 4건 ✅ · main 머지·push ✅ (6431362)
+- [x] EOD: history.md ✅ · TODO.md ✅ · PLAN 개정(make-plan) ✅ · 커밋 4건 ✅ · main 머지·push ✅ (6431362) — **배포 반영 실측 확인**(프로덕션 CSS `--ease-out-quart`·`--ease-out-back`·`@keyframes pop`)
 - [ ] **EOD 기록 세션** (Obsidian TIL · Notion) — notion 플러그인 별도 세션
 
 ### 사용자 담당
