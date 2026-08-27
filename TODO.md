@@ -235,3 +235,43 @@
 - 🆕 **EOD 기록 완료** — Day 9치 Obsidian·Notion 전부 당일 등록. Notion 누적 35건(과정요약 6 + 트러블슈팅 29)
 - ♻️ **상시 주의(Day 10 이후에도 유효)**: Obsidian `~/obsidian/resume/dev-notes/`는 **scored·stackd 공용** — 원고 파일명 접두사(`_notion-원고-scored-` / `_notion-원고-stackd-`)를 반드시 확인하고, TIL 신규 작성 전 같은 주제 노트가 있는지 먼저 훑을 것(중복 대신 보강이 기본)
 - **이슈 #1은 OPEN 유지** — 원인만 규명됐고 대응(A 수용 / B 구현)은 판정 ② 대기. 주 런칭 채널(GeekNews·디스콰이엇·X)의 프래그먼트 URL 처리도 Day 18~19 전 확인 필요
+
+## Day 10 (**8/27 목**) — 중점 품질 축 패스 1일차: 모션 설계 확정
+
+> 브랜치 `feat/day10-motion-design`. PLAN 지정 스킬 3종 적용 — find-animation-opportunities · animation-vocabulary · sequential-thinking(6단계). **연출 본체 구현은 Day 11~12** (PLAN 배분: Day 10 설계 → Day 11~12 animate/improve/review).
+
+### Claude 담당
+
+- [x] **모션 기회 스캔 + 게이트 판정** — 채택 3(공개 연출 전체·등급 릴 정지·공유 시트) / **기각 4**(대시보드 위젯 등장·히트맵 168셀 스태거·랜딩 장식·앵커 스무스 스크롤). 대시보드는 게이트 4(기능) 탈락 — 읽는 UI에서 데이터가 움직이면 판독 방해
+- [x] **의존성 결정: 새 라이브러리 0** — SCR-002 §13의 "GSAP"을 미도입으로 확정. 필요한 모션 4종 중 CSS 불가는 숫자 카운트업뿐이고 rAF 루프 1개면 된다. `tw-animate-css` 기임포트, GSAP ~23KB는 LCP 2.5초 예산 대비 정당화 불가. **Day 11~12에 재론 금지** (근거 ANIMATION.md 기록)
+- [x] **ANIMATION.md 확정** (14줄 → 122줄) — Day 0부터 비어 있던 이징·duration 빈칸 해소. 커스텀 이징 **2개만**(`--ease-out-quart`·`--ease-out-back`), **duration CSS 토큰 0개**(rAF와 CSS가 같은 숫자를 알아야 해 `reveal.ts` 상수 하나로 단일화 — 이중화하면 튜닝 때 반드시 어긋난다). 타임라인 예산 3종 + 산술 검산
+- [x] **`globals.css` 토큰 정착** — `@theme inline`에 이징 2종 + `--animate-pop`, `@keyframes pop`. reduced-motion **전역 킬 블록은 넣지 않음** (`animation-duration:0.01ms !important` 대해머는 AC-4의 대체 페이드까지 죽인다)
+- [x] **make-prd 경유 PRD 개정 3건** — ① SCR-002 v1.1.0→**v1.2.0**: AC-4·AC-5의 `skipped: false` 확정(연출을 건너뛴 주체가 사용자가 아니므로 스킵이 아니다) + AC-2에 Esc 추가 + §15 포커스 탈취 금지 명시 ② 11 카피사전 **CPY-RES-003 "오늘의 등급"** 신설 ③ 15 **EVT-SHARE-002 `method` enum 정정** — 명세 `download|clipboard`인데 코드에 clipboard 경로가 없었다. 실제 두 경로는 `download|share_sheet`
+- [x] **G9 수정** — `share-sheet.tsx`가 모바일 `navigator.share` 경로를 타도 항상 `method:"download"` 발화하던 것을 `viaShareSheet` 분기로 정정. 이미 배포돼 지표를 오염시키던 건
+- [x] **이슈 #2 등록** — 새로고침·`/report` 직접 진입 시 정상 링크가 "손상됐어요"(ERR-HASH-001)로 표시. `strippedUrl`이 BR-004를 이행하며 페이로드 해시까지 지우는데 Empty 상태(EL-RES-004)가 미구현이라 손상으로 흡수된다. **`result_failed` 지표까지 오염** → Day 11 상태 머신 작업과 한 묶음
+- [x] **이슈 #1 B안 기각 처리** — 코멘트로 근거 기록, Day 18~19 채널 점검 이관, 이슈 OPEN 유지
+- [x] **npm publish 사전 검증** — 무인증 범위 전부 통과. `npm view scored` → 404(이름 가용). 상세는 history.md
+- [x] 검증 — 웹 49 · CLI 33 tests / `tsc --noEmit` · `next build` exit 0 / 빌드 CSS에 토큰 3종 실재 확인
+- [ ] EOD: history.md ✅ · TODO.md ✅ · PLAN 개정(make-plan) · 커밋 · main 머지 · push
+- [ ] **EOD 기록 세션** (Obsidian TIL · Notion) — notion 플러그인 별도 세션
+
+### 사용자 담당
+
+- [x] **결정: 이슈 #1 B안 기각 → Day 18~19 이관** (2026-08-27) — 실측 결과 유실 범위가 Day 9 기록의 전제("최다 문장 1줄")보다 훨씬 컸다. 대시보드 5위젯 전부 미표시 + 유형 문구 `{streak}` 리터럴 노출 + 부분 모드 링크 생성 불가
+- [ ] ⛔ **`npm login` 재인증** — Day 5의 `jong-yeon` 로그인이 만료(`npm whoami` E401). 브라우저 OAuth·2FA라 대행 불가. **이게 `npx scored` 발행의 유일한 잔여 블로커**
+- [ ] **`npm publish scored` 승인·실행** (0.1.0) — 로그인 후. 발행 뒤 실제 `npx scored` 1회 완주 확인까지가 완료 조건
+- [ ] **모션 감성 판정** — Day 11~12 구현 후 육안 승인. "어느 순간 웃었나"는 코드로 측정 불가하며 축 패스의 완료 조건
+- [ ] **외부 눈 1명 확보** (Day 11 = 8/28 마감) — 0명이면 실패 조건 9 발동 처리 후 Day 21 인터뷰를 런칭 직후로 앞당겨 보전
+- [ ] GA4 측정 ID 발급 확인 (OQ-005, Day 15 전)
+- [ ] 실기기 수단 확보 (Day 16 밤 마감) — Xcode 시뮬레이터 10GB+ 또는 지인 iPhone 대여
+
+### Day 10 → Day 11 인계
+
+- **Day 11 첫 작업 = 연출 본체 구현.** 신규 `src/lib/reveal.ts`(순수 로직 — `PLAN` 상수·`reelIndex`·이징 함수, `node --test` 대상) + `src/components/report/reveal-stage.tsx`. `report-client.tsx` State 유니온에 `revealing` 추가
+- 🆕 **이슈 #2를 같은 커밋에 묶을 것** — Empty 상태 분기가 `revealing` 추가와 같은 유니온·같은 이펙트를 건드린다. 따로 하면 같은 파일을 두 번 연다
+- ⚠️ **`reelIndex` 음수 모듈로 주의** — 마지막 스텝이 반드시 판정 등급에 착지해야 한다. `start = ((finalIdx - (steps-1)) % len + len) % len`. 틀리면 재미 장치의 유일한 클라이맥스가 거짓말한다 → **테스트로 고정**
+- ⚠️ **등급 릴 폭 고정 필수** — 등급이 `S·A+·A·B+·B·C`로 1~2자 혼재. `tabular-nums`는 숫자 전용이라 컨테이너에 고정 폭을 줘야 한다
+- ⚠️ **카운트업 표기는 `src/lib/format.ts`의 `num`·`duration` 재사용** — 카드와 표기가 갈리면 안 된다. rAF는 ref의 `textContent` 직접 갱신(프레임마다 React 렌더 금지)
+- **`stat-card.tsx`는 무수정 유지** — `toBlob` PNG 캡처 대상 + 서버 컴포넌트. 연출은 카드 바깥 스테이지에서만
+- 잔여 미구현 EVT: **EVT-RES-002뿐** (연출과 함께 발화). 중복 발화 가드 필수 — 깔때기 지표다
+- Day 12는 `improve-animations` → `review-animations` + chrome-devtools 60fps 루프. **LCP 2.5초 예산 재확인**은 Day 17이지만 연출이 LCP를 막지 않는지는 Day 12에 선확인
