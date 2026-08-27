@@ -232,3 +232,10 @@
   **이슈 #1 B안 기각 근거**: Day 9 기록의 전제 "유실은 최다 문장 1줄"이 실측으로 틀렸다. 대시보드 5위젯이 전부 미표시되고, 유형 문구 풀 14개 중 6개가 `fun.*`를 참조하는데 선택이 `day` 숫자합 % 2로 결정적이라 해당 날짜엔 `{streak}` 리터럴이 화면에 노출되며, 부분 모드는 링크 생성 자체가 불가하다. 페이로드를 쿼리로 옮기면 유실이 0이지만 **쿼리는 서버 로그에 남아** 무업로드 원칙을 깬다(14가 "유일한 예외 = OG 쿼리"로 못 박음). 주 채널은 GeekNews·디스콰이엇·X이고 카톡은 부차 경로라 Day 18~19 채널 점검으로 이관했다.
 
   **npm publish 사전 검증**: 무인증 확인 가능 범위 전부 통과 — `bin` 대상 존재·shebang 보존, 0644 권한은 npm `bin-links`가 install 시 0755로 chmod하므로 블로커 아님, `files:["dist"]` 20파일 정상(루트 `.gitignore`의 `/cli/dist`는 패키지 루트 밖이라 무영향), LICENSE·README 자동 포함, 런타임 의존성 0, `prepublishOnly`가 build+test 강제. `npm view scored` → 404로 **이름 가용 확인**. 잔여 블로커는 인증 하나 — `npm whoami`가 E401이라 Day 5의 로그인이 만료됐다.
+
+## 2026-08-27 (Day 10 추가) — npm 패키지명 정정: `scored` → `@jong-yeon/scored`
+
+- **무엇을**: 2026-08-15에 확정했던 npm 패키지명 `scored`가 발행 불가로 판명되어 `@jong-yeon/scored`로 정정하고, 실행 명령 `npx scored`를 참조하던 코드·콘텐츠 11파일과 PRD 5문서를 전부 맞췄다.
+- **어떻게**: `npm publish` 시도에서 `403 Package name too similar to existing packages: store, store2`를 받았다. 레지스트리상 `scored`는 비어 있었지만(`npm view scored` → 404) npm의 유사이름 정책은 등록 여부와 별개로 작동한다. 대안은 스코프명(이미 발행됨)과 무스코프 `scored-cli` 둘이었는데 문구 개정 작업량이 동일해 추가 인증 왕복·재거부 위험이 없는 스코프명을 채택했다(사용자 결정). 코드는 `npx scored` → `npx @jong-yeon/scored` 일괄 치환(11파일), PRD는 make-prd 경유로 값을 SSOT(11 카피사전)에만 두고 화면 문서 4곳의 **값 복제를 CPY-ID 참조로 교체**해 기존 SSOT 위반까지 함께 해소했다. PLAN·MVP는 make-plan 경유(개정 이력 1건, 조정 횟수 미산입).
+- **왜**: 랜딩 복사 CTA(CPY-LAND-002)가 곧 이 명령 문자열이고, 그게 깔때기 1→2단계이자 킬 크라이테리아 1번(도달률)의 첫 관문이다. 명령이 404면 지표가 아니라 제품이 끊긴다. 과거 기록(`history.md`·`grill-log.md`·TODO의 체크 완료 항목)은 고치지 않고 남겼다 — 그때의 판단을 사후 수정하면 기록이 거짓이 된다. 대신 뒤집힌 결정에는 정정 포인터만 덧붙였다.
+- **작업 결과**: 코드·콘텐츠 잔여 참조 0, PRD 잔여 0, 코드↔SSOT 5쌍 일치 검증. 웹 49 · CLI 33 tests 통과, `tsc --noEmit` · `next build` exit 0. 발행된 `0.1.0`은 구 문구(`사용법: npx scored`, `alias sc="npx scored"`)가 박힌 채 불변이고 npm은 버전 덮어쓰기를 허용하지 않으므로 **`0.1.1` 재발행이 잔여 완료 조건**이다. `license: "MIT"` 필드도 발행 과정에서 누락됐던 것을 함께 복원했다(LICENSE 파일은 tarball에 포함돼 있었으나 필드가 없어 npm 페이지에 미표기).

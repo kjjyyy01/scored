@@ -17,7 +17,7 @@ export type Deps = {
   version: string;
 };
 
-const HELP = `사용법: npx scored
+const HELP = `사용법: npx @jong-yeon/scored
 
 ~/.claude/projects 세션 기록을 이 컴퓨터에서만 분석해 오늘의 성적표를 브라우저로 엽니다.
 네트워크 전송 없음 · 옵션 없음 (--help, --version만)`;

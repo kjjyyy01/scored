@@ -24,7 +24,7 @@ export default function HowPage() {
       <section className="mt-16 flex flex-col gap-4">
         <h2 className="text-2xl font-semibold">세션 기록은 컴퓨터를 떠나지 않습니다</h2>
         <p className="text-base leading-7">
-          <Code>npx scored</Code> 는 내 컴퓨터에서 <Code>~/.claude/projects</Code> 의 세션 기록을 읽어 그 자리에서 숫자로 집계합니다.
+          <Code>npx @jong-yeon/scored</Code> 는 내 컴퓨터에서 <Code>~/.claude/projects</Code> 의 세션 기록을 읽어 그 자리에서 숫자로 집계합니다.
           대화 원문은 어디로도 보내지 않고, 집계된 숫자만 주소의 <Code>#</Code> 뒤 조각에 실려 브라우저로 넘어갑니다.
         </p>
         <p className="text-base leading-7">
@@ -91,7 +91,7 @@ export default function HowPage() {
       <section className="mt-16 flex flex-col gap-4">
         <h2 className="text-2xl font-semibold">매일 뽑기</h2>
         <p className="text-base leading-7">
-          매일 뽑으려면 셸에 <Code>alias sc=&quot;npx scored&quot;</Code> 를 넣어두세요. 대화 전체는 <Code>~/.scored/</Code> 에
+          매일 뽑으려면 셸에 <Code>alias sc=&quot;npx @jong-yeon/scored&quot;</Code> 를 넣어두세요. 대화 전체는 <Code>~/.scored/</Code> 에
           날짜별로 남고 (내 컴퓨터에만), <strong>최근 7일치만 보관하고 오래된 건 자동으로 지웁니다</strong>.
           지금 지우려면 <Code>rm -rf ~/.scored</Code>
         </p>

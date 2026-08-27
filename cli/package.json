@@ -1,7 +1,7 @@
 {
-  "name": "scored",
-  "version": "0.1.0",
-  "description": "AI 코딩 세션의 오늘을 스탯 카드로 — 로컬 분석·무업로드 (npx scored)",
+  "name": "@jong-yeon/scored",
+  "version": "0.1.1",
+  "description": "AI 코딩 세션의 오늘 하루를 스탯 카드로 만들어 줍니다.",
   "type": "module",
   "bin": { "scored": "dist/index.js" },
   "files": ["dist"],
@@ -9,6 +9,9 @@
   "repository": { "type": "git", "url": "git+https://github.com/kjjyyy01/scored.git", "directory": "cli" },
   "homepage": "https://scored.kr",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "node --test test/*.test.ts",
     "build": "tsc -p tsconfig.json",
