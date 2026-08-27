@@ -243,7 +243,7 @@
 ### Claude 담당
 
 - [x] **모션 기회 스캔 + 게이트 판정** — 채택 3(공개 연출 전체·등급 릴 정지·공유 시트) / **기각 4**(대시보드 위젯 등장·히트맵 168셀 스태거·랜딩 장식·앵커 스무스 스크롤). 대시보드는 게이트 4(기능) 탈락 — 읽는 UI에서 데이터가 움직이면 판독 방해
-- [x] **의존성 결정: 새 라이브러리 0** — SCR-002 §13의 "GSAP"을 미도입으로 확정. 필요한 모션 4종 중 CSS 불가는 숫자 카운트업뿐이고 rAF 루프 1개면 된다. `tw-animate-css` 기임포트, GSAP ~23KB는 LCP 2.5초 예산 대비 정당화 불가. **Day 11~12에 재론 금지** (근거 ANIMATION.md 기록)
+- [x] **의존성 결정: 착수는 새 라이브러리 0** — 필요한 모션 4종 중 CSS 불가는 숫자 카운트업뿐이고 rAF 루프 1개면 되므로 Day 11을 라이브러리 없이 시작한다. **↩︎ 정정 (2026-08-27, 사용자 결정)**: 최초 기록은 "GSAP 미도입 확정 · Day 11~12 재론 금지"였으나 **기각을 철회**했다 — 애니메이션 설계는 Day 11~12에 수정될 수 있다. GSAP·framer-motion은 열려 있고 도입 검토 조건 3개를 ANIMATION.md §의존성에 명시
 - [x] **ANIMATION.md 확정** (14줄 → 122줄) — Day 0부터 비어 있던 이징·duration 빈칸 해소. 커스텀 이징 **2개만**(`--ease-out-quart`·`--ease-out-back`), **duration CSS 토큰 0개**(rAF와 CSS가 같은 숫자를 알아야 해 `reveal.ts` 상수 하나로 단일화 — 이중화하면 튜닝 때 반드시 어긋난다). 타임라인 예산 3종 + 산술 검산
 - [x] **`globals.css` 토큰 정착** — `@theme inline`에 이징 2종 + `--animate-pop`, `@keyframes pop`. reduced-motion **전역 킬 블록은 넣지 않음** (`animation-duration:0.01ms !important` 대해머는 AC-4의 대체 페이드까지 죽인다)
 - [x] **make-prd 경유 PRD 개정 3건** — ① SCR-002 v1.1.0→**v1.2.0**: AC-4·AC-5의 `skipped: false` 확정(연출을 건너뛴 주체가 사용자가 아니므로 스킵이 아니다) + AC-2에 Esc 추가 + §15 포커스 탈취 금지 명시 ② 11 카피사전 **CPY-RES-003 "오늘의 등급"** 신설 ③ 15 **EVT-SHARE-002 `method` enum 정정** — 명세 `download|clipboard`인데 코드에 clipboard 경로가 없었다. 실제 두 경로는 `download|share_sheet`
