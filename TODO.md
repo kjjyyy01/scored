@@ -255,9 +255,9 @@
 - [x] EOD: history.md ✅ · TODO.md ✅ · PLAN 개정(make-plan) ✅ · 커밋 4건 ✅ · main 머지·push ✅ (6431362) — **배포 반영 실측 확인**(프로덕션 CSS `--ease-out-quart`·`--ease-out-back`·`@keyframes pop`)
 - [ ] **EOD 기록 세션** (Obsidian TIL · Notion) — notion 플러그인 별도 세션
 - [x] 🆕 **npm 패키지명 정정 `scored` → `@jong-yeon/scored`** — 무스코프 발행이 npm 유사이름 정책에 거부(`403 too similar to store, store2`). 코드·콘텐츠 11파일 일괄 치환 + PRD 5문서 make-prd 경유 개정(값은 SSOT 11에만, 화면 문서 4곳의 값 복제는 CPY-ID 참조로 교체 — 기존 SSOT 위반 동시 해소) + PLAN·MVP make-plan 경유. 과거 기록(history·grill-log·체크 완료 항목)은 정정 포인터만 덧붙이고 원문 보존
-- [ ] ⛔ **`0.1.1` 재발행** — 발행된 `0.1.0`에 구 명령(`사용법: npx scored`·`alias sc="npx scored"`)이 박혀 있고 npm은 버전 덮어쓰기 불가. `license: "MIT"` 필드 누락도 0.1.1에서 복원됨. 보안 키 인증 필요(터미널에서 `npm publish`, `--otp` 없이)
-- [ ] **`npx @jong-yeon/scored` 1회 완주 확인** — 0.1.1 발행 후. Day 10 완료 조건
-- [ ] **`npm deprecate` 불요 판정** — 스코프명을 그대로 쓰기로 해 옛 이름 정리 대상 없음
+- [x] **`0.1.1` 재발행 완료** (2026-08-27) — 발행된 `0.1.0`에 구 명령(`사용법: npx scored`·`alias sc="npx scored"`)이 박혀 있고 npm은 버전 덮어쓰기 불가. `license: "MIT"` 필드 누락도 0.1.1에서 복원됨. 보안 키 인증 필요(터미널에서 `npm publish`, `--otp` 없이)
+- [x] **`npx @jong-yeon/scored` 1회 완주 확인 완료** — 세션 3개·프롬프트 40개 분석, 페이로드 해시 1036자가 웹 디코더(deflate-raw)로 역변환 성공(`v:1`), `~/.scored/2026-08-27.html` 0600·noindex, 자격증명 누출 0, CPY-CLI-005 신 명령 확인
+- [x] **`npm deprecate` 불요 판정** — 스코프명을 그대로 쓰기로 해 옛 이름 정리 대상 없음
 
 ### 사용자 담당
 
@@ -265,8 +265,9 @@
 - [x] **`npm login` 재인증** (2026-08-27 완료, `jong-yeon`) — Day 5의 `jong-yeon` 로그인이 만료(`npm whoami` E401). 브라우저 OAuth·2FA라 대행 불가. **이게 `npx scored` 발행의 유일한 잔여 블로커**
 - [x] **npm publish 실행** — `@jong-yeon/scored@0.1.0` 발행(2026-08-27). 무스코프 `scored`는 npm이 거부(`too similar to store, store2`)해 스코프명으로 확정. **잔여: 0.1.1 재발행**(0.1.0에 구 명령 문구가 박혀 불변) + `npx @jong-yeon/scored` 1회 완주 확인
 - [ ] **모션 감성 판정** — Day 11~12 구현 후 육안 승인. "어느 순간 웃었나"는 코드로 측정 불가하며 축 패스의 완료 조건
-- [ ] **외부 눈 1명 확보** (Day 11 = 8/28 마감) — 0명이면 실패 조건 9 발동 처리 후 Day 21 인터뷰를 런칭 직후로 앞당겨 보전
-- [ ] GA4 측정 ID 발급 확인 (OQ-005, Day 15 전)
+- [x] ~~**외부 눈 1명 확보**~~ → **폐지, 본인 직접 검증으로 확정** (2026-08-27 사용자 결정). 실패 조건 9는 발동 상태로 확정 — 보전 장치를 아래 확정 항목으로 전환
+- [ ] 🔒 **Day 21 초기 유저 인터뷰를 런칭 직후(Day 20~21)로 앞당겨 실시** — 조건부 아님. 판정일 9/22 전에 외부 관찰을 회수하지 못하면 킬 크라이테리아 해석에 근거가 없다
+- [x] **GA4 측정 ID 발급 확인 (OQ-005) — 완료 2026-08-27**: `G-R6RZ92N1P7` 프로덕션 실측. gtag.js 대조 실험으로 실재 속성 확인(가짜 ID 417KB/1회 vs 실 ID 500KB/2회 — 83KB가 속성 전용 설정). 잔여 EVT 실발화 검수는 Day 15~16 DebugView
 - [ ] 실기기 수단 확보 (Day 16 밤 마감) — Xcode 시뮬레이터 10GB+ 또는 지인 iPhone 대여
 
 ### Day 10 → Day 11 인계
