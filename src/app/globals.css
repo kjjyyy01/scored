@@ -44,6 +44,11 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* 모션 토큰 — 값 근거는 ANIMATION.md (Day 10 확정) */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-pop: pop 380ms var(--ease-out-back);
 }
 
 :root {
@@ -132,5 +137,11 @@
   }
   html {
     @apply font-sans;
+  }
+}
+/* 등급 릴 정지 강조 — 오버슈트로 "철컥" 정지감 (ANIMATION.md) */
+@keyframes pop {
+  50% {
+    transform: scale(1.08);
   }
 }
