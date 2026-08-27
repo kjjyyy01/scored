@@ -1,7 +1,7 @@
 # ARCHITECTURE.md
 
 - 플랫폼: **웹(Next.js 16 App Router, Vercel)** + **npm CLI `scored`** — Day 1 웹 확정, Day 2 CLI 진입 확정
-- 데이터 흐름: `npx scored`(사용자 머신) → `~/.claude/projects/**/*.jsonl` 스트리밍 집계 → 05 페이로드 → `deflate-raw`+`base64url` → `scored.kr/report?from=cli#<data>` (해시 = 서버 미전송) → 브라우저가 디코딩·렌더. 대화 원문은 `~/.scored/{day}.html` 로컬 파일로만 (Day 5)
+- 데이터 흐름: `npx @jong-yeon/scored`(사용자 머신) → `~/.claude/projects/**/*.jsonl` 스트리밍 집계 → 05 페이로드 → `deflate-raw`+`base64url` → `scored.kr/report?from=cli#<data>` (해시 = 서버 미전송) → 브라우저가 디코딩·렌더. 대화 원문은 `~/.scored/{day}.html` 로컬 파일로만 (Day 5)
 - 데이터 저장: **없음** — DB·인증·서버 상태 無 (비로그인 v1). localStorage 미사용. 예외: 동적 OG `/api/og` (무DB 엣지 함수, 요약 스탯 쿼리만)
 - 외부 API/AI: **없음** (정적 분석). GA4만 (Day 15)
 - 디렉터리 구조 (2026-08-18):

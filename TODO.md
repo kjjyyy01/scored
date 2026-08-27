@@ -58,7 +58,7 @@
 - [x] **사용자 승인 → 화면 문서 status Draft→Approved 전환** — **2026-08-17 승인** (SCR-001~006 + CLI-001, v1.1.0). PRD 전체 피드백 = 8항 검토 + grill 3라운드로 갈음
 - [x] 도메인 이름 결정: `vibe-scorecard.kr`(npm·레포명 통일안) → 레포명 `scored` 변경에 따라 **`scored.kr`로 최종 확정** 2026-08-15
 - [x] **도메인 scored.kr 결제 (사용자)** — 2026-08-15 완료. 잔여: Vercel 프로젝트 연결 + DNS 설정
-- [x] **npm 패키지명 `scored` 확정** — 2026-08-15 사용자 결정. `npx scored` — 도메인·레포와 통일 (CPY·ERR·19·04·CLI-001·MVP 반영). 루트 package.json은 `scored-web`(미발행)
+- [x] ~~**npm 패키지명 `scored` 확정**~~ → **2026-08-27 `@jong-yeon/scored`로 정정**(npm 유사이름 정책이 무스코프 `scored` 발행을 거부). 2026-08-15 사용자 결정. `npx scored` — 도메인·레포와 통일 (CPY·ERR·19·04·CLI-001·MVP 반영). 루트 package.json은 `scored-web`(미발행)
 - [ ] GA4 측정 ID 발급 확인 (사용자 — OQ-005, Day 15 전이면 됨)
 - [ ] EOD: Notion·Obsidian 기록 세션 (notion 플러그인 별도 세션) — **2026-08-17 새 세션에서 진행** (Day 3 내용은 docs/history.md 2026-08-14~17 항목 참조)
 
@@ -181,7 +181,7 @@
 
 - [x] **결정: 게릴라 테스터 → 본인 직접 테스트** (2026-08-25) — 실패 조건 9(Day 13 유저 테스트) 관련 스코프 변경이므로 **Day 9 컷 판정 때 make-plan 경유 PLAN 반영 필요**
 - [ ] StatCard 유형·등급 첫 렌더 + 배포 URL 육안 확인 (`scored.kr` 머지 후)
-- [ ] `npx scored` 실행해 카드 저장·링크 복사 직접 체험 (iPhone Safari 응답형 확인 겸)
+- [ ] `npx @jong-yeon/scored` 실행해 카드 저장·링크 복사 직접 체험 (iPhone Safari 응답형 확인 겸)
 - [ ] (보류 유지) npm publish `scored` 시점 — Day 9 컷 판정 후 재논의
 
 ### Day 8 → Day 9 인계
@@ -221,7 +221,7 @@
 - [x] **판정 ① 스코프 컷 대상 = 없음** (2026-08-26 확정) — Day 8·9 전 항목 완료. 실패 조건 3(컷 판정 회피) 통과
 - [x] **판정 ② 이슈 #1 대응 = B안 Day 10~12 이연 확정** (2026-08-26) — 축 패스가 '공유 순간의 마이크로 인터랙션'을 이미 우선하므로 동일 축. 그때면 C안(EL-RPT-008) 효과가 GA4에 잡혀 판단 근거가 생김
 - [x] **배포 URL 육안 확인** (`scored.kr` — 줄바꿈 + 유입 CTA) — 2026-08-26 정상 확인
-- [ ] (Day 8 → **Day 13 검증 세션으로 이월**) `npx scored` 실행해 카드 저장·링크 복사 직접 체험 — 현재 `npx scored`는 **npm 미발행으로 404**(실측 2026-08-26). 로컬 체험은 `cd cli && npm run build && node dist/index.js`
+- [ ] (Day 8 → **Day 13 검증 세션으로 이월**) `npx @jong-yeon/scored` 실행해 카드 저장·링크 복사 직접 체험 — **2026-08-27 발행 완료**(0.1.0, 0.1.1 예정). 로컬 체험은 `cd cli && npm run build && node dist/index.js`
 - [x] **결정: npm publish `scored` → Day 10(8/27)에 실행** (2026-08-26) — 보류 해제. 랜딩·`/how`가 전부 `npx scored`를 안내하는데 레지스트리에 없으면 도달률(킬 1번) 첫 관문이 404다. 첫 publish는 이름·`files`·`bin` 권한에서 한 번은 걸리므로 런칭 근처로 미루지 않는다
 
 ### Day 9 → Day 10 인계
@@ -254,12 +254,16 @@
 - [x] 검증 — 웹 49 · CLI 33 tests / `tsc --noEmit` · `next build` exit 0 / 빌드 CSS에 토큰 3종 실재 확인
 - [x] EOD: history.md ✅ · TODO.md ✅ · PLAN 개정(make-plan) ✅ · 커밋 4건 ✅ · main 머지·push ✅ (6431362) — **배포 반영 실측 확인**(프로덕션 CSS `--ease-out-quart`·`--ease-out-back`·`@keyframes pop`)
 - [ ] **EOD 기록 세션** (Obsidian TIL · Notion) — notion 플러그인 별도 세션
+- [x] 🆕 **npm 패키지명 정정 `scored` → `@jong-yeon/scored`** — 무스코프 발행이 npm 유사이름 정책에 거부(`403 too similar to store, store2`). 코드·콘텐츠 11파일 일괄 치환 + PRD 5문서 make-prd 경유 개정(값은 SSOT 11에만, 화면 문서 4곳의 값 복제는 CPY-ID 참조로 교체 — 기존 SSOT 위반 동시 해소) + PLAN·MVP make-plan 경유. 과거 기록(history·grill-log·체크 완료 항목)은 정정 포인터만 덧붙이고 원문 보존
+- [ ] ⛔ **`0.1.1` 재발행** — 발행된 `0.1.0`에 구 명령(`사용법: npx scored`·`alias sc="npx scored"`)이 박혀 있고 npm은 버전 덮어쓰기 불가. `license: "MIT"` 필드 누락도 0.1.1에서 복원됨. 보안 키 인증 필요(터미널에서 `npm publish`, `--otp` 없이)
+- [ ] **`npx @jong-yeon/scored` 1회 완주 확인** — 0.1.1 발행 후. Day 10 완료 조건
+- [ ] **`npm deprecate` 불요 판정** — 스코프명을 그대로 쓰기로 해 옛 이름 정리 대상 없음
 
 ### 사용자 담당
 
 - [x] **결정: 이슈 #1 B안 기각 → Day 18~19 이관** (2026-08-27) — 실측 결과 유실 범위가 Day 9 기록의 전제("최다 문장 1줄")보다 훨씬 컸다. 대시보드 5위젯 전부 미표시 + 유형 문구 `{streak}` 리터럴 노출 + 부분 모드 링크 생성 불가
-- [ ] ⛔ **`npm login` 재인증** — Day 5의 `jong-yeon` 로그인이 만료(`npm whoami` E401). 브라우저 OAuth·2FA라 대행 불가. **이게 `npx scored` 발행의 유일한 잔여 블로커**
-- [ ] **`npm publish scored` 승인·실행** (0.1.0) — 로그인 후. 발행 뒤 실제 `npx scored` 1회 완주 확인까지가 완료 조건
+- [x] **`npm login` 재인증** (2026-08-27 완료, `jong-yeon`) — Day 5의 `jong-yeon` 로그인이 만료(`npm whoami` E401). 브라우저 OAuth·2FA라 대행 불가. **이게 `npx scored` 발행의 유일한 잔여 블로커**
+- [x] **npm publish 실행** — `@jong-yeon/scored@0.1.0` 발행(2026-08-27). 무스코프 `scored`는 npm이 거부(`too similar to store, store2`)해 스코프명으로 확정. **잔여: 0.1.1 재발행**(0.1.0에 구 명령 문구가 박혀 불변) + `npx @jong-yeon/scored` 1회 완주 확인
 - [ ] **모션 감성 판정** — Day 11~12 구현 후 육안 승인. "어느 순간 웃었나"는 코드로 측정 불가하며 축 패스의 완료 조건
 - [ ] **외부 눈 1명 확보** (Day 11 = 8/28 마감) — 0명이면 실패 조건 9 발동 처리 후 Day 21 인터뷰를 런칭 직후로 앞당겨 보전
 - [ ] GA4 측정 ID 발급 확인 (OQ-005, Day 15 전)
