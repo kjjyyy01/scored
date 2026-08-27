@@ -253,7 +253,7 @@
 - [x] **npm publish 사전 검증** — 무인증 범위 전부 통과. `npm view scored` → 404(이름 가용). 상세는 history.md
 - [x] 검증 — 웹 49 · CLI 33 tests / `tsc --noEmit` · `next build` exit 0 / 빌드 CSS에 토큰 3종 실재 확인
 - [x] EOD: history.md ✅ · TODO.md ✅ · PLAN 개정(make-plan) ✅ · 커밋 4건 ✅ · main 머지·push ✅ (6431362) — **배포 반영 실측 확인**(프로덕션 CSS `--ease-out-quart`·`--ease-out-back`·`@keyframes pop`)
-- [ ] **EOD 기록 세션** (Obsidian TIL · Notion) — notion 플러그인 별도 세션
+- [x] **EOD 기록 세션** (Obsidian TIL · Notion) — Notion「개발 로그:scored」**신규 6건**(과정요약 ⑦ + TS-30~34, 누적 35 → **41건**) · Obsidian **신규 TIL 5건 + 보강 1건**. 원고 백업 `_notion-원고-scored-Day10.md`. 제목 6건 `notion-fetch` 재확인 완료(Day 9 파싱 함정 재발 없음)
 - [x] 🆕 **npm 패키지명 정정 `scored` → `@jong-yeon/scored`** — 무스코프 발행이 npm 유사이름 정책에 거부(`403 too similar to store, store2`). 코드·콘텐츠 11파일 일괄 치환 + PRD 5문서 make-prd 경유 개정(값은 SSOT 11에만, 화면 문서 4곳의 값 복제는 CPY-ID 참조로 교체 — 기존 SSOT 위반 동시 해소) + PLAN·MVP make-plan 경유. 과거 기록(history·grill-log·체크 완료 항목)은 정정 포인터만 덧붙이고 원문 보존
 - [x] **`0.1.1` 재발행 완료** (2026-08-27) — 발행된 `0.1.0`에 구 명령(`사용법: npx scored`·`alias sc="npx scored"`)이 박혀 있고 npm은 버전 덮어쓰기 불가. `license: "MIT"` 필드 누락도 0.1.1에서 복원됨. 보안 키 인증 필요(터미널에서 `npm publish`, `--otp` 없이)
 - [x] **`npx @jong-yeon/scored` 1회 완주 확인 완료** — 세션 3개·프롬프트 40개 분석, 페이로드 해시 1036자가 웹 디코더(deflate-raw)로 역변환 성공(`v:1`), `~/.scored/2026-08-27.html` 0600·noindex, 자격증명 누출 0, CPY-CLI-005 신 명령 확인
