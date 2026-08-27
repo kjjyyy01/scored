@@ -57,7 +57,7 @@ export async function GET(req: Request) {
         <div>터미널 한 줄이면,</div>
         <div>내 AI 코딩 성적표가 나온다</div>
       </div>
-      <div style={{ display: "flex", fontSize: 32, color: MUTED }}>npx scored · 서버 전송 0</div>
+      <div style={{ display: "flex", fontSize: 32, color: MUTED }}>npx @jong-yeon/scored · 서버 전송 0</div>
     </div>
   );
 

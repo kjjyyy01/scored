@@ -3,7 +3,7 @@
 AI 코딩 세션의 오늘 하루를 스탯 카드로 만들어 줍니다. **분석은 전부 내 컴퓨터에서** 일어나고, 대화 원문은 어디에도 올라가지 않습니다.
 
 ```bash
-npx scored
+npx @jong-yeon/scored
 ```
 
 터미널에서 한 줄이면 끝입니다. 설치도 로그인도 없습니다.
@@ -34,7 +34,7 @@ rm -rf ~/.scored
 ## 매일 뽑기
 
 ```bash
-alias sc="npx scored"
+alias sc="npx @jong-yeon/scored"
 ```
 
 ## 요구사항

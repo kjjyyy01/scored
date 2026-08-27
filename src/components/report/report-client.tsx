@@ -32,8 +32,8 @@ function takeEntry(): Entry {
 }
 
 const MESSAGE: Record<string, string> = {
-  "ERR-HASH-001": "결과 링크가 손상됐어요 — npx scored를 다시 실행해 주세요",
-  "ERR-HASH-002": "새 버전의 결과예요 — npx scored@latest로 다시 만들어 주세요",
+  "ERR-HASH-001": "결과 링크가 손상됐어요 — npx @jong-yeon/scored를 다시 실행해 주세요",
+  "ERR-HASH-002": "새 버전의 결과예요 — npx @jong-yeon/scored@latest로 다시 만들어 주세요",
 };
 
 export function ReportClient() {

@@ -1,5 +1,5 @@
 // SCR-001 REQ-LAND-001·002 — 복사·나에게 보내기. DOM 없이 테스트하려 의존성 주입식
-export const NPX_COMMAND = "npx scored"; // CPY-LAND-002
+export const NPX_COMMAND = "npx @jong-yeon/scored"; // CPY-LAND-002
 
 type Clip = (text: string) => Promise<void>;
 type Share = (data: { text: string; url: string }) => Promise<void>;

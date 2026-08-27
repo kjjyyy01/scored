@@ -6,7 +6,7 @@
 
 ## 에이전트가 할 수 있는 것
 
-- 성적표 생성: `npx scored` (Node 18+). `~/.claude/projects`의 세션 기록을 이 컴퓨터에서만
+- 성적표 생성: `npx @jong-yeon/scored` (Node 18+). `~/.claude/projects`의 세션 기록을 이 컴퓨터에서만
   분석하고 stdout에 전체 리포트 URL을 출력한다. 네트워크 전송 없음, 대화형 입력 없음,
   플래그는 `--help`/`--version`뿐 (다른 옵션을 추측하지 말 것).
 - 리포트 URL 해석: 사용자가 `https://scored.kr/report#<data>` URL을 건네면 아래 규약으로

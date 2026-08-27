@@ -60,7 +60,7 @@ test("--help / --version", async () => {
   assert.equal(await main(["--version"], d), 0);
   assert.equal(out.at(-1), "0.0.0-test");
   assert.equal(await main(["--help"], d), 0);
-  assert.ok(out.at(-1)?.includes("npx scored"));
+  assert.ok(out.at(-1)?.includes("npx @jong-yeon/scored"));
 });
 
 test("REQ-CLI-003 정상: 성적표 URL 다음 두 번째 탭으로 리포트 file:// 오픈", async () => {
@@ -80,7 +80,7 @@ test("REQ-CLI-003 정상: 성적표 URL 다음 두 번째 탭으로 리포트 fi
   assert.ok(html.includes("리포트에 담길 프롬프트") && html.includes("리포트에 담길 답변"));
   assert.equal((await stat(join(home, ".scored", "2026-08-17.html"))).mode & 0o777, 0o600);
   assert.ok(out.some((l) => l.includes("~/.scored/2026-08-17.html") && l.includes("7일")), "CPY-CLI-004 보관 고지 없음");
-  assert.ok(out.some((l) => l.includes('alias sc="npx scored"')), "CPY-CLI-005 재방문 안내 없음");
+  assert.ok(out.some((l) => l.includes('alias sc="npx @jong-yeon/scored"')), "CPY-CLI-005 재방문 안내 없음");
 });
 
 test("TC-CLI-003-03: ~/.scored 쓰기 불가 → ERR-CLI-004 경고, 성적표는 정상, exit 0", async () => {
