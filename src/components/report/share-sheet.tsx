@@ -45,7 +45,9 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
       const file = new File([blob], `scored-${payload.day}.png`, { type: "image/png" });
       // AC-1 모바일: 파일 공유시트 / 데스크톱: 다운로드 — 데스크톱 Chrome도 canShare가 true라 포인터로 분기
       const mobile = matchMedia("(pointer: coarse)").matches;
-      if (mobile && navigator.canShare?.({ files: [file] })) {
+      // 어느 경로로 나갔는지 EVT 파라미터에 그대로 실어야 한다 (15 EVT-SHARE-002)
+      const viaShareSheet = mobile && Boolean(navigator.canShare?.({ files: [file] }));
+      if (viaShareSheet) {
         await navigator.share({ files: [file] });
       } else {
         const a = document.createElement("a");
@@ -54,7 +56,7 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
         a.click();
         URL.revokeObjectURL(a.href);
       }
-      track("card_saved", { method: "download" }); // EVT-SHARE-002 — 공유·저장률 분자
+      track("card_saved", { method: viaShareSheet ? "share_sheet" : "download" }); // EVT-SHARE-002 — 공유·저장률 분자
       setNotice("카드를 저장했어요");
     } catch (e) {
       if ((e as Error)?.name === "AbortError") return; // 공유시트 취소는 실패가 아니다
