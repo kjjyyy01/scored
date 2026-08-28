@@ -5,22 +5,7 @@ import { judge } from "@/lib/judge.ts";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import { duration, num } from "@/lib/format.ts";
-
-// EL-RPT-002 지표 6줄 — 산출 불가한 줄은 통째로 생략 (REQ-RPT-001 AC-5)
-function rows(p: Payload): [string, string][] {
-  const s = p.stats;
-  const out: [string, string][] = [];
-  if (typeof s?.prompts === "number") out.push(["프롬프트", `${num(s.prompts)}개`]);
-  if (typeof s?.sessions === "number") out.push(["세션", `${num(s.sessions)}개`]);
-  if (s?.tokens) out.push(["토큰", num((s.tokens.in ?? 0) + (s.tokens.out ?? 0))]);
-  if (typeof s?.activeMinutes === "number") out.push(["활동 시간", duration(s.activeMinutes)]);
-  const tool = s?.tools?.[0];
-  if (tool) out.push(["최다 도구", `${tool[0]} ${num(tool[1])}회`]);
-  const sentence = p.highlights?.sentences?.[0];
-  if (sentence) out.push(["최다 문장", `“${sentence[0]}” ${sentence[1]}회`]);
-  return out;
-}
+import { rows } from "@/lib/rows.ts";
 
 export function StatCard({ payload }: { payload: Payload }) {
   const partial = isPartial(payload);
@@ -69,11 +54,11 @@ export function StatCard({ payload }: { payload: Payload }) {
       <CardContent>
         {/* grid-cols-1 = minmax(0,1fr): 암시적 auto 컬럼은 min-width:auto라 긴 문장이 컨테이너를 밀어낸다 */}
           <dl className="grid grid-cols-1 gap-3">
-          {rows(payload).map(([label, value]) => (
+          {rows(payload).map(({ label, to, text }) => (
             <div key={label} className="flex items-baseline justify-between gap-4 border-b border-border/60 pb-2 last:border-0">
               <dt className="shrink-0 text-sm text-muted-foreground">{label}</dt>
               {/* min-w-0 없으면 긴 문장이 flex 최소폭에 걸려 페이지에 가로 스크롤을 만든다 */}
-              <dd className="min-w-0 text-right font-semibold tabular-nums break-words line-clamp-2">{value}</dd>
+              <dd className="min-w-0 text-right font-semibold tabular-nums break-words line-clamp-2">{text(to)}</dd>
             </div>
           ))}
         </dl>

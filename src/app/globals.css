@@ -145,3 +145,15 @@
     transform: scale(1.08);
   }
 }
+
+/* 연출 구간 전환 — 비트(지표 디밍)와 라벨 퇴장. 값 근거는 ANIMATION.md */
+@keyframes dim {
+  to {
+    opacity: 0.35;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}

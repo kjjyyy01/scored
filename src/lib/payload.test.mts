@@ -31,10 +31,19 @@ test("TC-RES-001-01: 유효 해시 → 페이로드 객체 복원", async () => 
 });
 
 test("TC-RES-001-02: 손상 해시 → ERR-HASH-001", async () => {
-  for (const bad of ["#!!!not-base64!!!", "#YWJj", "#", ""]) {
+  for (const bad of ["#!!!not-base64!!!", "#YWJj"]) {
     const r = await decodeHash(bad);
     assert.equal(r.ok, false, `실패해야 함: ${bad}`);
     assert.equal(!r.ok && r.error, "ERR-HASH-001", `코드 불일치: ${bad}`);
+  }
+});
+
+// 이슈 #2 — 빈 해시는 손상이 아니라 부재다. 손상으로 흡수하면 result_failed 지표까지 오염된다
+test("TC-RES-001-05: 해시 부재 → Empty (error: null, ERR-HASH-001 아님)", async () => {
+  for (const none of ["#", ""]) {
+    const r = await decodeHash(none);
+    assert.equal(r.ok, false, `실패해야 함: ${JSON.stringify(none)}`);
+    assert.equal(!r.ok && r.error, null, `부재여야 함: ${JSON.stringify(none)}`);
   }
 });
 
