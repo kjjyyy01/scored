@@ -300,8 +300,12 @@
 - [x] **명세 공백 종결 (make-prd 경유)** — CPY-RES-004 신설(11 카피사전) · SCR-002 v1.3.0(EL-RES-004에 CPY 참조, Empty에 EVT-RES-003 미발화 명시, **엣지 케이스 2 정정** — "해시 제거본으로 재디코딩"은 존재한 적 없는 동작이었다) · TC-RES-001-05 추가
 - [x] **검증** — 웹 **64 tests 통과**(reveal 14 + payload 1 신설 포함) · `tsc --noEmit` · `eslint` · `next build` 전부 exit 0
 - [x] **브라우저 실측 (chrome-devtools)** — 100ms 샘플링으로 타임라인 전 구간 확인: 빌드업 0~600 → 카운트업 700~1600(최종값 정확 착지) → 비트 1800(opacity 1.00→0.35) → 릴 2100~2600 → **B+ 착지**(샘플 판정 등급과 일치) → 3030 종료. 릴 폭 전 등급 102.3px 동일(흔들림 0). Empty 상태 실화면 확인. 콘솔 에러 0
-- [ ] ⏭️ **60fps 트레이스 → Day 12 이월** — chrome-devtools MCP 서버가 세션 중 연결 종료(브라우저 프로세스 정리 중 동반 종료, 재연결 불가). PLAN상 60fps 루프는 원래 Day 12 항목이라 배분 변경 없음
-- [ ] ⏭️ **미캡처 화면 → Day 12** — 스킵/Esc 실동작 · `entry=link` 축약판 · 부분 모드 · reduced-motion 스크린샷
+- [x] **60fps 실측 (프로덕션 빌드)** — 214프레임 **중앙값 16.7ms · 최대 16.8ms · 17ms 초과 0 · 드롭 0**. dev도 동일(213프레임). rAF 하나로 카운트업 6줄 + 릴을 돌려도 프레임 예산에 여유가 있다 → **GSAP 도입 검토 조건 ③(60fps 미달) 미발동**
+- [x] **잔여 시나리오 4종 검증** — 스킵 버튼(900ms 클릭 → stage 제거·카드 표시) · Esc(1000ms → 동일 경로) · `entry=link` 축약판(rows 0 · 릴만 · **1250ms 정확 종료**) · 부분 모드(5행 · 릴 미렌더 · 1420ms = 500+80×4+600) · reduced-motion(**스테이지 한 번도 미마운트** · 102ms 카드 · `skipped:false`)
+- [x] **EVT-RES-002 실발화 확인** — `dataLayer`에서 `result_reached{entry}` → `reveal_completed{skipped:false}` 순서 확인(gtag 스텁은 GA 스크립트가 덮어써 실패 → dataLayer 직접 관찰로 전환). 중복 발화 0
+- [x] **스크린샷 5장** — `.dev-shots/day11-{reveal-countup,reveal-reel,after-reveal,empty,link-short,partial}.png`
+- [x] ⚠️ **LCP 초과 발견 → 이슈 #3 등록** — `entry=cli` **3484ms**(예산 2.5초 초과). LCP 요소가 h1(84ms) → 카드 h2(3484ms)로 갱신되어 **연출 길이에 종속**된다. `entry=link` 1600ms · reduced-motion 248ms는 통과 → **외부 유입 경로는 예산 안**이고 초과하는 건 CLI 자동 오픈 하나. Day 12 `improve-animations`에서 결론
+- 🔧 **검증 수단 교체** — chrome-devtools MCP 서버 종료 후 **CLI(`npx -p chrome-devtools-mcp chrome-devtools`)로 전환**해 전 항목 수행. MCP 재연결 없이도 `navigate_page --initScript`·`evaluate_script`·`take_screenshot`가 전부 된다
 
 ### 사용자 담당
 
@@ -311,7 +315,10 @@
 
 ### Day 11 → Day 12 인계
 
-- **Day 12 첫 작업 = `improve-animations` → `review-animations` + chrome-devtools 60fps 루프.** MCP 재연결이 선행 조건(세션 재시작)
+- **Day 12 첫 작업 = 이슈 #3(LCP) 결론 → `improve-animations` → `review-animations`.** 60fps는 Day 11에 이미 통과(드롭 0)라 루프의 남은 축은 LCP와 육안 판정
+- 🔧 **chrome-devtools는 CLI로 쓸 것** — MCP가 "already running"으로 막히면 pkill 금지(서버까지 죽는다). `npx -y -p chrome-devtools-mcp@latest chrome-devtools <cmd> --pageId N`. 단 `--filePath`는 워크스페이스 루트 밖이라 거부되므로 `--output-format json`으로 임시 경로를 받아 복사
+- ⚠️ **해시만 다른 URL은 same-document navigation** — BR-004로 주소창이 `/report`가 된 상태에서 `/report#해시`로 가면 리로드가 안 돼 `initScript`가 실행되지 않는다. 무의미 쿼리(`?n=1`)를 붙여 full navigation을 강제할 것
+- ⚠️ **데스크톱 레이아웃 정렬 불일치** — 빌드업 문구·지표 행은 좌측, 릴·버튼은 중앙이라 세로 축이 어긋난다. PRD §16의 "md+ 중앙 스테이지(최대 폭 제한)"가 미구현
 - ⚠️ **슬로우모션 검증의 함정** — `performance.now`만 늦추면 CSS 애니메이션은 실시간으로 흘러 비트·페이드가 먼저 끝난 프레임이 잡힌다. 프레임 캡처는 `requestAnimationFrame`을 no-op으로 만들고 `document.getAnimations().forEach(a => a.pause())`를 **같은 시점에** 걸어야 정지 화면이 맞는다
 - ⚠️ **빌드업 문구가 자리를 계속 차지한다** — `fade-out`은 opacity만 지워 스테이지 상단에 빈 줄이 남는다. 레이아웃 점프를 막는 대가이므로 Day 12 육안 판정에서 유지/제거 결정
 - **GSAP 도입 검토 조건 재점검은 Day 12 60fps 측정 후** — 현재까지 발동 0
