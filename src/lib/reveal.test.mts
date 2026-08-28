@@ -46,6 +46,20 @@ test("릴 스텝은 종료 시각을 넘겨도 마지막 스텝을 유지한다"
   assert.equal(reelStep(9999, 800, 16), 15);
 });
 
+// 릴 구간 시작 전에는 rAF가 이미 돌고 있다 — elapsed가 음수로 들어온다
+test("릴 스텝은 시작 전(음수 경과)에도 0을 유지한다", () => {
+  assert.equal(reelStep(-1550, 800, 16), 0);
+  assert.equal(reelStep(-1, 800, 16), 0);
+});
+
+test("릴 인덱스는 시작 전에도 실재하는 등급을 가리킨다", () => {
+  // 음수 스텝이 새면 GRADE_REEL[음수] = undefined → 릴이 빈칸으로 보인다
+  for (let final = 0; final < GRADE_REEL.length; final++) {
+    const i = reelIndex(final, reelStep(-1550, 800, 16), 16);
+    assert.ok(GRADE_REEL[i] !== undefined, `final=${final} idx=${i}`);
+  }
+});
+
 test("릴 스텝 0개면 항상 0 — 부분 모드에서 0 나눗셈이 나지 않는다", () => {
   assert.equal(reelStep(0, 0, 0), 0);
   assert.equal(reelStep(500, 0, 0), 0);

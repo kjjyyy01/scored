@@ -16,7 +16,9 @@ export function reelIndex(finalIdx: number, step: number, steps: number): number
 // (CSS steps()는 등간격이라 감속이 안 된다)
 export function reelStep(elapsed: number, dur: number, steps: number): number {
   if (steps <= 0 || dur <= 0) return 0;
-  const p = Math.min(1, elapsed / dur);
+  // 하한 clamp 필수 — 릴 구간 전에도 rAF는 돌고 있어 elapsed가 음수로 들어온다.
+  // 새면 음수 스텝 → GRADE_REEL[음수] = undefined → 릴이 빈칸으로 보인다
+  const p = Math.min(1, Math.max(0, elapsed / dur));
   return Math.min(steps - 1, Math.floor((1 - (1 - p) ** 2) * steps));
 }
 

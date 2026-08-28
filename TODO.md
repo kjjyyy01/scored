@@ -304,7 +304,9 @@
 - [x] **잔여 시나리오 4종 검증** — 스킵 버튼(900ms 클릭 → stage 제거·카드 표시) · Esc(1000ms → 동일 경로) · `entry=link` 축약판(rows 0 · 릴만 · **1250ms 정확 종료**) · 부분 모드(5행 · 릴 미렌더 · 1420ms = 500+80×4+600) · reduced-motion(**스테이지 한 번도 미마운트** · 102ms 카드 · `skipped:false`)
 - [x] **EVT-RES-002 실발화 확인** — `dataLayer`에서 `result_reached{entry}` → `reveal_completed{skipped:false}` 순서 확인(gtag 스텁은 GA 스크립트가 덮어써 실패 → dataLayer 직접 관찰로 전환). 중복 발화 0
 - [x] **스크린샷 5장** — `.dev-shots/day11-{reveal-countup,reveal-reel,after-reveal,empty,link-short,partial}.png`
-- [x] ⚠️ **LCP 초과 발견 → 이슈 #3 등록** — `entry=cli` **3484ms**(예산 2.5초 초과). LCP 요소가 h1(84ms) → 카드 h2(3484ms)로 갱신되어 **연출 길이에 종속**된다. `entry=link` 1600ms · reduced-motion 248ms는 통과 → **외부 유입 경로는 예산 안**이고 초과하는 건 CLI 자동 오픈 하나. Day 12 `improve-animations`에서 결론
+- [x] ⚠️ **LCP 초과 발견 → 당일 해결 (이슈 #3 close)** — `entry=cli` **3484ms**였다(예산 2.5초 초과). LCP 요소가 h1(size 14,616) → 카드 h2(17,516)로 갱신되어 **연출 길이에 종속**됐다. 대안 B 채택: 빌드업 문구를 display 스케일(`text-6xl md:text-7xl`, size 22,188)로 올려 **h2보다 크게** 만들자 갱신이 끊겼다 → **52ms**. `entry=link` 48ms · 부분 모드 48ms · reduced-motion 248ms. 60fps 유지. A(예산 예외)·C(연출 단축)는 불필요해져 미채택
+- [x] 🐛 **육안 검증이 잡은 결함 2건 (스크린샷 없었으면 못 봤다)** — ① **행이 0ms부터 노출**: `animate-in`에 `fill-mode`가 없어 delay 동안 초기 상태 미적용 → "0개/0개/0"이 빌드업 구간에 그대로 보였다(명세는 600ms 스태거 등장). ② **릴이 시작 전 빈칸**: `reelStep`에 하한 clamp가 없어 음수 경과 → 음수 스텝 → `GRADE_REEL[음수] = undefined`. 테스트 2건 추가(RED→GREEN, **66 tests**) + `fill-mode: both`
+- [x] 🎬 **릴 페이드인 200ms 추가** — clamp 수정 후엔 릴이 초기값 `S`로 1850ms 전에 노출됐다. **등급을 미리 흘리면 클라이맥스가 죽는다** → 릴 영역을 `reelStart`에 페이드인(회전과 겹쳐 총합 불변). 실측 타임라인: 0~600 빌드업만 → 702 행 진입 → 1901 릴 등장 → 2701~ **B+ 고정**
 - 🔧 **검증 수단 교체** — chrome-devtools MCP 서버 종료 후 **CLI(`npx -p chrome-devtools-mcp chrome-devtools`)로 전환**해 전 항목 수행. MCP 재연결 없이도 `navigate_page --initScript`·`evaluate_script`·`take_screenshot`가 전부 된다
 
 ### 사용자 담당
@@ -315,7 +317,7 @@
 
 ### Day 11 → Day 12 인계
 
-- **Day 12 첫 작업 = 이슈 #3(LCP) 결론 → `improve-animations` → `review-animations`.** 60fps는 Day 11에 이미 통과(드롭 0)라 루프의 남은 축은 LCP와 육안 판정
+- **Day 12 첫 작업 = `improve-animations` → `review-animations`.** 60fps·LCP는 Day 11에 닫혔다 — 남은 축은 **사용자 육안 판정** 하나
 - 🔧 **chrome-devtools는 CLI로 쓸 것** — MCP가 "already running"으로 막히면 pkill 금지(서버까지 죽는다). `npx -y -p chrome-devtools-mcp@latest chrome-devtools <cmd> --pageId N`. 단 `--filePath`는 워크스페이스 루트 밖이라 거부되므로 `--output-format json`으로 임시 경로를 받아 복사
 - ⚠️ **해시만 다른 URL은 same-document navigation** — BR-004로 주소창이 `/report`가 된 상태에서 `/report#해시`로 가면 리로드가 안 돼 `initScript`가 실행되지 않는다. 무의미 쿼리(`?n=1`)를 붙여 full navigation을 강제할 것
 - ⚠️ **데스크톱 레이아웃 정렬 불일치** — 빌드업 문구·지표 행은 좌측, 릴·버튼은 중앙이라 세로 축이 어긋난다. PRD §16의 "md+ 중앙 스테이지(최대 폭 제한)"가 미구현

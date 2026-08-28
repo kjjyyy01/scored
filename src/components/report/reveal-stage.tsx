@@ -84,9 +84,13 @@ export function RevealStage({
 
   return (
     <section className="grid min-h-[60svh] content-center gap-8" aria-label="성적표 공개 연출">
-      {/* CPY-RES-001 빌드업 — 지표 진입과 함께 자리를 비운다. pulse와 페이드를 다른 엘리먼트에 걸어 animation 충돌 회피 */}
+      {/* CPY-RES-001 빌드업 — 지표 진입과 함께 자리를 비운다. pulse와 페이드를 다른 엘리먼트에 걸어 animation 충돌 회피.
+          display 스케일은 LCP 요구이기도 하다: 이 문구가 카드 h2(size 17,516)보다 커야(22,861) LCP가
+          연출 종료까지 밀리지 않는다 — text-sm이던 시절 entry=cli의 LCP는 3484ms였다 (이슈 #3) */}
       <div style={{ animation: `fade-out 200ms ease-out ${p.rowStart[0] ?? p.total}ms both` }}>
-        <p className="animate-pulse text-sm text-muted-foreground">채점 중…</p>
+        <p className="animate-pulse text-center text-6xl md:text-7xl font-extrabold tracking-tight text-muted-foreground">
+          채점 중…
+        </p>
       </div>
 
       {/* 지표 카운트업 — 최종 표기는 카드와 같은 rows() SSOT.
@@ -102,7 +106,8 @@ export function RevealStage({
             <div
               key={row.label}
               className="flex items-baseline justify-between gap-4 border-b border-border/60 pb-2 last:border-0 animate-in fade-in-0 slide-in-from-bottom-2"
-              style={{ animationDelay: `${p.rowStart[i]}ms`, animationDuration: `${p.rowDur}ms`, animationTimingFunction: "ease-out" }}
+              // fill-mode: both가 없으면 delay 동안 애니메이션이 미적용이라 "0개"가 처음부터 보인다
+              style={{ animationDelay: `${p.rowStart[i]}ms`, animationDuration: `${p.rowDur}ms`, animationTimingFunction: "ease-out", animationFillMode: "both" }}
             >
               <dt className="shrink-0 text-sm text-muted-foreground">{row.label}</dt>
               <dd
@@ -119,8 +124,14 @@ export function RevealStage({
       )}
 
       {/* 등급 릴 — DESIGN.md가 "등급은 색이 아니라 크기·굵기·연출로"를 확정해 모션이 정보 위계를 떠맡는다 */}
+      {/* 릴 구간 시작에 맞춰 등장 — 그전에 초기 등급이 보이면 클라이맥스를 미리 흘린다.
+          회전과 겹치는 200ms라 타임라인 총합은 불변 */}
       {p.reelSteps > 0 && (
-        <div aria-hidden="true" className="grid justify-items-center gap-2">
+        <div
+          aria-hidden="true"
+          className="grid justify-items-center gap-2 animate-in fade-in-0"
+          style={{ animationDelay: `${p.reelStart}ms`, animationDuration: "200ms", animationFillMode: "both" }}
+        >
           {/* CPY-RES-003 — 릴 정지 직전까지만 노출 */}
           <p
             className="text-sm text-muted-foreground"
