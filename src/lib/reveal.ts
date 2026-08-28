@@ -12,14 +12,15 @@ export function reelIndex(finalIdx: number, step: number, steps: number): number
   return (start + step) % len;
 }
 
-// 경과 시간 → 스텝 번호. easeOutQuad 감속이 슬롯 느낌의 핵심
-// (CSS steps()는 등간격이라 감속이 안 된다)
+// 경과 시간 → 스텝 번호. easeOutCubic 감속이 슬롯 느낌의 핵심
+// (CSS steps()는 등간격이라 감속이 안 된다). 세제곱은 제곱보다 마지막 스텝을 길게 잡아
+// "곧 멈춘다"는 예고가 생긴다 — 2026-08-28 육안 판정에서 제곱은 "너무 빨리 지나간다"로 컷
 export function reelStep(elapsed: number, dur: number, steps: number): number {
   if (steps <= 0 || dur <= 0) return 0;
   // 하한 clamp 필수 — 릴 구간 전에도 rAF는 돌고 있어 elapsed가 음수로 들어온다.
   // 새면 음수 스텝 → GRADE_REEL[음수] = undefined → 릴이 빈칸으로 보인다
   const p = Math.min(1, Math.max(0, elapsed / dur));
-  return Math.min(steps - 1, Math.floor((1 - (1 - p) ** 2) * steps));
+  return Math.min(steps - 1, Math.floor((1 - (1 - p) ** 3) * steps));
 }
 
 // 카운트업 이징 — 초반 44%에 90% 도달, 마지막 자릿수에서 뜸들이는 착지감
@@ -41,7 +42,7 @@ export type Plan = {
 // 모드별 구간 길이 — ANIMATION.md §공개 연출 타임라인 예산의 표 그대로
 // skim = link + 부분 모드 겹침. 네 번째 모드를 만들지 않고 사실상 페이드로 접는다
 const BUDGET = {
-  full: { buildup: 600, stagger: 90, rowDur: 240, countDur: 700, beat: 100, reelDur: 800, reelSteps: 16, popDur: 380, cardDur: 350 },
+  full: { buildup: 600, stagger: 90, rowDur: 240, countDur: 700, beat: 100, reelDur: 1100, reelSteps: 16, popDur: 380, cardDur: 350 },
   link: { buildup: 250, stagger: 0, rowDur: 0, countDur: 0, beat: 0, reelDur: 700, reelSteps: 16, popDur: 300, cardDur: 250 },
   // 부분 모드 rowDur 200은 스태거 80과의 겹침 비율을 full(90:240)에 맞춘 값
   partial: { buildup: 500, stagger: 80, rowDur: 200, countDur: 600, beat: 0, reelDur: 0, reelSteps: 0, popDur: 0, cardDur: 300 },

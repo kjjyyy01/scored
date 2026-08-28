@@ -75,12 +75,12 @@ test("easeOutQuart는 44% 지점에서 90%에 도달한다", () => {
 
 // ── 타임라인 예산 (ANIMATION.md §공개 연출 타임라인 예산의 검산값) ──
 
-test("풀 연출 총합은 3030ms — 지표 6줄", () => {
-  assert.equal(plan("cli", false, 6).total, 3030);
+test("풀 연출 총합은 3330ms — 지표 6줄", () => {
+  assert.equal(plan("cli", false, 6).total, 3330);
 });
 
-test("행이 5줄이면 총합이 2940ms로 자동 감산된다", () => {
-  assert.equal(plan("cli", false, 5).total, 2940);
+test("행이 5줄이면 총합이 3240ms로 자동 감산된다", () => {
+  assert.equal(plan("cli", false, 5).total, 3240);
 });
 
 test("풀 연출 구간은 빌드업 → 카운트업 → 비트 → 릴 → pop 순서로 겹치지 않는다", () => {
