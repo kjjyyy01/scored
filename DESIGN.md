@@ -56,6 +56,11 @@
 - **전부 `lucide-react`.** 유니코드 문자(`↓`·`↑`·`✓`)를 아이콘으로 쓰지 않는다 — 폰트마다 자형·굵기·baseline이 달라 텍스트와 정렬이 어긋나고, 크기를 `size-*`로 제어할 수 없다
 - 텍스트와 함께 쓰면 아이콘에 `aria-hidden="true"`, 컨테이너는 `inline-flex items-center gap-1`
 - 크기: 본문 옆 `size-4`, 단독 버튼 `size-5` (Button 기본값이 svg를 16px로 줄이므로 명시 필요)
+
+### 커서
+
+- **클릭 가능한 것은 전부 `cursor-pointer`.** Tailwind v4 preflight가 `button`에 `cursor: default`를 주므로(v3와 반대) 명시하지 않으면 버튼이 클릭 가능해 보이지 않는다
+- 규칙은 `ui/button.tsx`의 `buttonVariants` base 한 곳에만 둔다 — 클릭 요소가 전부 이 컴포넌트를 통하므로 개별 지정이 필요 없다. `<a>`는 브라우저 기본이 pointer
 - 현재 사용: `Sun`·`Moon`(테마 토글) · `ChevronDown`(대시보드 앵커) · `ChevronUp`(맨 위로)
 
 ### 다크모드
@@ -70,6 +75,8 @@
   ```
 - **JS 없이도 동작한다** — 스크립트가 죽으면 `data-theme`이 비고 `color-scheme: light dark`가 시스템을 따른다. 마크업 위생 규칙을 어기지 않는 이유가 이것이다(토글만 사라지고 테마는 살아있다)
 - FOUC 방지는 `layout.tsx` `<head>`의 **동기 인라인 `<script>`** — `next/script`의 `afterInteractive`면 첫 페인트에 반대 테마가 한 프레임 번쩍인다
+- **`<html>`에 `suppressHydrationWarning` 필수** — 스크립트가 서버 HTML에 없는 `data-theme`을 붙이므로 속성이 어긋난다. 없으면 hydration 에러가 뜬다 (Next.js 공식 가이드 §Themes)
+- ⚠️ **dev 전용 함정**: Strict Mode 리마운트에서 React가 `<html>`을 **JSX가 아는 속성만 남기고 리셋**해 스크립트가 심은 값이 지워진다. `useLayoutEffect`로 재적용한다 — 프로덕션에선 no-op이라 dev에서만 보이는 증상이고, 이걸 코드 결함으로 오인하기 쉽다
 - Tailwind `dark:` 변형은 `@custom-variant dark`로 **미디어쿼리와 `data-theme`을 둘 다** 본다. 한쪽만 보면 토글이 안 먹거나(미디어쿼리) JS 없을 때 안 먹는다(속성)
 - ↩︎ **개정 이력**: 2026-08-18 `.dark` 클래스 → 미디어쿼리 전환(시스템 추종만, 토글은 v2 backlog) → **2026-08-28 토글을 v1으로 당김**. backlog.md에 v2 항목이 실제로 등록된 적은 없어 제거할 항목은 없다
 

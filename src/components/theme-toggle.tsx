@@ -1,12 +1,11 @@
 "use client";
 // 테마 토글 — 라이트 ↔ 다크. globals.css의 color-scheme 하나만 바꾼다
 // 선택 전에는 data-theme이 비어 있고 CSS가 OS를 따른다 (시스템 추종은 기본 동작으로 남는다)
-import { useSyncExternalStore } from "react";
+import { useLayoutEffect, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const ORDER = ["light", "dark"] as const;
-type Theme = (typeof ORDER)[number];
+type Theme = "light" | "dark";
 
 const META: Record<Theme, { icon: typeof Sun; label: string }> = {
   light: { icon: Sun, label: "밝게" },
@@ -34,6 +33,16 @@ const readServer = (): Theme => "light";
 
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, read, readServer);
+
+  // dev 전용 보정: Strict Mode 리마운트에서 React가 <html>을 JSX가 아는 속성만 남기고 리셋해
+  // 인라인 스크립트가 심은 data-theme이 지워진다. 프로덕션에선 no-op (Next.js 공식 가이드)
+  useLayoutEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved && document.documentElement.dataset.theme !== saved) {
+      document.documentElement.dataset.theme = saved;
+      listeners.forEach((l) => l());
+    }
+  }, []);
 
   // 누르는 순간부터 시스템 추종을 벗어나 선택이 고정된다
   const toggle = () => {
