@@ -56,11 +56,12 @@
 - **전부 `lucide-react`.** 유니코드 문자(`↓`·`↑`·`✓`)를 아이콘으로 쓰지 않는다 — 폰트마다 자형·굵기·baseline이 달라 텍스트와 정렬이 어긋나고, 크기를 `size-*`로 제어할 수 없다
 - 텍스트와 함께 쓰면 아이콘에 `aria-hidden="true"`, 컨테이너는 `inline-flex items-center gap-1`
 - 크기: 본문 옆 `size-4`, 단독 버튼 `size-5` (Button 기본값이 svg를 16px로 줄이므로 명시 필요)
-- 현재 사용: `SunMoon`·`Sun`·`Moon`(테마 토글) · `ChevronDown`(대시보드 앵커) · `ChevronUp`(맨 위로)
-- **테마 아이콘은 해·달 한 계열로 묶는다** — 시스템 상태에 `Monitor`를 쓰면 "밝기"가 아니라 "기기"로 읽힌다
+- 현재 사용: `Sun`·`Moon`(테마 토글) · `ChevronDown`(대시보드 앵커) · `ChevronUp`(맨 위로)
 
 ### 다크모드
-- **v1에 토글 포함 (2026-08-28 사용자 결정)** — 시스템 → 라이트 → 다크 3단 순환, `localStorage.theme`에 저장. 전역 우상단 고정 버튼 1개(`src/components/theme-toggle.tsx`)
+- **v1에 토글 포함 (2026-08-28 사용자 결정)** — **라이트 ↔ 다크 2단**, `localStorage.theme`에 저장. 전역 우상단 고정 버튼 1개(`src/components/theme-toggle.tsx`)
+- **시스템 추종은 UI에서 뺐지만 기본 동작으로 남는다** — 선택 전에는 `data-theme`이 비어 있고 CSS가 OS를 따른다. 아이콘은 그때 **실효 테마**를 보여주고(OS 다크면 달), 누르는 순간부터 선택이 고정된다. 시스템 상태를 3번째 칸으로 두면 "지금 뭐가 켜져 있는지"를 아이콘 하나로 못 읽는다
+- OS 설정 변경은 `matchMedia` change로 구독한다 — 선택 전이라면 아이콘도 따라가야 한다 (CSS는 자동)
 - 구현: **CSS `light-dark()`** — 라이트/다크 값을 변수 24쌍으로 한 벌만 정의하고, 전환은 `color-scheme` 한 줄로 한다. 변수 블록을 테마별로 복제하지 않는다
   ```css
   :root { color-scheme: light dark; --background: light-dark(라이트, 다크); }
