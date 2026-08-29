@@ -10,6 +10,7 @@ import { RevealStage } from "./reveal-stage";
 import { ShareSheet } from "./share-sheet";
 import { Dashboard } from "./dashboard";
 import { track } from "@/lib/analytics.ts";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type State =
@@ -144,8 +145,12 @@ export function ReportClient() {
       </Button>
       <ShareSheet payload={state.payload} open={sharing} onClose={() => setSharing(false)} />
       {/* EL-RPT-006 상세 보기 앵커 — 아래 SCR-004 섹션으로 스크롤 (탭 아님) */}
-      <a href="#dashboard" className="w-fit text-sm text-muted-foreground underline-offset-4 hover:underline">
-        ↓ 오늘의 기록 자세히 보기
+      <a
+        href="#dashboard"
+        className="inline-flex w-fit items-center gap-1 text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
+        <ChevronDown className="size-4" aria-hidden="true" />
+        오늘의 기록 자세히 보기
       </a>
       {/* EL-RPT-007 / EL-RPT-008 — 진입 경로에 따라 배타 (REQ-RPT-003 AC-2b).
           링크 수신자는 오늘 뽑은 적이 없어 "내일 또"가 성립하지 않고, 랜딩으로 갈 출구가 여기뿐이다 */}

@@ -2,14 +2,15 @@
 // 테마 토글 — 시스템 → 라이트 → 다크 순환. globals.css의 color-scheme 하나만 바꾼다
 // 시스템 상태는 data-theme 속성 자체를 지우는 것으로 표현한다 (light-dark()가 시스템을 따름)
 import { useSyncExternalStore } from "react";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Moon, Sun, SunMoon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const ORDER = ["system", "light", "dark"] as const;
 type Theme = (typeof ORDER)[number];
 
-const META: Record<Theme, { icon: typeof Monitor; label: string }> = {
-  system: { icon: Monitor, label: "시스템 설정" },
+// 세 상태를 해·달 한 계열로 묶는다 — 모니터 아이콘은 "밝기"가 아니라 "기기"로 읽힌다
+const META: Record<Theme, { icon: typeof Sun; label: string }> = {
+  system: { icon: SunMoon, label: "시스템 설정" },
   light: { icon: Sun, label: "밝게" },
   dark: { icon: Moon, label: "어둡게" },
 };

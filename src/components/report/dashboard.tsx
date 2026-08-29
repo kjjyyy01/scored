@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import type { Payload } from "../../../cli/src/types.ts";
 import { weekDelta } from "@/lib/dashboard.ts";
 import { duration, num } from "@/lib/format.ts";
+import { ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -238,8 +239,12 @@ export function Dashboard({ payload, entry, onFirstView }: { payload: Payload; e
       )}
 
       {/* EL-DASH-005 — href="#top"은 앵커 부재 시 문서 최상단 (HTML 표준) */}
-      <a href="#top" className="w-fit text-sm text-muted-foreground underline-offset-4 hover:underline">
-        ↑ 맨 위로
+      <a
+        href="#top"
+        className="inline-flex w-fit items-center gap-1 text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
+        <ChevronUp className="size-4" aria-hidden="true" />
+        맨 위로
       </a>
     </section>
   );
