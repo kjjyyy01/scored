@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 // 본문·헤드라인·숫자: Pretendard 가변 1파일 (DESIGN.md 서체)
 // ponytail: 2MB 단일 woff2 + swap. Day 17 LCP 미달 시 dynamic-subset CSS로 교체
@@ -41,8 +42,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="ko"
       className={`${pretendard.variable} ${geistMono.variable} h-full antialiased`}
+      // 아래 인라인 스크립트가 첫 페인트 전에 data-theme을 붙인다 — 서버 HTML엔 없어 속성이 어긋난다
+      suppressHydrationWarning
     >
+      <head>
+        {/* 첫 페인트 전에 테마를 확정한다 — afterInteractive면 다크에서 흰 화면이 한 프레임 번쩍인다 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
+        <ThemeToggle />
         {children}
         {GA_ID && (
           <>

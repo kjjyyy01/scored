@@ -7,14 +7,16 @@ const MIN_PROMPTS = 10; // BR-002 데이터 부족 경계
 
 export type DecodeResult =
   | { ok: true; payload: Payload }
-  | { ok: false; error: "ERR-HASH-001" | "ERR-HASH-002" };
+  // error: null = 해시 부재. 손상이 아니라 Empty 전이라 EVT-RES-003을 발화하지 않는다 (08 §상태전이)
+  | { ok: false; error: "ERR-HASH-001" | "ERR-HASH-002" | null };
 
 const FAIL = { ok: false, error: "ERR-HASH-001" } as const;
+const NONE = { ok: false, error: null } as const;
 
 // base64url → deflate-raw 해제 → JSON (CLI encode.ts의 역연산)
 export async function decodeHash(hash: string): Promise<DecodeResult> {
   const data = hash.replace(/^#/, "");
-  if (!data) return FAIL;
+  if (!data) return NONE;
 
   let json: string;
   try {

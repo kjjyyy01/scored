@@ -280,3 +280,50 @@
 - **`stat-card.tsx`는 무수정 유지** — `toBlob` PNG 캡처 대상 + 서버 컴포넌트. 연출은 카드 바깥 스테이지에서만
 - 잔여 미구현 EVT: **EVT-RES-002뿐** (연출과 함께 발화). 중복 발화 가드 필수 — 깔때기 지표다
 - Day 12는 `improve-animations` → `review-animations` + chrome-devtools 60fps 루프. **LCP 2.5초 예산 재확인**은 Day 17이지만 연출이 LCP를 막지 않는지는 Day 12에 선확인
+
+---
+
+## Day 11 (**8/28 금**) — 축 패스 2일차: 공개 연출 본체 구현
+
+> 브랜치 `feat/day11-reveal`. PLAN 지정 스킬 적용 — `animate`(구현) · `/tdd`(재미 장치 판정 로직 필수 대상) · `make-prd`(CPY 신설) · chrome-devtools(실측). **의존성 추가 0** — ANIMATION.md 도입 검토 조건 3개 중 발동한 것 없음(릴 손맛·오케스트레이션·60fps 모두 CSS+rAF로 충족, 단 60fps는 Day 12 정식 측정).
+
+### Claude 담당
+
+- [x] **`src/lib/reveal.ts` 순수 로직** — `GRADE_REEL`·`reelIndex`·`reelStep`·`easeOutQuart`·`plan()`. 모드 4종(full·link·partial·skim)을 `BUDGET` 테이블 데이터로 표현해 **분기 코드 없이** 부분 모드의 릴·pop이 0이 된다
+- [x] **`reveal.test.mts` 14건 (TDD, RED 확인 후 구현)** — 릴 마지막 스텝이 6등급 전부에서 판정 등급에 착지 · 음수 모듈로 방어 · 감속(뒤 스텝이 앞의 2배 이상) · `easeOutQuart(0.44)≈0.90` · 타임라인 검산(3030/2940/1250/1500/1340/1100/500)
+- [x] **`src/lib/rows.ts` 추출** — 지표 6행을 `{label, to, text}`로 재정의해 카드(정적)와 연출(카운트업)이 같은 SSOT를 쓴다. `stat-card.tsx`는 `text(to)` 렌더로만 변경(구조·표기 동일, PNG 캡처 대상 성격 유지)
+- [x] **`src/components/report/reveal-stage.tsx`** — 문서 흐름 `min-h-[60svh]`(fixed 미사용) · rAF 1개로 카운트업+릴 · `textContent` 직접 갱신(React 렌더 0) · 릴은 인덱스 변화 시에만 쓰기 · 행 진입/비트/pop/라벨 퇴장은 CSS(`animate-in`·`dim`·`animate-pop`·`fade-out`)
+- [x] **`report-client.tsx` 상태 머신** — State 유니온에 `revealing`·`empty` 추가. `ready`에 `cardDur`를 실어 모드별 카드 전환(350/250/300/200ms)을 호출부가 `plan()` 재계산 없이 쓴다
+- [x] **이슈 #2 근본 수정 (같은 커밋)** — 빈 해시를 `decodeHash`의 계약으로 끌어올려 `error: null`(부재)과 `ERR-HASH-001`(손상)을 분리. 호출부 분기가 아니라 도메인 계약이라 **`result_failed` 오염이 원천 차단**된다. `payload.test.mts` TC-RES-001-05 신설(RED→GREEN), 기존 TC-RES-001-02에서 `"#"`·`""` 제거
+- [x] **EVT-RES-002 발화** — 스킵·자연 종료·reduced-motion 3경로가 `finish()` 하나로 수렴, `done` ref 중복 가드. 잔여 미구현 EVT 0
+- [x] **reduced-motion (AC-4)** — 스테이지를 마운트하지 않고 카드 200ms 페이드. `skipped: false`(건너뛴 주체가 사용자가 아니다). 전역 `animation-duration: 0.01ms` 킬 블록 미도입
+- [x] **명세 공백 종결 (make-prd 경유)** — CPY-RES-004 신설(11 카피사전) · SCR-002 v1.3.0(EL-RES-004에 CPY 참조, Empty에 EVT-RES-003 미발화 명시, **엣지 케이스 2 정정** — "해시 제거본으로 재디코딩"은 존재한 적 없는 동작이었다) · TC-RES-001-05 추가
+- [x] **검증** — 웹 **64 tests 통과**(reveal 14 + payload 1 신설 포함) · `tsc --noEmit` · `eslint` · `next build` 전부 exit 0
+- [x] **브라우저 실측 (chrome-devtools)** — 100ms 샘플링으로 타임라인 전 구간 확인: 빌드업 0~600 → 카운트업 700~1600(최종값 정확 착지) → 비트 1800(opacity 1.00→0.35) → 릴 2100~2600 → **B+ 착지**(샘플 판정 등급과 일치) → 3030 종료. 릴 폭 전 등급 102.3px 동일(흔들림 0). Empty 상태 실화면 확인. 콘솔 에러 0
+- [x] **60fps 실측 (프로덕션 빌드)** — 214프레임 **중앙값 16.7ms · 최대 16.8ms · 17ms 초과 0 · 드롭 0**. dev도 동일(213프레임). rAF 하나로 카운트업 6줄 + 릴을 돌려도 프레임 예산에 여유가 있다 → **GSAP 도입 검토 조건 ③(60fps 미달) 미발동**
+- [x] **잔여 시나리오 4종 검증** — 스킵 버튼(900ms 클릭 → stage 제거·카드 표시) · Esc(1000ms → 동일 경로) · `entry=link` 축약판(rows 0 · 릴만 · **1250ms 정확 종료**) · 부분 모드(5행 · 릴 미렌더 · 1420ms = 500+80×4+600) · reduced-motion(**스테이지 한 번도 미마운트** · 102ms 카드 · `skipped:false`)
+- [x] **EVT-RES-002 실발화 확인** — `dataLayer`에서 `result_reached{entry}` → `reveal_completed{skipped:false}` 순서 확인(gtag 스텁은 GA 스크립트가 덮어써 실패 → dataLayer 직접 관찰로 전환). 중복 발화 0
+- [x] **스크린샷 5장** — `.dev-shots/day11-{reveal-countup,reveal-reel,after-reveal,empty,link-short,partial}.png`
+- [x] ⚠️ **LCP 초과 발견 → 당일 해결 (이슈 #3 close)** — `entry=cli` **3484ms**였다(예산 2.5초 초과). LCP 요소가 h1(size 14,616) → 카드 h2(17,516)로 갱신되어 **연출 길이에 종속**됐다. 대안 B 채택: 빌드업 문구를 display 스케일(`text-6xl md:text-7xl`, size 22,188)로 올려 **h2보다 크게** 만들자 갱신이 끊겼다 → **52ms**. `entry=link` 48ms · 부분 모드 48ms · reduced-motion 248ms. 60fps 유지. A(예산 예외)·C(연출 단축)는 불필요해져 미채택
+- [x] 🐛 **육안 검증이 잡은 결함 2건 (스크린샷 없었으면 못 봤다)** — ① **행이 0ms부터 노출**: `animate-in`에 `fill-mode`가 없어 delay 동안 초기 상태 미적용 → "0개/0개/0"이 빌드업 구간에 그대로 보였다(명세는 600ms 스태거 등장). ② **릴이 시작 전 빈칸**: `reelStep`에 하한 clamp가 없어 음수 경과 → 음수 스텝 → `GRADE_REEL[음수] = undefined`. 테스트 2건 추가(RED→GREEN, **66 tests**) + `fill-mode: both`
+- [x] 🎬 **릴 페이드인 200ms 추가** — clamp 수정 후엔 릴이 초기값 `S`로 1850ms 전에 노출됐다. **등급을 미리 흘리면 클라이맥스가 죽는다** → 릴 영역을 `reelStart`에 페이드인(회전과 겹쳐 총합 불변). 실측 타임라인: 0~600 빌드업만 → 702 행 진입 → 1901 릴 등장 → 2701~ **B+ 고정**
+- 🔧 **검증 수단 교체** — chrome-devtools MCP 서버 종료 후 **CLI(`npx -p chrome-devtools-mcp chrome-devtools`)로 전환**해 전 항목 수행. MCP 재연결 없이도 `navigate_page --initScript`·`evaluate_script`·`take_screenshot`가 전부 된다
+
+### 사용자 담당
+
+- [x] 🔴 **모션 감성 판정 — 통과** (2026-08-28). ① 첫인상 "지금 좋아" ② **릴 속도는 원안 컷** — 800ms·easeOutQuad가 "등급 측정이 너무 빨리 지나간다"로 걸려 **1100ms·easeOutCubic**으로 조정(마지막 등급 체류 200ms → 437ms, 총 3030 → 3330ms) 후 "지금 속도 좋아" 통과. **GSAP 도입 검토 조건 3개 전부 미발동 확정**
+- [x] **테마 토글 v1 도입 (F-008)** — 사용자 결정으로 DESIGN.md의 v2 backlog 항목을 당겼다. 시스템 → 라이트 → 다크 3단 순환, `localStorage.theme`. **CSS `light-dark()`로 변수 24쌍을 한 벌만** 두고 `color-scheme` 한 줄로 전환 — 토글을 넣으면서 오히려 변수 블록이 2벌 → 1벌로 줄었다. FOUC 방지는 `<head>` 동기 인라인 script. `@custom-variant dark`가 미디어쿼리·`data-theme`을 둘 다 봐서 **JS가 죽어도 시스템 추종은 남는다**(마크업 위생 규칙 유지). PRD: F-008 · EL-COM-001(04 전역 UI 절 신설) · CPY-COM-004 · 14 브라우저 저장 항목
+- [ ] ⚠️ **비트 디밍 구간 대비 2.34:1 미달** — 라이트·다크 공통, `aria-hidden`이고 같은 값이 1.2초 뒤 카드에서 19.76:1로 재노출. 디밍 0.35 → 0.5 완화는 연출 강도와 맞바꾸는 판단이라 **Day 17 접근성 스팟 패스**로 이관
+- [ ] 실기기 수단 확보 (Day 16 밤 마감)
+- [ ] 🔒 Day 21 초기 유저 인터뷰 런칭 직후 앞당김 (확정 항목)
+
+### Day 11 → Day 12 인계
+
+- **Day 12 첫 작업 = `improve-animations` → `review-animations`.** 60fps·LCP는 Day 11에 닫혔다 — 남은 축은 **사용자 육안 판정** 하나
+- 🔧 **chrome-devtools는 CLI로 쓸 것** — MCP가 "already running"으로 막히면 pkill 금지(서버까지 죽는다). `npx -y -p chrome-devtools-mcp@latest chrome-devtools <cmd> --pageId N`. 단 `--filePath`는 워크스페이스 루트 밖이라 거부되므로 `--output-format json`으로 임시 경로를 받아 복사
+- ⚠️ **`next start`는 빌드 후 반드시 재시작** — 시작 시점의 빌드 매니페스트를 들고 있어, 재빌드로 청크 해시가 바뀌면 **클라이언트 JS 로드가 실패한다.** HTML은 정상으로 보이는데 이벤트 핸들러만 안 붙어 "버튼은 있는데 반응 없다"가 된다(2026-08-28 테마 토글 검증에서 실제 발생, 코드 결함으로 오인). dev(HMR)에는 없는 함정이라 dev에서 정상이면 이걸 먼저 의심할 것
+- ⚠️ **해시만 다른 URL은 same-document navigation** — BR-004로 주소창이 `/report`가 된 상태에서 `/report#해시`로 가면 리로드가 안 돼 `initScript`가 실행되지 않는다. 무의미 쿼리(`?n=1`)를 붙여 full navigation을 강제할 것
+- ⚠️ **데스크톱 레이아웃 정렬 불일치** — 빌드업 문구·지표 행은 좌측, 릴·버튼은 중앙이라 세로 축이 어긋난다. PRD §16의 "md+ 중앙 스테이지(최대 폭 제한)"가 미구현
+- ⚠️ **슬로우모션 검증의 함정** — `performance.now`만 늦추면 CSS 애니메이션은 실시간으로 흘러 비트·페이드가 먼저 끝난 프레임이 잡힌다. 프레임 캡처는 `requestAnimationFrame`을 no-op으로 만들고 `document.getAnimations().forEach(a => a.pause())`를 **같은 시점에** 걸어야 정지 화면이 맞는다
+- ⚠️ **빌드업 문구가 자리를 계속 차지한다** — `fade-out`은 opacity만 지워 스테이지 상단에 빈 줄이 남는다. 레이아웃 점프를 막는 대가이므로 Day 12 육안 판정에서 유지/제거 결정
+- **GSAP 도입 검토 조건 재점검은 Day 12 60fps 측정 후** — 현재까지 발동 0

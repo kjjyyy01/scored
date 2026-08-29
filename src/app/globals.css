@@ -51,80 +51,58 @@
   --animate-pop: pop 380ms var(--ease-out-back);
 }
 
+/* 테마 — 라이트/다크 값을 light-dark()로 한 쌍씩 묶는다 (변수 블록 1벌).
+   전환은 color-scheme 하나만 바꾸면 되고, data-theme이 없으면 시스템을 따른다 */
 :root {
-  /* 체크박스·스크롤바 등 브라우저 기본 컨트롤도 테마를 따라간다 */
-  color-scheme: light;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.147 0.004 49.25);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.147 0.004 49.25);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.147 0.004 49.25);
-  --primary: oklch(0.5 0.15 150);
+  /* 브라우저 기본 컨트롤·light-dark() 둘 다 이 값을 본다. JS가 죽어도 시스템 추종으로 남는다 */
+  color-scheme: light dark;
+  --background: light-dark(oklch(1 0 0), oklch(0.147 0.004 49.25));
+  --foreground: light-dark(oklch(0.147 0.004 49.25), oklch(0.985 0.001 106.423));
+  --card: light-dark(oklch(1 0 0), oklch(0.216 0.006 56.043));
+  --card-foreground: light-dark(oklch(0.147 0.004 49.25), oklch(0.985 0.001 106.423));
+  --popover: light-dark(oklch(1 0 0), oklch(0.216 0.006 56.043));
+  --popover-foreground: light-dark(oklch(0.147 0.004 49.25), oklch(0.985 0.001 106.423));
+  --primary: light-dark(oklch(0.5 0.15 150), oklch(0.48 0.14 150));
   --primary-foreground: oklch(0.98 0.016 73.684);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.97 0.001 106.424);
-  --muted-foreground: oklch(0.553 0.013 58.071);
-  --accent: oklch(0.97 0.001 106.424);
-  --accent-foreground: oklch(0.216 0.006 56.043);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.923 0.003 48.717);
-  --input: oklch(0.923 0.003 48.717);
-  --ring: oklch(0.709 0.01 56.259);
+  --secondary: light-dark(oklch(0.967 0.001 286.375), oklch(0.274 0.006 286.033));
+  --secondary-foreground: light-dark(oklch(0.21 0.006 285.885), oklch(0.985 0 0));
+  --muted: light-dark(oklch(0.97 0.001 106.424), oklch(0.268 0.007 34.298));
+  --muted-foreground: light-dark(oklch(0.553 0.013 58.071), oklch(0.709 0.01 56.259));
+  --accent: light-dark(oklch(0.97 0.001 106.424), oklch(0.268 0.007 34.298));
+  --accent-foreground: light-dark(oklch(0.216 0.006 56.043), oklch(0.985 0.001 106.423));
+  --destructive: light-dark(oklch(0.577 0.245 27.325), oklch(0.704 0.191 22.216));
+  --border: light-dark(oklch(0.923 0.003 48.717), oklch(1 0 0 / 10%));
+  --input: light-dark(oklch(0.923 0.003 48.717), oklch(1 0 0 / 15%));
+  --ring: light-dark(oklch(0.709 0.01 56.259), oklch(0.553 0.013 58.071));
   --chart-1: oklch(0.837 0.128 66.29);
   --chart-2: oklch(0.705 0.213 47.604);
   --chart-3: oklch(0.646 0.222 41.116);
   --chart-4: oklch(0.553 0.195 38.402);
   --chart-5: oklch(0.47 0.157 37.304);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0.001 106.423);
-  --sidebar-foreground: oklch(0.147 0.004 49.25);
-  --sidebar-primary: oklch(0.646 0.222 41.116);
+  --sidebar: light-dark(oklch(0.985 0.001 106.423), oklch(0.216 0.006 56.043));
+  --sidebar-foreground: light-dark(oklch(0.147 0.004 49.25), oklch(0.985 0.001 106.423));
+  --sidebar-primary: light-dark(oklch(0.646 0.222 41.116), oklch(0.705 0.213 47.604));
   --sidebar-primary-foreground: oklch(0.98 0.016 73.684);
-  --sidebar-accent: oklch(0.97 0.001 106.424);
-  --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
-  --sidebar-border: oklch(0.923 0.003 48.717);
-  --sidebar-ring: oklch(0.709 0.01 56.259);
+  --sidebar-accent: light-dark(oklch(0.97 0.001 106.424), oklch(0.268 0.007 34.298));
+  --sidebar-accent-foreground: light-dark(oklch(0.216 0.006 56.043), oklch(0.985 0.001 106.423));
+  --sidebar-border: light-dark(oklch(0.923 0.003 48.717), oklch(1 0 0 / 10%));
+  --sidebar-ring: light-dark(oklch(0.709 0.01 56.259), oklch(0.553 0.013 58.071));
 }
 
-/* 다크모드: 시스템 추종만 (JS 0, DESIGN.md) */
-@media (prefers-color-scheme: dark) {
-  :root {
-  color-scheme: dark;
-  --background: oklch(0.147 0.004 49.25);
-  --foreground: oklch(0.985 0.001 106.423);
-  --card: oklch(0.216 0.006 56.043);
-  --card-foreground: oklch(0.985 0.001 106.423);
-  --popover: oklch(0.216 0.006 56.043);
-  --popover-foreground: oklch(0.985 0.001 106.423);
-  --primary: oklch(0.48 0.14 150);
-  --primary-foreground: oklch(0.98 0.016 73.684);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.268 0.007 34.298);
-  --muted-foreground: oklch(0.709 0.01 56.259);
-  --accent: oklch(0.268 0.007 34.298);
-  --accent-foreground: oklch(0.985 0.001 106.423);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.553 0.013 58.071);
-  --chart-1: oklch(0.837 0.128 66.29);
-  --chart-2: oklch(0.705 0.213 47.604);
-  --chart-3: oklch(0.646 0.222 41.116);
-  --chart-4: oklch(0.553 0.195 38.402);
-  --chart-5: oklch(0.47 0.157 37.304);
-  --sidebar: oklch(0.216 0.006 56.043);
-  --sidebar-foreground: oklch(0.985 0.001 106.423);
-  --sidebar-primary: oklch(0.705 0.213 47.604);
-  --sidebar-primary-foreground: oklch(0.98 0.016 73.684);
-  --sidebar-accent: oklch(0.268 0.007 34.298);
-  --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.553 0.013 58.071);
+/* 사용자 선택 — layout.tsx의 인라인 스크립트가 렌더 전에 채운다 (FOUC 방지) */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/* Tailwind dark: 변형 — 시스템 추종과 사용자 선택 둘 다 본다.
+   미디어쿼리만 보면 토글이 안 먹고, data-theme만 보면 JS 없을 때 안 먹는다 */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) { @slot }
   }
+  &:where([data-theme="dark"], [data-theme="dark"] *) { @slot }
 }
+
 
 @layer base {
   * {
@@ -143,5 +121,17 @@
 @keyframes pop {
   50% {
     transform: scale(1.08);
+  }
+}
+
+/* 연출 구간 전환 — 비트(지표 디밍)와 라벨 퇴장. 값 근거는 ANIMATION.md */
+@keyframes dim {
+  to {
+    opacity: 0.35;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
   }
 }

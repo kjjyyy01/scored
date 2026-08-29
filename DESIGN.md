@@ -51,8 +51,34 @@
 | 공유 카드·OG 이미지 | 테마 무관 **라이트 고정** (미리보기 일관성) |
 | 반경·그림자 | shadcn 기본 (`--radius: 0.625rem`) 유지 |
 
+### 아이콘 (2026-08-28 확정)
+
+- **전부 `lucide-react`.** 유니코드 문자(`↓`·`↑`·`✓`)를 아이콘으로 쓰지 않는다 — 폰트마다 자형·굵기·baseline이 달라 텍스트와 정렬이 어긋나고, 크기를 `size-*`로 제어할 수 없다
+- 텍스트와 함께 쓰면 아이콘에 `aria-hidden="true"`, 컨테이너는 `inline-flex items-center gap-1`
+- 크기: 본문 옆 `size-4`, 단독 버튼 `size-5` (Button 기본값이 svg를 16px로 줄이므로 명시 필요)
+
+### 커서
+
+- **클릭 가능한 것은 전부 `cursor-pointer`.** Tailwind v4 preflight가 `button`에 `cursor: default`를 주므로(v3와 반대) 명시하지 않으면 버튼이 클릭 가능해 보이지 않는다
+- 규칙은 `ui/button.tsx`의 `buttonVariants` base 한 곳에만 둔다 — 클릭 요소가 전부 이 컴포넌트를 통하므로 개별 지정이 필요 없다. `<a>`는 브라우저 기본이 pointer
+- 현재 사용: `Sun`·`Moon`(테마 토글) · `ChevronDown`(대시보드 앵커) · `ChevronUp`(맨 위로)
+
 ### 다크모드
-- v1: **시스템 추종만** — shadcn 다크 변수를 `@media (prefers-color-scheme: dark)`에 정의 (스크립트 0, JS 없이 동작 — 마크업 위생 규칙). 토글 UI·`.dark` 클래스 방식은 v2 backlog. (2026-08-18 적용: init이 만든 `.dark` 블록·`@custom-variant dark`를 미디어쿼리로 전환 — Tailwind `dark:` 변형도 기본값인 미디어쿼리 기준)
+- **v1에 토글 포함 (2026-08-28 사용자 결정)** — **라이트 ↔ 다크 2단**, `localStorage.theme`에 저장. 전역 우상단 고정 버튼 1개(`src/components/theme-toggle.tsx`)
+- **시스템 추종은 UI에서 뺐지만 기본 동작으로 남는다** — 선택 전에는 `data-theme`이 비어 있고 CSS가 OS를 따른다. 아이콘은 그때 **실효 테마**를 보여주고(OS 다크면 달), 누르는 순간부터 선택이 고정된다. 시스템 상태를 3번째 칸으로 두면 "지금 뭐가 켜져 있는지"를 아이콘 하나로 못 읽는다
+- OS 설정 변경은 `matchMedia` change로 구독한다 — 선택 전이라면 아이콘도 따라가야 한다 (CSS는 자동)
+- 구현: **CSS `light-dark()`** — 라이트/다크 값을 변수 24쌍으로 한 벌만 정의하고, 전환은 `color-scheme` 한 줄로 한다. 변수 블록을 테마별로 복제하지 않는다
+  ```css
+  :root { color-scheme: light dark; --background: light-dark(라이트, 다크); }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"]  { color-scheme: dark; }
+  ```
+- **JS 없이도 동작한다** — 스크립트가 죽으면 `data-theme`이 비고 `color-scheme: light dark`가 시스템을 따른다. 마크업 위생 규칙을 어기지 않는 이유가 이것이다(토글만 사라지고 테마는 살아있다)
+- FOUC 방지는 `layout.tsx` `<head>`의 **동기 인라인 `<script>`** — `next/script`의 `afterInteractive`면 첫 페인트에 반대 테마가 한 프레임 번쩍인다
+- **`<html>`에 `suppressHydrationWarning` 필수** — 스크립트가 서버 HTML에 없는 `data-theme`을 붙이므로 속성이 어긋난다. 없으면 hydration 에러가 뜬다 (Next.js 공식 가이드 §Themes)
+- ⚠️ **dev 전용 함정**: Strict Mode 리마운트에서 React가 `<html>`을 **JSX가 아는 속성만 남기고 리셋**해 스크립트가 심은 값이 지워진다. `useLayoutEffect`로 재적용한다 — 프로덕션에선 no-op이라 dev에서만 보이는 증상이고, 이걸 코드 결함으로 오인하기 쉽다
+- Tailwind `dark:` 변형은 `@custom-variant dark`로 **미디어쿼리와 `data-theme`을 둘 다** 본다. 한쪽만 보면 토글이 안 먹거나(미디어쿼리) JS 없을 때 안 먹는다(속성)
+- ↩︎ **개정 이력**: 2026-08-18 `.dark` 클래스 → 미디어쿼리 전환(시스템 추종만, 토글은 v2 backlog) → **2026-08-28 토글을 v1으로 당김**. backlog.md에 v2 항목이 실제로 등록된 적은 없어 제거할 항목은 없다
 
 ## 컴포넌트 라이브러리: shadcn/ui (2026-08-15 PRD 피드백 Q3)
 
