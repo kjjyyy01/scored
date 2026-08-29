@@ -52,7 +52,17 @@
 | 반경·그림자 | shadcn 기본 (`--radius: 0.625rem`) 유지 |
 
 ### 다크모드
-- v1: **시스템 추종만** — shadcn 다크 변수를 `@media (prefers-color-scheme: dark)`에 정의 (스크립트 0, JS 없이 동작 — 마크업 위생 규칙). 토글 UI·`.dark` 클래스 방식은 v2 backlog. (2026-08-18 적용: init이 만든 `.dark` 블록·`@custom-variant dark`를 미디어쿼리로 전환 — Tailwind `dark:` 변형도 기본값인 미디어쿼리 기준)
+- **v1에 토글 포함 (2026-08-28 사용자 결정)** — 시스템 → 라이트 → 다크 3단 순환, `localStorage.theme`에 저장. 전역 우상단 고정 버튼 1개(`src/components/theme-toggle.tsx`)
+- 구현: **CSS `light-dark()`** — 라이트/다크 값을 변수 24쌍으로 한 벌만 정의하고, 전환은 `color-scheme` 한 줄로 한다. 변수 블록을 테마별로 복제하지 않는다
+  ```css
+  :root { color-scheme: light dark; --background: light-dark(라이트, 다크); }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"]  { color-scheme: dark; }
+  ```
+- **JS 없이도 동작한다** — 스크립트가 죽으면 `data-theme`이 비고 `color-scheme: light dark`가 시스템을 따른다. 마크업 위생 규칙을 어기지 않는 이유가 이것이다(토글만 사라지고 테마는 살아있다)
+- FOUC 방지는 `layout.tsx` `<head>`의 **동기 인라인 `<script>`** — `next/script`의 `afterInteractive`면 첫 페인트에 반대 테마가 한 프레임 번쩍인다
+- Tailwind `dark:` 변형은 `@custom-variant dark`로 **미디어쿼리와 `data-theme`을 둘 다** 본다. 한쪽만 보면 토글이 안 먹거나(미디어쿼리) JS 없을 때 안 먹는다(속성)
+- ↩︎ **개정 이력**: 2026-08-18 `.dark` 클래스 → 미디어쿼리 전환(시스템 추종만, 토글은 v2 backlog) → **2026-08-28 토글을 v1으로 당김**. backlog.md에 v2 항목이 실제로 등록된 적은 없어 제거할 항목은 없다
 
 ## 컴포넌트 라이브러리: shadcn/ui (2026-08-15 PRD 피드백 Q3)
 
