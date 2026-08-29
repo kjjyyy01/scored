@@ -321,6 +321,7 @@
 
 - **Day 12 첫 작업 = `improve-animations` → `review-animations`.** 60fps·LCP는 Day 11에 닫혔다 — 남은 축은 **사용자 육안 판정** 하나
 - 🔧 **chrome-devtools는 CLI로 쓸 것** — MCP가 "already running"으로 막히면 pkill 금지(서버까지 죽는다). `npx -y -p chrome-devtools-mcp@latest chrome-devtools <cmd> --pageId N`. 단 `--filePath`는 워크스페이스 루트 밖이라 거부되므로 `--output-format json`으로 임시 경로를 받아 복사
+- ⚠️ **`next start`는 빌드 후 반드시 재시작** — 시작 시점의 빌드 매니페스트를 들고 있어, 재빌드로 청크 해시가 바뀌면 **클라이언트 JS 로드가 실패한다.** HTML은 정상으로 보이는데 이벤트 핸들러만 안 붙어 "버튼은 있는데 반응 없다"가 된다(2026-08-28 테마 토글 검증에서 실제 발생, 코드 결함으로 오인). dev(HMR)에는 없는 함정이라 dev에서 정상이면 이걸 먼저 의심할 것
 - ⚠️ **해시만 다른 URL은 same-document navigation** — BR-004로 주소창이 `/report`가 된 상태에서 `/report#해시`로 가면 리로드가 안 돼 `initScript`가 실행되지 않는다. 무의미 쿼리(`?n=1`)를 붙여 full navigation을 강제할 것
 - ⚠️ **데스크톱 레이아웃 정렬 불일치** — 빌드업 문구·지표 행은 좌측, 릴·버튼은 중앙이라 세로 축이 어긋난다. PRD §16의 "md+ 중앙 스테이지(최대 폭 제한)"가 미구현
 - ⚠️ **슬로우모션 검증의 함정** — `performance.now`만 늦추면 CSS 애니메이션은 실시간으로 흘러 비트·페이드가 먼저 끝난 프레임이 잡힌다. 프레임 캡처는 `requestAnimationFrame`을 no-op으로 만들고 `document.getAnimations().forEach(a => a.pause())`를 **같은 시점에** 걸어야 정지 화면이 맞는다
