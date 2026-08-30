@@ -92,8 +92,11 @@ export function ReportClient() {
       <RevealStage
         payload={state.payload}
         entry={state.entry}
+        // EVT-RES-002 자연 종료 — 대기 진입 시점 발화 (클릭 시점이 아니다: 대기 중 이탈자도 완주다)
+        onEnded={() => track("reveal_completed", { skipped: false })}
         onFinish={(skipped, cardDur) => {
-          track("reveal_completed", { skipped }); // EVT-RES-002 — 깔때기 지표
+          // 스킵만 여기서 발화 — 자연 종료분은 onEnded가 이미 발화했다 (중복 금지)
+          if (skipped) track("reveal_completed", { skipped: true });
           setState({ phase: "ready", payload: state.payload, entry: state.entry, cardDur });
         }}
       />
