@@ -327,3 +327,36 @@
 - ⚠️ **슬로우모션 검증의 함정** — `performance.now`만 늦추면 CSS 애니메이션은 실시간으로 흘러 비트·페이드가 먼저 끝난 프레임이 잡힌다. 프레임 캡처는 `requestAnimationFrame`을 no-op으로 만들고 `document.getAnimations().forEach(a => a.pause())`를 **같은 시점에** 걸어야 정지 화면이 맞는다
 - ⚠️ **빌드업 문구가 자리를 계속 차지한다** — `fade-out`은 opacity만 지워 스테이지 상단에 빈 줄이 남는다. 레이아웃 점프를 막는 대가이므로 Day 12 육안 판정에서 유지/제거 결정
 - **GSAP 도입 검토 조건 재점검은 Day 12 60fps 측정 후** — 현재까지 발동 0
+
+## Day 12 (8/29~8/30) — 축 패스 마감: 모션 감사 반영
+
+> 브랜치 `feat/day12-motion-polish`. PLAN 지정 스킬 — `improve-animations`(감사) 완료,
+> `review-animations`는 **사용자 직접 호출 전용**(`/review-animations`)이라 아래 사용자 담당으로 이관.
+
+### 감사 결과 (improve-animations)
+
+- 연출 본체(타임라인·이징·60fps·LCP·reduced-motion)는 Day 11 확정대로 **수정 없음** — 재론 근거 미발견
+- 기각: `transition-all`(shadcn 원본 무수정 관행) · 테마 전환 색 트랜지션 · 스킵 시 즉시 제거(의도적 스냅)
+
+### 구현 (Claude)
+
+- [x] **§16 md+ 중앙 스테이지** — 스테이지에 `md:max-w-md md:mx-auto`. 행·릴·버튼이 같은 축(448px 칼럼). 모바일 전폭 유지 (Day 11 인계 결함 해소)
+- [x] **공유 시트 열림·닫힘 전환** — ANIMATION.md 채택 표에 있었으나 미구현이던 항목. 모바일 slide-up 400ms quart / md+ scale 0.97 fade 250ms / 닫기 비대칭 단축 / reduced-motion 페이드만. `@starting-style` + `allow-discrete`, 미지원 강하 = 현행. JS 분기 0
+- [x] **대시보드 앵커 smooth scroll** — `scroll-behavior: smooth` 한 줄 (no-preference 가드). 게이트 판정 "네이티브로 충분"의 실구현
+- [x] **검증** — 웹 66 · CLI 33 tests · `tsc` · `eslint` · `next build` 전부 통과
+- [x] **실측 (chrome-devtools CLI, 프로덕션 빌드)** — 60fps: 252프레임 중앙값 16.7ms·17ms 초과 0·드롭 0 / LCP 44ms(빌드업 P가 유지) / 시트 전환: 120ms 시점 translateY 148px(모바일)·scale 0.9763(md+), 닫기 display 유지 → 250ms 뒤 none / 컴파일 CSS 전 블록 생존 확인
+- [x] **GSAP 도입 검토 조건 재점검** — 3개 전부 미발동 유지 (① 육안 통과 후 레이아웃만 변경 ② 오케스트레이션 무변화 ③ 60fps 통과)
+- [x] **빌드업 A/B 스크린샷** — `.dev-shots/day12-desktop-mid.png`(A안 유지 = 현행) vs `day12-buildup-B-removed.png`(B안 제거 = 빈 줄 없음, 단 fade-out 종료 시 전체 ~96px 점프)
+
+### 사용자 담당
+
+- [ ] 🔴 **모션 최종 육안 판정** — 축 패스 완료 조건. 공유 시트 열림·닫힘 손맛 포함
+- [ ] 🔴 **빌드업 빈 줄 유지(A)/제거(B) 결정** — A/B 스크린샷 비교. 권고: A 유지 (B는 행 스태거 도중 레이아웃 점프)
+- [ ] `/review-animations` 직접 실행 (스킬이 사용자 호출 전용)
+- [ ] 판정 통과 후 main 머지·배포 승인
+
+### Day 12 → Day 13 인계
+
+- Day 13(8/30 예정이었으나 Day 12가 8/30로 밀림) = 검증 세션: 시크릿 창·새 프로필에서 `npx @jong-yeon/scored`부터 공유까지 완주 + 자문 4문항
+- 공유 시트 전환이 새로 들어갔다 — 검증 세션 완주 플로우에서 열림·닫힘 체감 확인 포함할 것
+- 실기기 수단 확보 마감 Day 16 밤(9/2) 불변

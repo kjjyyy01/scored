@@ -115,6 +115,27 @@ rAF와 CSS가 **같은 숫자를 둘 다 알아야** 하므로, `delay-[600ms]` 
 - 감지: `matchMedia("(prefers-reduced-motion: reduce)").matches` 1회. change 리스너 불필요 — 3초 사이에 OS 설정을 바꾸는 사용자는 없다
 - ⚠️ globals.css에 `animation-duration: 0.01ms !important` **전역 킬 블록을 넣지 않는다.** 그 대해머는 이 대체 페이드까지 죽인다. 크로스페이드는 reduce에서 권장되는 대체안이라 살려야 한다
 
+## 공유 시트 전환 (Day 12 구현 — 채택 표의 "공유 시트 열림·닫힘" 항목)
+
+키프레임이 아니라 **트랜지션** — 빠른 재열림에서 현재 상태부터 이어간다(재시작 없음).
+네이티브 `<dialog>`의 display·top-layer는 `transition-behavior: allow-discrete` + `@starting-style`로
+붙잡는다. **미지원 브라우저는 자동으로 현행(즉시 표시)으로 강하** — JS 분기 0.
+
+| 구간 | 열기 | 닫기 | 근거 |
+|---|---|---|---|
+| 모바일 slide-up (`translateY(100%)` → 0) | 400ms `--ease-out-quart` | 250ms `ease-out` | 350ms 이상 이동의 착지는 quart. 닫기가 짧은 **비대칭 타이밍** — 조작 응답은 빠르게 |
+| md+ scale·fade (`scale(0.97)` → 1) | 250ms `ease-out` | 200ms `ease-out` | 중앙 모달은 화면 밖 이동이 없다. 250ms 이하는 내장 곡선 (토큰 안 만든다) |
+| 백드롭 opacity | 열기·닫기 본체와 동기 | 〃 | — |
+| reduced-motion | 페이드 200ms (transform 강제 none) | 〃 | 이동·크기만 죽이고 페이드는 남긴다 — 전역 킬 블록 금지 규칙과 동일 |
+
+실측(2026-08-30): 열림 중 120ms 시점 translateY 148px 진행(모바일)·scale 0.9763(md+),
+닫기 후 display가 전환 끝까지 유지 → 250ms 뒤 none (allow-discrete 동작 확인).
+
+## 대시보드 앵커 스크롤 (Day 12)
+
+기각 표의 "네이티브 `scroll-behavior`로 충분" 판정의 실구현 — `html { scroll-behavior: smooth }`
+한 줄, `prefers-reduced-motion: no-preference` 가드. JS 스크롤 금지 유지.
+
 ## 모션 채택·기각 판정 (find-animation-opportunities 게이트, 2026-08-27)
 
 ### 채택
