@@ -187,6 +187,13 @@
       transform: scale(0.97);
     }
   }
+  /* 백드롭은 본체와 같은 속도여야 한다 — 갈라지면 시트가 착지한 뒤 배경만 계속 어두워진다 */
+  .share-dialog::backdrop {
+    transition-duration: 200ms;
+  }
+  .share-dialog[open]::backdrop {
+    transition-duration: 250ms;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   /* 이동·크기는 죽이고 페이드만 남긴다 — 전역 킬 블록 금지 (ANIMATION.md) */
@@ -199,6 +206,10 @@
     @starting-style {
       transform: none;
     }
+  }
+  .share-dialog::backdrop,
+  .share-dialog[open]::backdrop {
+    transition-duration: 200ms;
   }
 }
 
