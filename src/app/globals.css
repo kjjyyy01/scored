@@ -135,3 +135,76 @@
     opacity: 0;
   }
 }
+
+/* 공유 시트 열림·닫힘 — ANIMATION.md 채택 표 (모바일 slide-up / md+ scale·fade).
+   키프레임이 아니라 트랜지션: 빠른 재열림에서 현재 상태부터 이어간다 (재시작 없음).
+   display·overlay는 allow-discrete로 전환 끝까지 붙잡는다 — 미지원 브라우저는
+   @starting-style도 같이 없어 현행(즉시 표시)으로 강하한다. JS 분기 0 */
+.share-dialog {
+  opacity: 0;
+  transform: translateY(100%);
+  /* 닫기 — 조작 응답은 빠르게 (열기보다 짧은 비대칭 타이밍) */
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 250ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+.share-dialog[open] {
+  opacity: 1;
+  transform: none;
+  /* 열기 — 350ms 이상 이동의 착지는 quart (ANIMATION.md 이징 표) */
+  transition-duration: 400ms;
+  transition-timing-function: var(--ease-out-quart);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+.share-dialog::backdrop {
+  opacity: 0;
+  transition-property: opacity, display, overlay;
+  transition-duration: 250ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+.share-dialog[open]::backdrop {
+  opacity: 1;
+  transition-duration: 400ms;
+  @starting-style {
+    opacity: 0;
+  }
+}
+@media (min-width: 48rem) {
+  /* md+ 중앙 모달 — 화면 밖 이동 대신 scale·fade. 250ms 이하는 내장 ease-out (토큰 안 만든다) */
+  .share-dialog {
+    transform: scale(0.97);
+    transition-duration: 200ms;
+  }
+  .share-dialog[open] {
+    transition-duration: 250ms;
+    transition-timing-function: ease-out;
+    @starting-style {
+      transform: scale(0.97);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* 이동·크기는 죽이고 페이드만 남긴다 — 전역 킬 블록 금지 (ANIMATION.md) */
+  .share-dialog,
+  .share-dialog[open] {
+    transform: none;
+    transition-duration: 200ms;
+  }
+  .share-dialog[open] {
+    @starting-style {
+      transform: none;
+    }
+  }
+}
+
+/* EL-RPT-006 앵커 → 대시보드 이동 — 네이티브로 충분 (모션 게이트 판정), JS 스크롤 금지 */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
