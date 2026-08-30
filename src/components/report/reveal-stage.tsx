@@ -83,7 +83,8 @@ export function RevealStage({
   }, []);
 
   return (
-    <section className="grid min-h-[60svh] content-center gap-8" aria-label="성적표 공개 연출">
+    // §16 md+ 중앙 스테이지 — 폭을 제한해 행·릴·버튼이 같은 축에 선다 (모바일은 전폭)
+    <section className="grid min-h-[60svh] content-center gap-8 md:mx-auto md:max-w-md" aria-label="성적표 공개 연출">
       {/* CPY-RES-001 빌드업 — 지표 진입과 함께 자리를 비운다. pulse와 페이드를 다른 엘리먼트에 걸어 animation 충돌 회피.
           display 스케일은 LCP 요구이기도 하다: 이 문구가 카드 h2(size 17,516)보다 커야(22,861) LCP가
           연출 종료까지 밀리지 않는다 — text-sm이던 시절 entry=cli의 LCP는 3484ms였다 (이슈 #3) */}
