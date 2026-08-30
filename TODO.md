@@ -347,6 +347,7 @@
 - [x] **실측 (chrome-devtools CLI, 프로덕션 빌드)** — 60fps: 252프레임 중앙값 16.7ms·17ms 초과 0·드롭 0 / LCP 44ms(빌드업 P가 유지) / 시트 전환: 120ms 시점 translateY 148px(모바일)·scale 0.9763(md+), 닫기 display 유지 → 250ms 뒤 none / 컴파일 CSS 전 블록 생존 확인
 - [x] **GSAP 도입 검토 조건 재점검** — 3개 전부 미발동 유지 (① 육안 통과 후 레이아웃만 변경 ② 오케스트레이션 무변화 ③ 60fps 통과)
 - [x] **빌드업 A/B 스크린샷** — `.dev-shots/day12-desktop-mid.png`(A안 유지 = 현행) vs `day12-buildup-B-removed.png`(B안 제거 = 빈 줄 없음, 단 fade-out 종료 시 전체 ~96px 점프)
+- [x] **자동 전환 폐지 → "결과 보기" 대기** (사용자 결정 2026-08-30, make-prd 경유) — SCR-002 v1.4.0(EL-RES-005·CPY-RES-005·TC-RES-002-02) + 08·11·15 개정. EVT-RES-002는 **자연 종료(대기 진입) 시점** 발화 유지 — 클릭 발화면 대기 중 이탈자가 완주 지표에서 빠진다. 실측 4경로(대기·클릭·스킵·대기 중 Esc) 전부 통과, 중복 발화 0. `.dev-shots/day12-wait-state.png`
 
 ### 사용자 담당
 
