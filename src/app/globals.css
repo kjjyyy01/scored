@@ -135,3 +135,89 @@
     opacity: 0;
   }
 }
+
+/* 공유 시트 열림·닫힘 — ANIMATION.md 채택 표 (모바일 slide-up / md+ scale·fade).
+   키프레임이 아니라 트랜지션: 빠른 재열림에서 현재 상태부터 이어간다 (재시작 없음).
+   display·overlay는 allow-discrete로 전환 끝까지 붙잡는다 — 미지원 브라우저는
+   @starting-style도 같이 없어 현행(즉시 표시)으로 강하한다. JS 분기 0 */
+.share-dialog {
+  opacity: 0;
+  transform: translateY(100%);
+  /* 닫기 — 조작 응답은 빠르게 (열기보다 짧은 비대칭 타이밍) */
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 250ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+.share-dialog[open] {
+  opacity: 1;
+  transform: none;
+  /* 열기 — 350ms 이상 이동의 착지는 quart (ANIMATION.md 이징 표) */
+  transition-duration: 400ms;
+  transition-timing-function: var(--ease-out-quart);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+.share-dialog::backdrop {
+  opacity: 0;
+  transition-property: opacity, display, overlay;
+  transition-duration: 250ms;
+  transition-timing-function: ease-out;
+  transition-behavior: allow-discrete;
+}
+.share-dialog[open]::backdrop {
+  opacity: 1;
+  transition-duration: 400ms;
+  @starting-style {
+    opacity: 0;
+  }
+}
+@media (min-width: 48rem) {
+  /* md+ 중앙 모달 — 화면 밖 이동 대신 scale·fade. 250ms 이하는 내장 ease-out (토큰 안 만든다) */
+  .share-dialog {
+    transform: scale(0.97);
+    transition-duration: 200ms;
+  }
+  .share-dialog[open] {
+    transition-duration: 250ms;
+    transition-timing-function: ease-out;
+    @starting-style {
+      transform: scale(0.97);
+    }
+  }
+  /* 백드롭은 본체와 같은 속도여야 한다 — 갈라지면 시트가 착지한 뒤 배경만 계속 어두워진다 */
+  .share-dialog::backdrop {
+    transition-duration: 200ms;
+  }
+  .share-dialog[open]::backdrop {
+    transition-duration: 250ms;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* 이동·크기는 죽이고 페이드만 남긴다 — 전역 킬 블록 금지 (ANIMATION.md) */
+  .share-dialog,
+  .share-dialog[open] {
+    transform: none;
+    transition-duration: 200ms;
+  }
+  .share-dialog[open] {
+    @starting-style {
+      transform: none;
+    }
+  }
+  .share-dialog::backdrop,
+  .share-dialog[open]::backdrop {
+    transition-duration: 200ms;
+  }
+}
+
+/* EL-RPT-006 앵커 → 대시보드 이동 — 네이티브로 충분 (모션 게이트 판정), JS 스크롤 금지.
+   :has(:target)로 좁힌다 — html에 그냥 걸면 뒤로가기 스크롤 복원까지 애니메이션된다.
+   해시 대상이 있을 때만 = 앵커 이동뿐. :has() 미지원은 즉시 점프로 강하 */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(:target) {
+    scroll-behavior: smooth;
+  }
+}

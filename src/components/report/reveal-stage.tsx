@@ -1,7 +1,7 @@
 "use client";
 // EL-RES-001 공개 연출 스테이지 — 재미 장치 v1의 본체 (BR-007). 타임라인 계산은 reveal.ts가 SSOT
 // 카드 바깥·문서 흐름에 둔다: position:fixed면 z-index·스크롤 락·포커스 트랩·backdrop이 따라온다
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Payload } from "../../../cli/src/types.ts";
 import { isPartial } from "@/lib/payload.ts";
 import { judge } from "@/lib/judge.ts";
@@ -12,10 +12,13 @@ import { Button } from "@/components/ui/button";
 export function RevealStage({
   payload,
   entry,
+  onEnded,
   onFinish,
 }: {
   payload: Payload;
   entry: "cli" | "link";
+  // 자연 종료(대기 진입) — EVT-RES-002는 여기서 발화한다 (AC-1: 클릭 발화로 바꾸면 완주 지표가 깨진다)
+  onEnded: () => void;
   // cardDur는 여기서 넘긴다 — 모드별 카드 전환 길이를 호출부가 plan()을 다시 돌려 구할 이유가 없다
   onFinish: (skipped: boolean, cardDur: number) => void;
 }) {
@@ -28,12 +31,23 @@ export function RevealStage({
   const values = useRef<(HTMLElement | null)[]>([]);
   const reel = useRef<HTMLSpanElement>(null);
   const done = useRef(false);
+  // 자연 종료 후 대기 — 자동 전환 폐지(EL-RES-005, 2026-08-30). ref는 Esc 핸들러의 stale closure 방지
+  const [ended, setEnded] = useState(false);
+  const endedRef = useRef(false);
 
-  // 스킵·자연 종료가 같은 경로. reveal_completed는 깔때기 지표라 중복 발화 금지
+  // 카드 전환 요청 — 스킵·결과 보기가 같은 경로. 중복 호출 가드
   const finish = (skipped: boolean) => {
     if (done.current) return;
     done.current = true;
     onFinish(skipped, p.cardDur);
+  };
+
+  // 자연 종료 = EVT 발화 + 대기 진입. 전이는 EL-RES-005 클릭이 한다
+  const end = () => {
+    if (endedRef.current || done.current) return;
+    endedRef.current = true;
+    setEnded(true);
+    onEnded();
   };
 
   useEffect(() => {
@@ -65,13 +79,14 @@ export function RevealStage({
         }
       }
 
-      if (t >= p.total) return finish(false);
+      if (t >= p.total) return end(); // rAF 재예약 중단 — 전이는 버튼이
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") finish(true);
+      // 연출 중 Esc = 스킵, 대기 중 Esc = 결과 보기와 동일 경로 (§15)
+      if (e.key === "Escape") finish(!endedRef.current);
     };
     window.addEventListener("keydown", onKey);
     return () => {
@@ -83,7 +98,8 @@ export function RevealStage({
   }, []);
 
   return (
-    <section className="grid min-h-[60svh] content-center gap-8" aria-label="성적표 공개 연출">
+    // §16 md+ 중앙 스테이지 — 폭을 제한해 행·릴·버튼이 같은 축에 선다 (모바일은 전폭)
+    <section className="grid min-h-[60svh] content-center gap-8 md:mx-auto md:max-w-md" aria-label="성적표 공개 연출">
       {/* CPY-RES-001 빌드업 — 지표 진입과 함께 자리를 비운다. pulse와 페이드를 다른 엘리먼트에 걸어 animation 충돌 회피.
           display 스케일은 LCP 요구이기도 하다: 이 문구가 카드 h2(size 17,516)보다 커야(22,861) LCP가
           연출 종료까지 밀리지 않는다 — text-sm이던 시절 entry=cli의 LCP는 3484ms였다 (이슈 #3) */}
@@ -150,10 +166,22 @@ export function RevealStage({
         </div>
       )}
 
-      {/* EL-RES-002 CPY-RES-002 — 스테이지 내 유일 focusable. 포커스는 탈취하지 않는다 (§15) */}
-      <Button variant="ghost" className="h-11 w-fit justify-self-center px-5" onClick={() => finish(true)}>
-        건너뛰기
-      </Button>
+      {/* EL-RES-002 스킵 → 자연 종료 후 EL-RES-005 결과 보기로 교체 — 같은 자리라 유일 focusable 유지 (§15).
+          포커스는 탈취하지 않는다 */}
+      {ended ? (
+        <Button
+          className="h-11 w-fit justify-self-center px-5 animate-in fade-in-0 slide-in-from-bottom-2"
+          // 지표 행과 같은 조합 — 순수 페이드면 아무것도 없던 자리에서 생겨난 것처럼 보인다
+          style={{ animationDuration: "200ms", animationTimingFunction: "ease-out" }}
+          onClick={() => finish(false)}
+        >
+          결과 보기
+        </Button>
+      ) : (
+        <Button variant="ghost" className="h-11 w-fit justify-self-center px-5" onClick={() => finish(true)}>
+          건너뛰기
+        </Button>
+      )}
     </section>
   );
 }

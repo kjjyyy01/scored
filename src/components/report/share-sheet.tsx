@@ -83,7 +83,8 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
       onCancel={(e) => { e.preventDefault(); requestClose(); }}
       onClick={(e) => { if (e.target === ref.current) requestClose(); }}
       aria-labelledby="share-title"
-      className="m-0 max-h-[90dvh] w-full max-w-lg overflow-y-auto border border-border bg-background p-6 text-foreground backdrop:bg-black/50
+      // share-dialog: 열림·닫힘 전환은 globals.css (모바일 slide-up / md+ scale·fade)
+      className="share-dialog m-0 max-h-[90dvh] w-full max-w-lg overflow-y-auto border border-border bg-background p-6 text-foreground backdrop:bg-black/50
                  mt-auto rounded-t-xl md:m-auto md:rounded-xl"
     >
       <div className="flex flex-col gap-6">
