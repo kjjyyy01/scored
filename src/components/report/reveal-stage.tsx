@@ -170,8 +170,9 @@ export function RevealStage({
           포커스는 탈취하지 않는다 */}
       {ended ? (
         <Button
-          className="h-11 w-fit justify-self-center px-5 animate-in fade-in-0"
-          style={{ animationDuration: "200ms" }}
+          className="h-11 w-fit justify-self-center px-5 animate-in fade-in-0 slide-in-from-bottom-2"
+          // 지표 행과 같은 조합 — 순수 페이드면 아무것도 없던 자리에서 생겨난 것처럼 보인다
+          style={{ animationDuration: "200ms", animationTimingFunction: "ease-out" }}
           onClick={() => finish(false)}
         >
           결과 보기

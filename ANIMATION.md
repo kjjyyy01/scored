@@ -141,8 +141,13 @@ rAF와 CSS가 **같은 숫자를 둘 다 알아야** 하므로, `delay-[600ms]` 
 
 ## 대시보드 앵커 스크롤 (Day 12)
 
-기각 표의 "네이티브 `scroll-behavior`로 충분" 판정의 실구현 — `html { scroll-behavior: smooth }`
-한 줄, `prefers-reduced-motion: no-preference` 가드. JS 스크롤 금지 유지.
+기각 표의 "네이티브 `scroll-behavior`로 충분" 판정의 실구현 — `prefers-reduced-motion: no-preference`
+가드 + **`html:has(:target)`로 스코프 한정**. JS 스크롤 금지 유지.
+
+`html`에 그냥 걸면 앵커뿐 아니라 **뒤로가기 스크롤 복원까지 애니메이션된다.** `:has(:target)`는
+해시 대상이 실제로 존재할 때만 매칭되므로 앵커 이동에만 걸린다 — 이 앱에 프로그래매틱 스크롤은
+0건이라 남는 부작용 표면도 이것뿐이었다. `:has()` 미지원 브라우저는 즉시 점프로 강하한다.
+실측: `:target` 없음 → `auto`, `#dashboard` 활성 → `smooth`.
 
 ## 모션 채택·기각 판정 (find-animation-opportunities 게이트, 2026-08-27)
 

@@ -213,9 +213,11 @@
   }
 }
 
-/* EL-RPT-006 앵커 → 대시보드 이동 — 네이티브로 충분 (모션 게이트 판정), JS 스크롤 금지 */
+/* EL-RPT-006 앵커 → 대시보드 이동 — 네이티브로 충분 (모션 게이트 판정), JS 스크롤 금지.
+   :has(:target)로 좁힌다 — html에 그냥 걸면 뒤로가기 스크롤 복원까지 애니메이션된다.
+   해시 대상이 있을 때만 = 앵커 이동뿐. :has() 미지원은 즉시 점프로 강하 */
 @media (prefers-reduced-motion: no-preference) {
-  html {
+  html:has(:target) {
     scroll-behavior: smooth;
   }
 }

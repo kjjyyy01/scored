@@ -356,3 +356,10 @@
 - **어떻게**: 코드만 보고 단정하지 않고 `getComputedStyle(el, "::backdrop")`으로 실측했다. 데스크톱(1280px)에서 **다이얼로그 열기 250ms인데 백드롭은 400ms**, 닫기는 200ms vs 250ms였다. 원인은 `::backdrop` 규칙이 `@media (min-width: 48rem)`·`prefers-reduced-motion` 블록 **밖에만** 있어 두 미디어 오버라이드가 본체에만 걸린 것. 두 블록에 백드롭 duration을 추가해 묶었다. 수정 후 재실측 250/250·200/200.
 - **왜**: 열기 400 / 닫기 250의 비대칭은 **의도**지만 본체 250 / 백드롭 400은 **누락**이다. 한 동작이 두 속도로 갈라지면 시트가 착지한 뒤 배경만 150ms 더 어두워져 "무거운 잔상"으로 읽힌다. 육안으로는 놓치기 쉬운 크기라 계산된 값을 직접 읽어야 잡힌다 — Day 11의 "계측은 무엇이 언제를 알려주지만 보이느냐는 알려주지 않는다"의 반대 사례다(이번엔 눈이 못 잡고 숫자가 잡았다).
 - **작업 결과**: 웹 66 tests·`tsc`·`eslint`·`build` 통과. 리뷰 통과 항목 — 키프레임 대신 **트랜지션 + `@starting-style` + `allow-discrete`**(재열림 retarget) · `transform`/`opacity`만 · `scale(0.97)`(never `scale(0)`) · 비대칭 타이밍 · 중앙 모달 origin 면제 · `ease-in` 0건 · reduced-motion이 이동만 죽이고 페이드 유지 · 빈도 적합(연출 Rare·시트 Occasional). 잔여 권고 2건은 미적용: ① 결과 보기 버튼의 순수 페이드에 slide 추가(같은 컴포넌트에 fade-only 선례가 있어 위반은 아님) ② `scroll-behavior: smooth` 전역 스코프 축소.
+
+## 2026-08-30 (Day 12 리뷰 반영) — 권고 2건 적용: 버튼 물리성 + 스크롤 스코프
+
+- **무엇을**: `review-animations`가 선택으로 남긴 권고 2건을 반영했다(사용자 결정). ① `결과 보기` 버튼에 `slide-in-from-bottom-2` 추가 ② `scroll-behavior: smooth`의 스코프를 `html` → `html:has(:target)`로 축소.
+- **어떻게**: ① 지표 행이 이미 쓰던 `fade-in-0 slide-in-from-bottom-2` + `ease-out` 조합을 그대로 맞췄다 — 새 규격을 만들지 않았다. ② 스코프를 좁히는 방법이 문제였다. CSS만으로 "이 링크를 눌렀을 때만"을 표현할 수는 없지만, **`:has(:target)`는 해시 대상이 실제로 존재할 때만 매칭**되므로 앵커 이동에만 걸린다. JS 스크롤(`scrollIntoView`)로 바꾸면 스코프는 정확해지지만 게이트 판정("네이티브로 충분")과 ANIMATION.md의 "JS 스크롤 금지"를 동시에 어긴다 — CSS 안에서 푸는 길이 있었다. 적용 전 `grep`으로 **프로그래매틱 스크롤이 0건**임을 먼저 확인했다(부작용 표면이 앵커 + 스크롤 복원 둘뿐임을 확정).
+- **왜**: ① 순수 페이드는 "아무것도 없던 자리에서 생겨남"이라 물리성이 없다. 릴에 fade-only 선례가 있지만 그건 **초기 등급 은폐**라는 목적이 있고, 버튼은 새 어포던스의 등장이라 성격이 다르다. ② `html`에 그냥 걸면 **뒤로가기 스크롤 복원까지 애니메이션된다** — 의도는 앵커 1곳이었다.
+- **작업 결과**: 웹 66 tests·`tsc`·`eslint`·`build` 통과. 실측 — `:target` 없음 → `scrollBehavior: auto`(즉시), `#dashboard` 활성 → `smooth` / 버튼 `enter` 200ms `ease-out` + slide 적용. `:has()` 미지원은 즉시 점프로 강하. **review-animations 지적 전건 종결.**
