@@ -411,3 +411,11 @@
   - ⚠️ **비용**: 랜딩 초기 JS **196.6 → 262.5 KB gzip (+65.9 KB, +33%)**. `bundleSizeOptimizations`(excludeTracing 등)는 Turbopack에서 **효과 0**이라 제거했다. Day 17 LCP 재측정의 감시 항목 — 예산 초과 시 동적 import로 임계 경로에서 뺀다.
   - **실 DSN 확인 (2026-08-31 밤)**: 사용자가 Vercel·`.env.local`에 DSN·`SENTRY_ORG`·`SENTRY_PROJECT`·`SENTRY_AUTH_TOKEN`을 설정 → 로컬 프로덕션 빌드로 실오류 1건 발생 → `ingest.us.sentry.io` **200 × 10건 수신**, 소스맵 85개 생성. `disableLogger`도 **deprecated + Turbopack 미지원** 경고가 떠 제거했다(`bundleSizeOptimizations`와 같은 이유 — 동작 안 하는 설정은 남기지 않는다). 저장된 이벤트의 URL 필드를 Sentry API로 재확인하려 했으나 **403** — 토큰이 소스맵 업로드 권한만 가진 최소 권한이라 정상이다. 스크럽 증명은 로컬 수집기 바이트 검사로 갈음하고, UI 확인은 사용자 몫으로 남겼다.
   - 검증: 웹 69(신규 3)·CLI 33 tests·`tsc`·`eslint`·`build` 통과.
+
+## 2026-08-31 (Day 15 선행 종료) — Sentry main 머지·배포·프로덕션 검증
+
+- **무엇을**: `feat/day15-sentry`(커밋 4건)를 main에 머지(`c66b21c`)하고 배포한 뒤 프로덕션에서 실측했다. 사용자 승인 후 진행 — 랜딩 JS +33%와 `/how` 공개 문구 변경이 걸려 있어 앞선 문서 커밋들과 달리 확인을 받고 머지했다.
+- **어떻게**: 머지된 트리에서 전체 검증을 다시 돌리고(웹 69·CLI 33 tests·`tsc`·`eslint`·`build`), 배포 후에는 `/how` 고지 문구가 실제 HTML에 나오는지 폴링한 뒤(4회차 반영) 배포된 청크를 직접 받아 DSN 주입을 확인했다. 프로덕션 자산 경로가 `/_next/static/immutable/chunks/`라 로컬(`static/chunks`) 패턴으로 잡으면 0건이 나온다 — Day 12에 겪은 함정이 그대로 재발해 패턴을 고치고 나서야 잡혔다.
+- **왜**: 배선이 로컬에서 도는 것과 배포된 번들에 DSN이 실려 도는 것은 다른 문제다. 특히 `NEXT_PUBLIC_*`는 **빌드 시점에 값이 박히므로**, Vercel 환경변수가 프로덕션 빌드에 실제로 들어갔는지는 배포된 청크를 열어봐야 안다.
+- **작업 결과**: **프로덕션 실측 전건 통과** — `/how` 고지 4개 문구 노출 · 배포 청크(`0ftwzhnx72t68.js`, 126KB)에 **DSN 주입 확인** · 강제 예외 → `role=alert` + ERR-APP-001 안내 렌더(흰 화면 아님) · `window.__SENTRY__` 활성 · **`ingest.us.sentry.io` 200 × 7건** · 주소창 URL 24자(`https://scored.kr/report` — 해시 제거). 랜딩 초기 JS는 프로덕션 실측 **269 KB gzip**(로컬 측정 262.5 KB와 정합). Day 17 LCP 재측정의 감시 항목으로 남긴다.
+- **잔여**: ① 서버·엣지 `onRequestError` 경로는 실오류를 강제하지 못해 **런타임 미검증** ② Sentry 알림 채널 도달 확인은 사용자 몫(DoD 미완) ③ 테스트 이슈 정리 필요 — 안 지우면 런칭 후 실오류와 섞인다.
