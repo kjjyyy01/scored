@@ -4,7 +4,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Payload } from "../../../cli/src/types.ts";
-import { decodeHash, strippedUrl, type DecodeResult } from "@/lib/payload.ts";
+import { decodeHash, type DecodeResult } from "@/lib/payload.ts";
+import { strippedUrl } from "@/lib/scrub.ts";
 import { StatCard } from "./stat-card";
 import { RevealStage } from "./reveal-stage";
 import { ShareSheet } from "./share-sheet";

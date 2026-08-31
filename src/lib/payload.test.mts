@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { decodeHash, strippedUrl, isPartial, shareUrl } from "./payload.ts";
+import { decodeHash, isPartial, shareUrl } from "./payload.ts";
+import { strippedUrl } from "./scrub.ts";
 import type { Payload } from "../../cli/src/types.ts";
 
 // 05 예시 기준 최소 페이로드
