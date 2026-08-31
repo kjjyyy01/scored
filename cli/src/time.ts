@@ -13,7 +13,7 @@ function fmt(tz: string): Intl.DateTimeFormat {
 }
 
 // ts의 로컬 날짜(YYYY-MM-DD)와 시(0~23)
-export function localParts(ts: number, tz: string): { date: string; hour: number } {
+function localParts(ts: number, tz: string): { date: string; hour: number } {
   const p: Record<string, string> = {};
   for (const x of fmt(tz).formatToParts(ts)) p[x.type] = x.value;
   return { date: `${p.year}-${p.month}-${p.day}`, hour: Number(p.hour) % 24 };
