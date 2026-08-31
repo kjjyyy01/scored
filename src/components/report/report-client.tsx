@@ -48,12 +48,6 @@ export function ReportClient() {
   useEffect(() => {
     const { hash, entry } = takeEntry();
 
-    // dev 전용: ?primary=<css color> 로 실물 카드 위에서 색 후보를 갈아끼운다 (DESIGN.md --primary 확정용)
-    if (process.env.NODE_ENV === "development") {
-      const c = new URLSearchParams(window.location.search).get("primary");
-      if (c) document.documentElement.style.setProperty("--primary", c);
-    }
-
     // BR-004: 디코딩 전에 주소창부터 지운다 — 하이라이트 원문이 히스토리에 남지 않게
     history.replaceState(null, "", strippedUrl(window.location.href));
 

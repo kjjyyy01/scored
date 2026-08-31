@@ -53,7 +53,8 @@ export function StatCard({ payload }: { payload: Payload }) {
 
       <CardContent>
         {/* grid-cols-1 = minmax(0,1fr): 암시적 auto 컬럼은 min-width:auto라 긴 문장이 컨테이너를 밀어낸다 */}
-          <dl className="grid grid-cols-1 gap-3">
+        {/* SCR-003 §16: md+ 지표 2열 */}
+        <dl className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-x-8">
           {rows(payload).map(({ label, to, text }) => (
             <div key={label} className="flex items-baseline justify-between gap-4 border-b border-border/60 pb-2 last:border-0">
               <dt className="shrink-0 text-sm text-muted-foreground">{label}</dt>
