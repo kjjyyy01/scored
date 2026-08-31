@@ -1,8 +1,10 @@
 // SCR-002 공개 연출의 순수 로직 — 타임라인 예산·릴 착지·이징. 값의 근거는 ANIMATION.md가 SSOT
 // DOM·React를 모르는 계산만 둔다 (rAF 루프는 reveal-stage.tsx)
 
-// 릴에 도는 등급 목록 — judge.ts의 Judged["grade"]와 같은 집합·같은 순서(위→아래 하강)
-export const GRADE_REEL = ["S", "A+", "A", "B+", "B", "C"] as const;
+import { GRADE_ORDER } from "./judge.ts";
+
+// 릴에 도는 등급 목록 — 판정 등급 SSOT와 같은 집합·순서(위→아래 하강)
+export const GRADE_REEL = GRADE_ORDER;
 
 // 스텝 s에서 보여줄 등급 인덱스. 마지막 스텝이 반드시 판정 등급에 착지한다
 // 시작점을 역산하므로 음수 모듈로 방어가 필수 — 틀리면 클라이맥스가 거짓말한다

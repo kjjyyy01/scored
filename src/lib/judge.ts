@@ -18,6 +18,9 @@ function curveScore(value: number, anchors: readonly (readonly [number, number])
   return 100;
 }
 
+// 등급 순서 SSOT — 릴(reveal)·OG 검증(og)이 파생
+export const GRADE_ORDER = ["S", "A+", "A", "B+", "B", "C"] as const;
+
 const GRADES = [[90, "S"], [75, "A+"], [60, "A"], [45, "B+"], [25, "B"]] as const;
 
 // 유형 코드 (07 `t` 값) — BR-010 나열 순서가 동점 우선순위
@@ -87,7 +90,7 @@ function vars(p: Payload): Record<string, string> {
 
 export type Judged = {
   score: number;
-  grade: "S" | "A+" | "A" | "B+" | "B" | "C";
+  grade: (typeof GRADE_ORDER)[number];
   type: TypeCode;
   typeName: string;
   copy: string;
