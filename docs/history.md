@@ -419,3 +419,14 @@
 - **왜**: 배선이 로컬에서 도는 것과 배포된 번들에 DSN이 실려 도는 것은 다른 문제다. 특히 `NEXT_PUBLIC_*`는 **빌드 시점에 값이 박히므로**, Vercel 환경변수가 프로덕션 빌드에 실제로 들어갔는지는 배포된 청크를 열어봐야 안다.
 - **작업 결과**: **프로덕션 실측 전건 통과** — `/how` 고지 4개 문구 노출 · 배포 청크(`0ftwzhnx72t68.js`, 126KB)에 **DSN 주입 확인** · 강제 예외 → `role=alert` + ERR-APP-001 안내 렌더(흰 화면 아님) · `window.__SENTRY__` 활성 · **`ingest.us.sentry.io` 200 × 7건** · 주소창 URL 24자(`https://scored.kr/report` — 해시 제거). 랜딩 초기 JS는 프로덕션 실측 **269 KB gzip**(로컬 측정 262.5 KB와 정합). Day 17 LCP 재측정의 감시 항목으로 남긴다.
 - **잔여**: ① 서버·엣지 `onRequestError` 경로는 실오류를 강제하지 못해 **런타임 미검증** ② Sentry 알림 채널 도달 확인은 사용자 몫(DoD 미완) ③ 테스트 이슈 정리 필요 — 안 지우면 런칭 후 실오류와 섞인다.
+
+## 2026-09-01 (Day 16) — Vercel 환경변수 민감도 정리 + 운영 함정 기록
+
+- **무엇을**: 사용자 지적으로 Vercel 환경변수 민감도를 점검해 정리했다. `SENTRY_AUTH_TOKEN`을 **Sensitive + Production 전용**으로 재등록(사용자 직접 입력), `NEXT_PUBLIC_SENTRY_DSN`을 Production 전용으로 축소. 정책과 함정을 PRD 14 §8·"운영 함정"과 `.env.example`에 기록했다.
+- **어떻게**: `vercel env ls`로 실상태를 먼저 봤더니 **민감도 플래그가 정확히 뒤집혀 있었다** — 진짜 시크릿인 `SENTRY_AUTH_TOKEN`은 Non-sensitive(대시보드 평문 조회·`env pull` 가능), 브라우저 번들에 박히는 공개값 `NEXT_PUBLIC_GA_ID`는 Sensitive. git 이력·추적 파일에서 토큰 패턴을 스캔해 유출 0건을 확인한 뒤 순서를 잡았다.
+- **왜**: 시크릿을 "되읽을 수 없게" 만드는 것이 목적인데, 잠긴 쪽이 공개값이고 열린 쪽이 시크릿이면 정책이 반대로 작동한다. DSN을 Production 전용으로 좁힌 것은 별개 이유 — 프리뷰 배포 오류가 프로덕션 이슈와 섞이면 런칭 후 신호를 못 읽는다.
+- **작업 결과**: 최종 상태 — `SENTRY_AUTH_TOKEN` Sensitive/Production · `NEXT_PUBLIC_SENTRY_DSN` Non-sensitive/Production · `SENTRY_ORG`·`SENTRY_PROJECT` Non-sensitive · `NEXT_PUBLIC_GA_ID`는 Sensitive 유지(무의미하나 무해, 재등록 실패 시 GA4가 끊겨 런칭 8일 전에 건드릴 이유가 약함).
+  - ⚠️ **사고 1건**: `vercel env rm NEXT_PUBLIC_SENTRY_DSN preview`가 Preview 타깃만이 아니라 **변수를 통째로 지웠다.** 도움말이 `env remove name [environment]`라 환경별 삭제로 읽힌 탓 — 같은 일이 사용자 실행분까지 합쳐 하루 2회 발생했다. 즉시 재등록해 복구했고 결과 상태는 목표와 동일. **`NEXT_PUBLIC_*`는 빌드 시점에 박히므로 기존 배포는 멀쩡하고 다음 배포부터 조용히 꺼진다** — 즉시 티가 안 나는 종류의 사고라 기록해 둔다.
+  - **자기 정정 1건**: 로컬 `.env.local`의 `SENTRY_AUTH_TOKEN` 제거를 권했으나, 확인해 보니 `@sentry/cli` postinstall이 차단돼 **바이너리가 없어 로컬 업로드가 애초에 불가능**했다. "로컬 빌드가 릴리스를 어지럽힌다"는 근거가 성립하지 않아 철회하고, 위생 차원의 선택 사항으로 낮췄다.
+  - 시크릿 입력 경로: Vercel Claude Code 플러그인이 CLI를 비대화형으로 만들어 `--value`를 요구한다 → 히스토리·대화 기록에 평문이 남으므로 **대시보드나 별도 터미널에서만** 입력한다.
+
