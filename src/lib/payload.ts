@@ -1,4 +1,4 @@
-// 06 해시 페이로드 규약 — 디코딩·BR-003 버전 판정·BR-004 주소창 정리·BR-002 부분 모드
+// 06 해시 페이로드 규약 — 디코딩·BR-003 버전 판정·BR-002 부분 모드 (URL 위생은 scrub.ts)
 import type { Payload } from "../../cli/src/types.ts";
 import { judge } from "./judge.ts";
 
@@ -41,14 +41,6 @@ export async function decodeHash(hash: string): Promise<DecodeResult> {
   if (typeof v !== "number") return FAIL;
   if (v > SUPPORTED_V) return { ok: false, error: "ERR-HASH-002" };
   return { ok: true, payload: parsed as Payload };
-}
-
-// BR-004: 주소창에서 해시(하이라이트 원문)와 진입 출처 쿼리를 제거 — 데이터는 메모리에만
-export function strippedUrl(href: string): string {
-  const u = new URL(href);
-  u.hash = "";
-  u.searchParams.delete("from");
-  return u.toString().replace(/\?$/, "");
 }
 
 // BR-002: 프롬프트 10개 미만 → 유형·등급 미판정, 있는 지표만

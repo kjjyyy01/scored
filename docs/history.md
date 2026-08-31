@@ -398,3 +398,16 @@
 - **어떻게**: 항목별로 "무엇을 보면 참인지"를 정하고 그것만 확인했다. 테스트로 되는 것(판정 로직·BR-004)은 TC 번호로, 배포 산출물로 되는 것(서버 렌더·OG·위생 파일)은 **프로덕션 HTML·PNG를 직접 받아서**, 런타임이 필요한 것은 실제로 터뜨려서. 특히 에러 바운더리는 `decodeHash`가 `v`만 검증한다는 점을 이용해 **`fun` 누락 + `prompts≥10` 해시**를 만들어 프로덕션에서 강제 예외를 냈다(`prompts<10`이면 BR-002 부분 모드로 빠져 judge가 호출되지 않아 안 터진다).
 - **왜**: 체크박스를 근거 없이 채우면 목록이 있으나 마나다. 반대로 비워두면 **무엇이 진짜 구멍인지 모른 채 남은 5일을 쓴다**. 실사의 목적은 통과율이 아니라 잔여 항목의 성격(코드 결함인가, 수단 부족인가)을 가르는 것이었다.
 - **작업 결과**: **11/15 완료, 코드 결함 0건.** 잔여 4건은 전부 수단·세션 대기 — CLI 수동 완주(Day 13 세션 미실시) / GA4 DebugView(Day 15~16) / LCP 재측정(Day 17, Day 12 실측 476ms로 여유) / **iOS Safari 순회(수단 미확보, 마감 Day 16 밤)**. 실사 중 확인된 것: 강제 예외에서도 `role=alert` + 안내 + 버튼 2개가 렌더돼 흰 화면이 아니었고, **그 경로에서도 해시가 주소창에서 제거**돼 BR-004가 에러 경로까지 지켜졌다. OG는 불량 파라미터에 기본 OG로 폴백(SCR-005 엣지 3). ⚠️ **CLI Windows 실행은 코드 리뷰(`open.ts` win32 `Start-Process`, `os.homedir()`)로 대체 — 실행 미검증 상태로 런칭한다**는 점을 DoD에 명시했다.
+
+## 2026-08-31 (Day 15 선행) — Sentry 오류 수집 배선 + URL 스크럽 실증
+
+- **무엇을**: PLAN Day 15~16 필수 항목인 오류 수집을 붙였다. `@sentry/nextjs@10.72.0` 설치 → `instrumentation-client.ts`(클라이언트)·`instrumentation.ts`(서버·엣지) 배선, **BR-004 URL 스크럽**, `/how` 고지, PRD 14·SCR-006 반영, `.env.example` 신설. DSN·알림 채널 설정은 사용자 몫으로 남겼다.
+- **어떻게**: GA4와 같은 **게이팅 패턴** — `NEXT_PUBLIC_SENTRY_DSN`이 없으면 `init` 자체를 안 한다(실측: `window.__SENTRY__` 없음, 요청 0건). 프라이버시가 핵심이라 세 겹으로 막았다: ① 이벤트 `request.url`과 브레드크럼(`url`·`to`·`from`)을 `scrubUrl`로 통과시켜 해시·`?from` 제거 ② 세션 리플레이 0 (성적표 화면을 통째로 녹화하므로 도입 금지) ③ `tracesSampleRate: 0`·`sendDefaultPii: false`. 스크럽은 새로 짜지 않고 이미 있던 `strippedUrl`을 재사용했다.
+- **왜**: `/report#<해시>`에는 하이라이트 원문이 실릴 수 있다. 오류 수집이 URL을 그대로 보내면 **BR-004가 무력화되고 `/how`의 "컴퓨터를 떠나지 않습니다"가 거짓말이 된다.** 그래서 배선과 고지를 같은 커밋에 묶었다 — 코드만 붙이고 문서를 안 고치면 화면이 사용자를 속이게 된다.
+- **작업 결과**: **실측 2건이 설계를 바꿨다.**
+  - ① **렌더 오류가 Sentry에 안 갔다.** React 오류 바운더리가 예외를 삼켜 `window.onerror`에 뜨지 않는다 — DoD가 신경 쓰는 바로 그 경로가 비어 있었다. `error.tsx`에 `captureException`을 넣어 해결. 로컬 수집기로 엔벨로프를 받아 확인: 수정 전 `session`만 도착 → 수정 후 `event`·`TypeError` 도착.
+  - ② **URL 스크럽 실증.** 크래시가 주소창 정리보다 먼저 나 **해시가 URL에 남은 최악의 경우**를 재현한 뒤 전송 바이트를 검사했다 — `url` 필드는 `http://localhost:3111/report`(해시 제거), 브레드크럼 `to`는 `/report`, 해시 전체·앞 20자·`#`+40자 패턴 **전부 미검출**.
+  - ③ **구조 회귀 1건 자체 수정.** `scrub.ts`가 `payload.ts`를 import해 엣지 런타임이 `DecompressionStream` 경고를 냈다 → 의존 방향을 뒤집어 `strippedUrl`을 `scrub.ts`(의존 0)로 옮기고 `payload.ts`가 아닌 쪽이 참조하게 했다. 경고 소멸.
+  - ⚠️ **비용**: 랜딩 초기 JS **196.6 → 262.5 KB gzip (+65.9 KB, +33%)**. `bundleSizeOptimizations`(excludeTracing 등)는 Turbopack에서 **효과 0**이라 제거했다. Day 17 LCP 재측정의 감시 항목 — 예산 초과 시 동적 import로 임계 경로에서 뺀다.
+  - **실 DSN 확인 (2026-08-31 밤)**: 사용자가 Vercel·`.env.local`에 DSN·`SENTRY_ORG`·`SENTRY_PROJECT`·`SENTRY_AUTH_TOKEN`을 설정 → 로컬 프로덕션 빌드로 실오류 1건 발생 → `ingest.us.sentry.io` **200 × 10건 수신**, 소스맵 85개 생성. `disableLogger`도 **deprecated + Turbopack 미지원** 경고가 떠 제거했다(`bundleSizeOptimizations`와 같은 이유 — 동작 안 하는 설정은 남기지 않는다). 저장된 이벤트의 URL 필드를 Sentry API로 재확인하려 했으나 **403** — 토큰이 소스맵 업로드 권한만 가진 최소 권한이라 정상이다. 스크럽 증명은 로컬 수집기 바이트 검사로 갈음하고, UI 확인은 사용자 몫으로 남겼다.
+  - 검증: 웹 69(신규 3)·CLI 33 tests·`tsc`·`eslint`·`build` 통과.

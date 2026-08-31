@@ -77,13 +77,18 @@ export default function HowPage() {
         </p>
       </section>
 
-      {/* EL-HOW-003 GA4 고지 */}
+      {/* EL-HOW-003 외부 전송 고지 — GA4 + 오류 수집 */}
       <section className="mt-16 flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold">방문 통계</h2>
+        <h2 className="text-2xl font-semibold">방문 통계와 오류 기록</h2>
         <p className="text-base leading-7">
           어떤 화면이 얼마나 쓰이는지 보려고 Google Analytics를 씁니다. 보내는 것은 &ldquo;명령어를 복사했다&rdquo;,
           &ldquo;결과에 도달했다&rdquo;, &ldquo;링크를 복사했다&rdquo; 같은 <strong>행동의 발생 사실</strong>뿐입니다.
           성적표의 숫자·유형·등급·자주 쓴 문장은 통계로 보내지 않습니다.
+        </p>
+        <p className="text-base leading-7">
+          화면이 깨졌을 때 고치려고 오류 기록도 남깁니다(Sentry). 오류가 났을 때만, 무엇이 어디서 터졌는지가 갑니다.
+          이때 <strong>주소의 <Code>#</Code> 뒤 조각은 떼고 보냅니다</strong> — 거기에 성적 데이터가 들어 있기 때문입니다.
+          화면 녹화는 쓰지 않습니다.
         </p>
       </section>
 
