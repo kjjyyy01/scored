@@ -58,7 +58,7 @@ export const isPartial = (p: Payload): boolean => (p.stats?.prompts ?? 0) < MIN_
 export async function encodeHash(p: Payload): Promise<string> {
   const cs = new CompressionStream("deflate-raw");
   const w = cs.writable.getWriter();
-  w.write(new TextEncoder().encode(JSON.stringify(p))).then(() => w.close());
+  w.write(new TextEncoder().encode(JSON.stringify(p))).then(() => w.close()).catch(() => {}); // 쓰기 거부 삼킴 — decode와 대칭
   const buf = new Uint8Array(await new Response(cs.readable).arrayBuffer());
   let bin = "";
   for (const b of buf) bin += String.fromCharCode(b);
