@@ -11,7 +11,6 @@ const nextConfig: NextConfig = {
 // 유실률이 문제가 되면 그때 추가 (프록시 라우트가 "서버 무전송" 서사와 충돌하는 비용도 함께 판단)
 export default withSentryConfig(nextConfig, {
   silent: true,
-  disableLogger: true,
 });
 
 // ⚠️ 랜딩 초기 JS: 196.6 → 262.5 KB gzip (**+65.9 KB, +33%**, 2026-08-31 실측).

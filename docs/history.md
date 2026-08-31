@@ -409,4 +409,5 @@
   - ② **URL 스크럽 실증.** 크래시가 주소창 정리보다 먼저 나 **해시가 URL에 남은 최악의 경우**를 재현한 뒤 전송 바이트를 검사했다 — `url` 필드는 `http://localhost:3111/report`(해시 제거), 브레드크럼 `to`는 `/report`, 해시 전체·앞 20자·`#`+40자 패턴 **전부 미검출**.
   - ③ **구조 회귀 1건 자체 수정.** `scrub.ts`가 `payload.ts`를 import해 엣지 런타임이 `DecompressionStream` 경고를 냈다 → 의존 방향을 뒤집어 `strippedUrl`을 `scrub.ts`(의존 0)로 옮기고 `payload.ts`가 아닌 쪽이 참조하게 했다. 경고 소멸.
   - ⚠️ **비용**: 랜딩 초기 JS **196.6 → 262.5 KB gzip (+65.9 KB, +33%)**. `bundleSizeOptimizations`(excludeTracing 등)는 Turbopack에서 **효과 0**이라 제거했다. Day 17 LCP 재측정의 감시 항목 — 예산 초과 시 동적 import로 임계 경로에서 뺀다.
+  - **실 DSN 확인 (2026-08-31 밤)**: 사용자가 Vercel·`.env.local`에 DSN·`SENTRY_ORG`·`SENTRY_PROJECT`·`SENTRY_AUTH_TOKEN`을 설정 → 로컬 프로덕션 빌드로 실오류 1건 발생 → `ingest.us.sentry.io` **200 × 10건 수신**, 소스맵 85개 생성. `disableLogger`도 **deprecated + Turbopack 미지원** 경고가 떠 제거했다(`bundleSizeOptimizations`와 같은 이유 — 동작 안 하는 설정은 남기지 않는다). 저장된 이벤트의 URL 필드를 Sentry API로 재확인하려 했으나 **403** — 토큰이 소스맵 업로드 권한만 가진 최소 권한이라 정상이다. 스크럽 증명은 로컬 수집기 바이트 검사로 갈음하고, UI 확인은 사용자 몫으로 남겼다.
   - 검증: 웹 69(신규 3)·CLI 33 tests·`tsc`·`eslint`·`build` 통과.
