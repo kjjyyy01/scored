@@ -14,6 +14,7 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
   const [withHighlights, setWithHighlights] = useState(false); // BR-004 기본 OFF
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  const [fallbackUrl, setFallbackUrl] = useState(""); // 복사 실패 시 수동 복사용 URL
   const hasHighlights = Boolean(payload.highlights?.sentences?.length);
 
   useEffect(() => {
@@ -67,12 +68,16 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
   }
 
   async function onCopyLink() {
+    let url = "";
     try {
-      const url = await shareUrl(payload, withHighlights, location.origin);
+      url = await shareUrl(payload, withHighlights, location.origin);
       await navigator.clipboard.writeText(url);
       track("link_copied", { highlight_included: withHighlights });
       setNotice("링크를 복사했어요");
+      setFallbackUrl("");
     } catch {
+      // ERR-CLIP-001: URL을 화면에 노출해 수동 복사
+      setFallbackUrl(url);
       setNotice("자동 복사가 안 됐어요 — 아래 텍스트를 직접 복사해 주세요");
     }
   }
@@ -122,6 +127,9 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
         </div>
 
         <p aria-live="polite" className="min-h-5 text-sm text-primary">{notice}</p>
+        {fallbackUrl && (
+          <p className="rounded bg-muted p-3 font-mono text-xs break-all select-all">{fallbackUrl}</p>
+        )}
 
         {/* EL-SHARE-005 — CPY-SHARE-004 */}
         <p className="text-sm text-muted-foreground">

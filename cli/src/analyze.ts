@@ -62,6 +62,9 @@ const STOPWORDS = new Set(
 );
 
 // §4 하이라이트: 최다 사용 문장(반복 ≥2, 상위 3, ≤100자)·단어(2자 이상, 상위 10)
+// 빈도 맵 내림차순 정렬 — highlights·analyze 공용
+const rank = (m: Map<string, number>): [string, number][] => [...m].sort((a, b) => b[1] - a[1]);
+
 export function highlights(texts: string[]): NonNullable<Payload["highlights"]> {
   const sentences = new Map<string, number>();
   const words = new Map<string, number>();
@@ -79,7 +82,6 @@ export function highlights(texts: string[]): NonNullable<Payload["highlights"]> 
       words.set(w, (words.get(w) ?? 0) + 1);
     }
   }
-  const rank = (m: Map<string, number>) => [...m].sort((a, b) => b[1] - a[1]);
   return {
     sentences: rank(sentences).filter(([, n]) => n >= 2).slice(0, 3).map(([t, n]) => [t.slice(0, 100), n]),
     words: rank(words).slice(0, 10),
@@ -162,7 +164,6 @@ export async function analyze(input: Input, { now, tz }: Options): Promise<Paylo
     if (m.model && !m.model.startsWith("<")) models[m.model] = (models[m.model] ?? 0) + 1; // `<synthetic>` 제외
     for (const name of m.tools.values()) toolCount.set(name, (toolCount.get(name) ?? 0) + 1);
   }
-  const top = (m: Map<string, number>, n: number): [string, number][] => [...m].sort((a, b) => b[1] - a[1]).slice(0, n);
 
   // 7일 컨텍스트: 대상일 포함 최근 7 경계일 (오래된→최근)
   const days = Array.from({ length: 7 }, (_, i) => shiftDay(day, i - 6));
@@ -233,7 +234,7 @@ export async function analyze(input: Input, { now, tz }: Options): Promise<Paylo
       tokens,
       activeMinutes: Math.round(activeMs / 60_000),
       models,
-      tools: top(toolCount, 10),
+      tools: rank(toolCount).slice(0, 10),
       hourly,
     },
     week,

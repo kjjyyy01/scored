@@ -1,8 +1,9 @@
 // 07 GET /api/og 쿼리 검증 — 사용자 입력은 서버 측 검증 (보안 규칙). 실패 = null → 기본 OG 폴백
-import type { TypeCode } from "./judge.ts";
+import { GRADE_ORDER, TYPE_NAMES, type TypeCode } from "./judge.ts";
 
-const CODES = new Set(["night", "swamp", "retry", "long", "one", "marathon", "balance"]);
-const GRADES = new Set(["S", "A+", "A", "B+", "B", "C"]);
+// judge SSOT에서 파생 — 목록 중복 정의 방지
+const CODES = new Set<string>(Object.keys(TYPE_NAMES));
+const GRADES = new Set<string>(GRADE_ORDER);
 
 export type OgParams = {
   t: TypeCode;
