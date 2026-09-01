@@ -14,5 +14,5 @@
     - 세션 = 파일이 아니다: 재개 시 `.jsonl`이 통째 복제되므로 프롬프트 `uuid` 중복 제거 + 부분집합 파일 제외(`liveSessions`) — `analyze.ts`가 SSOT, `report.ts`가 재사용
     - 로그를 두 번 읽는다(집계 1회 + 리포트 1회, 실측 각 2.4s). 대상일이 집계 후에야 정해지므로 — 느려지면 대상일 파일만 추려 2회차에 전달
     - `test/*.test.ts` — CLI-001 §9 TC 1:1
-  - `e2e/` — Playwright, 핵심 플로우 1개만 (`npm run test:e2e`). 단위는 `npm test`(node:test)가 담당
+  - `e2e/` — Playwright: 핵심 플로우 1개(`report`) + 메타데이터 회귀(`seo`) (`npm run test:e2e`). 단위는 `npm test`(node:test)가 담당
   - `docs/` — PLAN·MVP·prd/·history·grill-log · 루트 `RUNBOOK.md`(롤백·백업 정책·장애 시 행동)
