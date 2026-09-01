@@ -20,11 +20,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// 랜딩 JSON-LD(04 §메타데이터·색인 규약)가 같은 문자열을 참조한다 — 값은 여기 하나뿐
+export const SITE_DESCRIPTION = "AI 코딩 세션의 오늘을 스탯 카드로 — 무업로드·비로그인";
+
 export const metadata: Metadata = {
   // OG 이미지 경로 등 절대 URL이 필요한 필드의 기준점
   metadataBase: new URL("https://scored.kr"),
   title: "scored",
-  description: "AI 코딩 세션의 오늘을 스탯 카드로 — 무업로드·비로그인",
+  description: SITE_DESCRIPTION,
   openGraph: {
     title: "scored",
     description: "터미널 한 줄이면, 내 AI 코딩 성적표가 나온다",

@@ -5,6 +5,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "처리 방식 — scored",
   description: "분석은 전부 브라우저와 내 컴퓨터에서. 무엇이 어디로 가고 무엇이 가지 않는지.",
+  alternates: { canonical: "/how" }, // 04 §메타데이터·색인 규약
 };
 
 // 표·코드 조각이 반복돼 작은 조각만 지역 컴포넌트로 뺀다
