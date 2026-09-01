@@ -454,3 +454,4 @@
   - **표기 정정 1건**: PRD에 `https://scored.kr/`로 적었으나 Next `metadataBase` 정규화가 슬래시를 떼 `https://scored.kr`로 렌더된다 → JSON-LD `url`과 PRD 표기를 실제 출력에 맞췄다. 문서와 구현이 한 글자라도 다르면 Day 17 검수 때 무엇이 정답인지 알 수 없다.
   - **E2E 5건 추가**(`e2e/seo.spec.ts`) — 메타데이터는 조용히 사라지는 종류라 육안 검수만으로는 회귀를 못 잡는다. canonical 4라우트 + JSON-LD 유무 2화면.
   - 검증: 웹 69 · CLI 33 tests · **E2E 6** · `tsc` · `eslint` · `build` 통과. DoD 위생 항목에 근거 기입.
+  - **프로덕션 실측** (머지 `cf72a9e` 배포 후): 5개 URL canonical 전건 일치 · 랜딩 JSON-LD 노출 · `/report` 0건 · 동적 OG 200 PNG(회귀 없음).
