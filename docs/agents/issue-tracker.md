@@ -2,7 +2,7 @@
 
 Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
 
-> ⚠️ 선행 조건: 아직 git 리포·GitHub 원격이 없음. Day 0 잔여 작업(git init + GitHub 리포 생성 + Vercel 연결) 완료 전까지 이슈 조작 불가.
+> 원격 `kjjyyy01/scored` 연결 완료 · `gh` 인증 완료 — 이슈 조작 가능 (2026-09-01 확인).
 
 ## Conventions
 
