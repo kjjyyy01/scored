@@ -1,13 +1,35 @@
 // SCR-001 랜딩 — npx 실행까지 유도(깔때기 1→2단계). 서버 렌더링: JS 없이 전 콘텐츠 노출
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CommandCta } from "@/components/landing/command-cta";
 import { StatCard } from "@/components/report/stat-card";
 import { SAMPLE, SAMPLE_MARATHON } from "@/lib/sample.ts";
 import { Badge } from "@/components/ui/badge";
+import { SITE_DESCRIPTION } from "./layout";
+
+// 04 §메타데이터·색인 규약 — 쿼리(`?from=report`)는 별개 문서가 아니다
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+
+// 04 §JSON-LD 페이로드 — 값 전부 고정, 사용자 데이터가 들어갈 자리가 없다
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "scored",
+  description: SITE_DESCRIPTION,
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "macOS, Windows, Linux",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "KRW" },
+  url: "https://scored.kr",
+};
 
 export default function Home() {
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-16 md:px-6 md:py-24">
+      {/* 구조화 데이터는 실행 코드가 아니라 네이티브 script (Next.js JSON-LD 가이드) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       <div className="grid gap-12 md:grid-cols-2 md:items-start md:gap-16">
         <div className="flex flex-col gap-6">
           {/* EL-LAND-005 신뢰 배지 — CPY-COM-001 */}

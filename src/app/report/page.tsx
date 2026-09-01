@@ -9,6 +9,8 @@ export async function generateMetadata(
   const base: Metadata = {
     title: "성적표 — scored",
     description: "AI 코딩 세션의 오늘 하루를 스탯 카드로. 분석은 전부 브라우저 안에서.",
+    // 04 §메타데이터·색인 규약 — `?from=cli`·OG 쿼리를 뺀 경로만 (해시는 서버에 오지 않는다)
+    alternates: { canonical: "/report" },
   };
   const sp = new URLSearchParams(
     Object.entries(await searchParams).flatMap(([k, v]) => (typeof v === "string" ? [[k, v]] : [])),

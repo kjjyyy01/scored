@@ -444,3 +444,13 @@
   - ⚠️ **GA4 속성 오염**: 검증 과정에서 실 측정 ID로 테스트 이벤트 수십 건이 들어갔다(2026-09-01). 런칭 전이라 판정 구간(9/8~9/22) 밖이지만, 지표를 볼 때 이 날짜를 제외해야 한다.
   - 검증: 웹 69·CLI 33 tests · E2E 1 · `tsc` · `eslint` 통과.
 
+
+## 2026-09-01 (Day 16) — canonical·JSON-LD (Day 17 갭 2건 선처리)
+
+- **무엇을**: Day 15 사전 훑기에서 나온 구멍 2개 — `canonical` 링크 없음, JSON-LD 없음 — 을 메웠다. 둘 다 PLAN Day 17 항목인데 **PRD에 명세가 없어** 구현 근거가 비어 있던 상태였다. `04_정보구조`에 **메타데이터·색인 규약**을 단일 원본으로 신설하고(make-prd 경유), 4라우트 canonical + 랜딩 JSON-LD를 구현했다.
+- **어떻게**: 값은 04 한 곳에만 두고 화면 문서 §13(SCR-001·002·006)은 참조만 하게 했다. 랜딩 `description`은 `layout.tsx`에서 `SITE_DESCRIPTION`으로 export해 메타 태그와 JSON-LD가 같은 문자열을 쓴다 — 복제하면 문구 변경 때 갈라진다. JSON-LD는 `next/script`가 아니라 네이티브 `<script type="application/ld+json">`(Next.js 가이드: 구조화 데이터는 실행 코드가 아니다).
+- **왜**: 판단이 필요했던 것은 `/report`다. 해시에 개인 활동 데이터가 실리는 화면이라 ① canonical은 **쿼리·해시를 뺀 경로만** 가리키게 하고(`?from=cli`·`?from=report`는 GA4 세그먼트용일 뿐 별개 문서가 아니다 — 쿼리별로 색인되면 크롤 예산이 갈리고 유입 판정도 흐려진다) ② **JSON-LD를 금지**했다. 성적 값을 구조화 데이터로 내보내면 14 §5(성적 데이터 전송 금지)를 우회하는 경로가 된다. `noindex`는 **넣지 않기로** 했다 — 색인 가치는 없지만 사이트맵 제외로 충분하고, SNS 크롤러가 `robots` 메타를 어떻게 다루는지 보장할 수 없다. 공유 미리보기(F-005)가 v1 유입의 주 경로라 잃을 위험이 더 크다.
+- **작업 결과**: 로컬 프로덕션 빌드 실측 — `/`·`/?from=report` → `https://scored.kr` · `/how` → `/how` · `/report`·`/report?from=cli` → `/report` (**쿼리 제거 확인**), 랜딩 JSON-LD 서버 렌더(JS 없이 노출), `/report` JSON-LD **0건**.
+  - **표기 정정 1건**: PRD에 `https://scored.kr/`로 적었으나 Next `metadataBase` 정규화가 슬래시를 떼 `https://scored.kr`로 렌더된다 → JSON-LD `url`과 PRD 표기를 실제 출력에 맞췄다. 문서와 구현이 한 글자라도 다르면 Day 17 검수 때 무엇이 정답인지 알 수 없다.
+  - **E2E 5건 추가**(`e2e/seo.spec.ts`) — 메타데이터는 조용히 사라지는 종류라 육안 검수만으로는 회귀를 못 잡는다. canonical 4라우트 + JSON-LD 유무 2화면.
+  - 검증: 웹 69 · CLI 33 tests · **E2E 6** · `tsc` · `eslint` · `build` 통과. DoD 위생 항목에 근거 기입.
