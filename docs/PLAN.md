@@ -260,8 +260,8 @@
 - [x] Day 12: 중점 축 집중 패스 완료 (+ 지식 총정리 → Obsidian) — 2026-08-29~30 완료. **모션 감성 판정 통과**(GSAP 도입 조건 3개 전부 미발동, 의존성 0), Obsidian `dev-notes/` 5건 + Notion 트러블슈팅 4건 등록
 - [ ] Day 13: 검증 세션 — 본인 직접 테스트(시크릿 창 완주 + 자문 4문항) + 외부 눈 1명(권고)
 - [x] Day 14: 3축 리뷰 + 코드 성숙도 체크리스트(보안 4종 + 재미 로직 테스트) 통과
-- [ ] Day 16: sentry 알림 + GA4 DebugView 검수 + E2E 1개 + 피드백 채널 + 분석 고지 페이지 + 장애 대비 3종 + OG 이미지
-  - 진척(2026-09-02): E2E ✅(핵심 1 + 메타데이터 5) · 고지 페이지 ✅(`/how`) · OG ✅(정적+동적) · GA4 실발화 ✅(네트워크 레벨 EVT 9종) · 장애 대비 3종 문서 ✅(`RUNBOOK.md`) — 롤백 리허설 ✅(2026-09-02 실시, 4단계 정상) · Sentry 알림 채널 ✅(2026-09-02 도달 확인 — environment `vercel-production` 규명) — **잔여: DebugView 육안(사용자)**. 피드백 채널은 2026-08-31 사용자 결정으로 backlog 이관(스코프 제외)
+- [x] Day 16: sentry 알림 + GA4 DebugView 검수 + E2E 1개 + 피드백 채널 + 분석 고지 페이지 + 장애 대비 3종 + OG 이미지 — 2026-09-02 완료 (피드백 채널은 8/31 사용자 결정으로 스코프 제외)
+  - 진척(2026-09-02): E2E ✅(핵심 1 + 메타데이터 5) · 고지 페이지 ✅(`/how`) · OG ✅(정적+동적) · GA4 실발화 ✅(네트워크 레벨 EVT 9종) · 장애 대비 3종 문서 ✅(`RUNBOOK.md`) — 롤백 리허설 ✅(2026-09-02 실시, 4단계 정상) · Sentry 알림 채널 ✅(2026-09-02 도달 확인 — environment `vercel-production` 규명) · GA4 서버 측 수집 ✅(2026-09-02 실시간 보고서 9종 전수) — **Day 16 잔여 0**. 피드백 채널은 2026-08-31 사용자 결정으로 backlog 이관(스코프 제외)
 - [ ] Day 17: 기술 점검 통과 (Search Console + 사이트맵 + JSON-LD + Lighthouse + iOS Safari 순회 + 접근성 스팟 + Vercel 플랜 판단) + LCP 예산
   - 진척(2026-09-02, 하루 앞당겨 처리): 사이트맵 ✅ · JSON-LD ✅(랜딩 `SoftwareApplication`) · canonical 4라우트 ✅ · Lighthouse 접근성·SEO·Best Practices **전 화면 100** ✅ · 접근성 스팟 ✅(다크 대비 결함 1건 수정) · LCP ✅(708ms) · iOS Safari 순회 🟡(2026-09-02 **부분 검증** — 실기기 수단 미확보로 Mac Safari 26.6.2(동일 WebKit) 대체. 엔진 기능 8/8 실측 통과 + 3라우트 전수 순회 + iPhone 프리셋 세로/가로 정상. 미검증 잔여는 iOS 고유 정책 2건: `navigator.share` transient activation·주소창 축소/safe-area) — **잔여: Search Console 등록 · Vercel 플랜 판단(전부 사용자)**
 - [ ] Day 19: 런칭 포스트 준비 (재미 장치 GIF 헤드 자산 + 전 링크 UTM)
