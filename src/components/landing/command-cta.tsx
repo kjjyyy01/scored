@@ -70,7 +70,7 @@ export function CommandCta() {
       </div>
 
       {/* 클릭 뒤에만 채워지지만 자리는 미리 잡아 둔다 — 버튼이 밀려나면 오조작이 난다 */}
-      <p aria-live="polite" className="order-4 min-h-5 text-sm text-primary md:order-3">
+      <p aria-live="polite" className="order-4 min-h-5 text-sm text-primary-text md:order-3">
         {notice}
       </p>
     </div>
