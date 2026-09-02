@@ -468,3 +468,4 @@
   - **오판 방지 1건**: `/report` snapshot 감사가 `meta-description` 없음으로 떴으나, DOM과 프로덕션 HTML 양쪽에 **실제로 존재**했다. snapshot 모드가 navigation 아티팩트를 수집하지 않아 생긴 도구 한계다(GA4 때와 같은 패턴).
   - **backlog행**: `llms.txt`(Agentic Browsing 67점 유일 실패) — v1 스코프 동결 대상.
   - 검증: 웹 69 · CLI 33 tests · `tsc` · `eslint` · `build` 통과.
+  - **프로덕션 실측** (머지 `9f82f5a` 배포 후): `/how` 다크 접근성 **100** · LCP **708ms**(모바일 Slow 4G·CPU 4x)·CLS 0.00. DoD **12/16 → 13/16**(LCP 항목 해소).
