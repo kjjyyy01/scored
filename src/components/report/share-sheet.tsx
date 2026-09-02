@@ -126,7 +126,7 @@ export function ShareSheet({ payload, open, onClose }: { payload: Payload; open:
           <Button onClick={onCopyLink} className="h-11 px-5 sm:flex-1">링크 복사</Button>
         </div>
 
-        <p aria-live="polite" className="min-h-5 text-sm text-primary">{notice}</p>
+        <p aria-live="polite" className="min-h-5 text-sm text-primary-text">{notice}</p>
         {fallbackUrl && (
           <p className="rounded bg-muted p-3 font-mono text-xs break-all select-all">{fallbackUrl}</p>
         )}

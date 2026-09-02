@@ -115,7 +115,7 @@ export default function HowPage() {
       <section className="mt-16 flex flex-col gap-4 border-t border-border pt-8">
         <p className="text-base leading-7">
           위 설명이 사실인지는 코드로 확인할 수 있습니다.{" "}
-          <a href="https://github.com/kjjyyy01/scored" className="font-medium text-primary underline underline-offset-4" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/kjjyyy01/scored" className="font-medium text-primary-text underline underline-offset-4" target="_blank" rel="noopener noreferrer">
             github.com/kjjyyy01/scored
           </a>
         </p>
