@@ -74,6 +74,15 @@ cd cli && npm test && npm run build && npm publish   # 직전 정상 코드로 �
 
 ## 4. 롤백 리허설
 
-- [ ] **미실시** — 실제 프로덕션 배포를 건드리므로 사용자 승인 후 실시한다
+- [x] **실시 완료 (2026-09-02)** — 4단계 전부 정상. 롤백은 실제로 작동한다.
 
-리허설 절차(승인 시): 직전 배포로 롤백 → `scored.kr` 200 확인 → 현재 배포로 다시 롤백 → 200 재확인. 최근 3개 배포가 문서 변경뿐이라 화면 차이는 없다.
+절차: 직전 배포로 롤백 → `scored.kr` 200 확인 → 현재 배포로 다시 롤백 → 200 재확인.
+
+| 단계 | 대상 | 결과 |
+|---|---|---|
+| baseline | `scored-7pc2ygcid` (`dpl_5cYrdXTLeTPCqRWACv2hZFEiMNWn`, 커밋 `cefeedb`) | 200 |
+| 롤백 | `scored-c3w8q08zh` (커밋 `9f82f5a`) | 200 |
+| 롤포워드 | `scored-7pc2ygcid` | 200 |
+| 복귀 확인 | `vercel inspect https://scored.kr` → `dpl_5cYrdXTLeTPCqRWACv2hZFEiMNWn` | 원래 배포로 복귀 |
+
+두 배포의 차이가 **문서 커밋 1개뿐**이라 화면 변화 0인 상태에서 절차만 검증했다 — 리허설은 화면이 바뀌지 않는 창에서 하는 게 맞다. 실제 장애 시엔 §2의 명령이 그대로 쓰인다.
