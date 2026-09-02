@@ -25,9 +25,14 @@
 vercel ls                      # Status=Ready·Environment=Production 인 직전 배포 URL 확인
 vercel rollback <직전배포URL> --yes
 vercel rollback status         # 완료 확인
+
+# ▼ 장애가 해소되면 반드시 실행 — 안 하면 이후 배포가 조용히 안 올라간다
+vercel promote <최신배포URL>   # 도메인을 최신으로 옮기고 자동 할당을 다시 켠다
 ```
 
 빌드를 다시 하지 않고 별칭만 옮기므로 수십 초면 끝난다. 배포 이력은 13건 보존 중(2026-09-01 확인).
+
+🚨 **롤백은 자동 도메인 할당을 끈다 — 반드시 `promote`로 되돌려라.** 롤백 상태에서는 main에 푸시해도 `scored.kr`이 바뀌지 않는다. **빌드는 성공하고 배포 상태도 `● Ready`로 뜨는데 도메인만 옛 배포에 고정**되므로, 성공 로그만 보면 절대 알아챌 수 없다. 2026-09-02 리허설 후 실제로 이 상태에 빠졌고 **`Ready` 배포 5건이 6시간 동안 라이브에 못 올라갔다**(당시 변경이 전부 문서라 실피해는 0). Vercel 대시보드에 `To undo the rollback promote to production or re-enable auto-assigning custom domains` 배너가 뜨는 것이 유일한 신호다. **점검법**: `vercel inspect https://scored.kr`의 배포 id가 `vercel ls --prod` 맨 위와 같은지 본다.
 
 ⚠️ **환경변수가 원인이면 롤백은 답이 아니다.** `NEXT_PUBLIC_*`은 빌드 시점에 번들로 구워진다(Day 14 실측 — DSN이 청크에 박힌 것을 확인). 값을 잘못 바꿔 생긴 장애는 **env를 고치고 재배포**해야 풀린다.
 
