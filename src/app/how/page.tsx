@@ -1,6 +1,8 @@
 // SCR-006 처리 방식 안내 — 신뢰 장치 + 법적 고지. 이 화면 자체가 근거라 JS 의존 금지 (§13)
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CURVES, GRADES, PART_LABELS } from "@/lib/judge.ts"; // EL-HOW-005 — 값 복제 금지, 코드가 SSOT
+import { num } from "@/lib/format.ts";
 
 export const metadata: Metadata = {
   title: "처리 방식 — scored",
@@ -103,9 +105,53 @@ export default function HowPage() {
         </p>
       </section>
 
-      {/* EL-HOW-005 판정 기준 변경 고지 — CPY-COM-003 */}
-      <section className="mt-16 flex flex-col gap-4">
+      {/* EL-HOW-005 판정 기준 — 등급 산식(BR-009, judge.ts 상수 렌더) + 변경 고지 CPY-COM-003 */}
+      <section id="judge" className="mt-16 flex flex-col gap-4 scroll-mt-8">
         <h2 className="text-2xl font-semibold">판정 기준</h2>
+        <p className="text-base leading-7">
+          등급은 오늘 하루의 <strong>프롬프트 수 · 토큰(입력+출력) · 활동 시간</strong> 세 가지를 각각 0~100점으로 환산한 뒤
+          평균을 냅니다. 실력이나 효율이 아니라 <strong>얼마나 많이 굴렸는지</strong>만 봅니다. 프롬프트가 10개 미만인 날은 채점하지 않아요.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <caption className="sr-only">지표별 점수 환산표 — 값 사이는 직선 보간, 최대 이상은 100점</caption>
+            <thead>
+              <tr className="border-b border-border text-left text-muted-foreground">
+                <th scope="col" className="py-2 pr-4 font-medium">지표</th>
+                {CURVES.prompts.map(([, pts]) => (
+                  <th key={pts} scope="col" className="py-2 pr-4 text-right font-medium tabular-nums">{pts}점</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(Object.keys(CURVES) as (keyof typeof CURVES)[]).map((key) => (
+                <tr key={key} className="border-b border-border/60">
+                  <th scope="row" className="py-2 pr-4 text-left font-medium">
+                    {PART_LABELS[key]}{key === "minutes" && "(분)"}
+                  </th>
+                  {CURVES[key].map(([value]) => (
+                    <td key={value} className="py-2 pr-4 text-right tabular-nums">{num(value)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          값 사이는 비례해서 매기고, 마지막 값을 넘으면 100점이에요. 세 점수의 평균이 총점입니다.
+        </p>
+        <dl className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+          {GRADES.map(([min, grade]) => (
+            <div key={grade} className="flex gap-2">
+              <dt className="font-bold">{grade}</dt>
+              <dd className="text-muted-foreground tabular-nums">{min}점 이상</dd>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <dt className="font-bold">C</dt>
+            <dd className="text-muted-foreground tabular-nums">그 외</dd>
+          </div>
+        </dl>
         <p className="text-base leading-7">
           성적표 판정 기준은 서비스 개선 시 바뀔 수 있어요 — 같은 링크라도 시점에 따라 등급이 달라질 수 있어요
         </p>

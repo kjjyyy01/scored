@@ -5,6 +5,9 @@ import { useEffect, useRef } from "react";
 import type { Payload } from "../../../cli/src/types.ts";
 import { weekDelta } from "@/lib/dashboard.ts";
 import { duration, num } from "@/lib/format.ts";
+import { judge } from "@/lib/judge.ts";
+import { isPartial } from "@/lib/payload.ts";
+import Link from "next/link";
 import { ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -150,6 +153,9 @@ export function Dashboard({ payload, entry, onFirstView }: { payload: Payload; e
   if (typeof fun?.maxErrorStreak === "number") tiles.push(["최장 연속 에러", `${num(fun.maxErrorStreak)}회`]);
   if (typeof fun?.retryScore === "number") tiles.push(['"다시" 어휘', `${num(fun.retryScore)}번`]);
 
+  // EL-DASH-008 — BR-002 부분 모드면 등급이 없으니 산출 내역도 생략 (AC-2)
+  const judged = s && !isPartial(p) ? judge(p) : null;
+
   return (
     <section id="dashboard" aria-labelledby="dash-heading" className="flex flex-col gap-6">
       <h2 id="dash-heading" ref={headRef} className="text-2xl font-semibold">
@@ -168,6 +174,31 @@ export function Dashboard({ payload, entry, onFirstView }: { payload: Payload; e
             <WeekRow label="프롬프트" values={p.week.prompts} days={p.week.days ?? []} />
             <WeekRow label="토큰" values={p.week.tokens} days={p.week.days ?? []} />
             {heatmapOk && <Heatmap heatmap={p.week.heatmap} />}
+          </Widget>
+        )}
+
+        {judged && (
+          <Widget title="등급 산출 내역">
+            <table className="w-full text-sm">
+              <caption className="sr-only">지표별 점수 — 세 점수의 평균이 총점</caption>
+              <tbody>
+                {judged.parts.map(({ key, label, value, score }) => (
+                  <tr key={key} className="border-b border-border/60">
+                    <th scope="row" className="py-2 text-left font-normal text-muted-foreground">{label}</th>
+                    <td className="py-2 text-right tabular-nums">{key === "minutes" ? duration(value) : num(value)}</td>
+                    <td className="py-2 pl-4 text-right font-semibold tabular-nums">{score}점</td>
+                  </tr>
+                ))}
+                <tr>
+                  <th scope="row" className="py-2 text-left font-semibold">평균 = 총점</th>
+                  <td />
+                  <td className="py-2 pl-4 text-right font-bold tabular-nums">{judged.score}점 · {judged.grade}</td>
+                </tr>
+              </tbody>
+            </table>
+            <Link href="/how#judge" className="w-fit text-sm text-muted-foreground underline-offset-4 hover:underline">
+              점수 기준 보기
+            </Link>
           </Widget>
         )}
 

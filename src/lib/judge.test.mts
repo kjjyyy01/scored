@@ -19,6 +19,13 @@ const withStats = (prompts: number, tokens: number, activeMinutes: number): Payl
 
 // ── BR-009 등급 커브 (08 §계산 규칙 앵커표에서 수기 계산한 기대값) ──
 
+// TC-DASH-001-04: 지표별 점수 parts — 평균 반올림이 score와 같아야 표시 내역과 총점이 일치한다
+test("TC-DASH-001-04: parts 3점수 평균 반올림 = score — 35·250만·270분 = 50·60·60 → 57", () => {
+  const r = judge(withStats(35, 2_500_000, 270));
+  assert.deepEqual(r.parts.map((p) => p.score), [50, 60, 60]);
+  assert.equal(Math.round(r.parts.reduce((a, p) => a + p.score, 0) / 3), r.score);
+});
+
 test("TC-RPT-001-05: 앵커 정중앙 — 20프롬프트·80만·90분 = 각 40점 → 40 B", () => {
   const r = judge(withStats(20, 800_000, 90));
   assert.equal(r.score, 40);
