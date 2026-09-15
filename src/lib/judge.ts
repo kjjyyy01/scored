@@ -1,8 +1,8 @@
 // 웹 판정 모듈 (BR-001) — BR-009 등급·BR-010 유형·CPY-TYPE 문구. SSOT: 08 §계산 규칙
 import type { Payload } from "../../cli/src/types.ts";
 
-// 등급 커브 앵커 — [지표값, 점수] 오름차순 (08 §계산 규칙 표)
-const CURVES = {
+// 등급 커브 앵커 — [지표값, 점수] 오름차순 (08 §계산 규칙 표). export: /how EL-HOW-005가 import 렌더
+export const CURVES = {
   prompts: [[10, 20], [20, 40], [50, 60], [90, 80], [120, 100]],
   tokens: [[400_000, 20], [800_000, 40], [2_500_000, 60], [7_500_000, 80], [15_000_000, 100]],
   minutes: [[30, 20], [90, 40], [270, 60], [360, 80], [480, 100]],
@@ -21,7 +21,12 @@ function curveScore(value: number, anchors: readonly (readonly [number, number])
 // 등급 순서 SSOT — 릴(reveal)·OG 검증(og)이 파생
 export const GRADE_ORDER = ["S", "A+", "A", "B+", "B", "C"] as const;
 
-const GRADES = [[90, "S"], [75, "A+"], [60, "A"], [45, "B+"], [25, "B"]] as const;
+// 등급 컷 [최소 총점, 등급] 내림차순 — 마지막 미달은 C. export: /how EL-HOW-005
+export const GRADES = [[90, "S"], [75, "A+"], [60, "A"], [45, "B+"], [25, "B"]] as const;
+
+// 지표별 점수 한 줄 (EL-DASH-008 등급 산출 내역)
+export type ScorePart = { key: keyof typeof CURVES; label: string; value: number; score: number };
+export const PART_LABELS: Record<keyof typeof CURVES, string> = { prompts: "프롬프트", tokens: "토큰", minutes: "활동 시간" };
 
 // 유형 코드 (07 `t` 값) — BR-010 나열 순서가 동점 우선순위
 export type TypeCode = "night" | "swamp" | "retry" | "long" | "one" | "marathon" | "balance";
@@ -94,15 +99,24 @@ export type Judged = {
   type: TypeCode;
   typeName: string;
   copy: string;
+  parts: ScorePart[]; // 지표별 점수 — score는 이 3개의 평균 반올림
 };
 
 export function judge(p: Payload): Judged {
   const s = p.stats;
-  const score = Math.round(
-    (curveScore(s.prompts, CURVES.prompts) +
-      curveScore(s.tokens.in + s.tokens.out, CURVES.tokens) +
-      curveScore(s.activeMinutes, CURVES.minutes)) / 3,
-  );
+  // 지표별 점수 → 평균 = 총점 (BR-009). parts를 먼저 만들어 표시 내역과 총점의 출처를 하나로
+  const values: Record<keyof typeof CURVES, number> = {
+    prompts: s.prompts,
+    tokens: s.tokens.in + s.tokens.out,
+    minutes: s.activeMinutes,
+  };
+  const parts: ScorePart[] = (Object.keys(CURVES) as (keyof typeof CURVES)[]).map((key) => ({
+    key,
+    label: PART_LABELS[key],
+    value: values[key],
+    score: Math.round(curveScore(values[key], CURVES[key])),
+  }));
+  const score = Math.round(parts.reduce((a, x) => a + x.score, 0) / parts.length);
   const grade = GRADES.find(([min]) => score >= min)?.[1] ?? "C";
 
   let type: TypeCode = "balance";
@@ -118,5 +132,5 @@ export function judge(p: Payload): Judged {
   const v = vars(p);
   const copy = pool[digitSum % pool.length].replace(/\{(\w+)\}/g, (_, k) => v[k] ?? `{${k}}`);
 
-  return { score, grade, type, typeName: name, copy };
+  return { score, grade, type, typeName: name, copy, parts };
 }
