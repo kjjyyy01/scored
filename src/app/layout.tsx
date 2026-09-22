@@ -69,8 +69,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Script>
           </>
         )}
+        {/* id는 "clarity"로 두면 안 된다 — 브라우저가 id를 window.clarity로 노출해 태그 로더의 window.clarity 함수 정의를 덮는다 */}
         {CLARITY_ID && (
-          <Script id="clarity" strategy="afterInteractive">
+          <Script id="ms-clarity" strategy="afterInteractive">
             {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
           </Script>
         )}
