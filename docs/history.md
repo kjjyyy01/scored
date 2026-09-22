@@ -742,3 +742,10 @@
 - 어떻게: make-prd 인터뷰(Q1~Q6)로 분류·범위·SSOT·위치 확정 후 SCR-006 v1.2.0·SCR-004 v1.2.0 개정 → TDD(TC-DASH-001-04 RED→GREEN) → `CURVES`·`GRADES` export해 페이지가 import 렌더(숫자 하드코딩 0). 카드(SCR-003)·공유 PNG·OG는 무변경
 - 왜: 사용자가 프롬프트 3개(BR-002 미만) 성적표에서 "등급이 안 나온다"를 버그로 읽음 → 기준 자체를 서비스에 명시. 판정 전 신기능 금지와의 관계는 "고지 확장(기존 계산값 표시)"으로 사용자가 분류(Q1)
 - 결과: lib 테스트 70/70, tsc·eslint 통과, `next build` 통과(`/how` 정적 HTML에 표·`id="judge"` 포함 확인). 브랜치 `feat/grade-criteria`
+
+## 2026-09-22 — Microsoft Clarity 태그 추가 (`feat/clarity`)
+
+- 무엇을: `src/app/layout.tsx`에 Clarity 로더 스크립트 추가 — `NEXT_PUBLIC_CLARITY_ID` 있을 때만 `afterInteractive`로 삽입 (GA4와 동일 패턴, 새 의존성 0)
+- 어떻게: 더미 ID로 `next build` 후 프리렌더 HTML(`index.html`·`how.html`)에 `clarity.ms/tag/` + ID 삽입 확인. tsc·eslint 통과. Vercel Production에는 ID가 이미 등록돼 있음(2026-09-22)
+- 왜: 히트맵·세션 리플레이로 랜딩→CLI 복사→결과 도달 구간의 이탈 지점을 보려고 (GA4 이벤트로는 "어디서 멈췄는지"가 안 보임)
+- 결과: 코드 반영 완료. **미해결 — 고지 불일치**: `/how` EL-HOW-003의 "화면 녹화는 쓰지 않습니다" 문장과 PRD-14 §5·6(외부 전송 = GA4+Sentry)이 현재 실제와 어긋남. PRD-14 "외부로 나가는 곳이 늘면 이 화면을 먼저 고친다" 원칙에 따라 SCR-006·PRD-14 개정(make-prd)이 후속 필수. 마스킹 수준(Strict / `data-clarity-mask`)도 미결정 — `/report`는 성적 데이터가 전부 화면 텍스트

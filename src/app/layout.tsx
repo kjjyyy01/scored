@@ -39,6 +39,8 @@ export const metadata: Metadata = {
 
 // 측정 ID가 없으면 스크립트 자체를 넣지 않는다 — 이벤트 코드는 그대로 두고 발화만 안 된다
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+// Clarity 프로젝트 ID — 없으면 미로드 (GA4와 동일 패턴)
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -66,6 +68,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA_ID}')`}
             </Script>
           </>
+        )}
+        {CLARITY_ID && (
+          <Script id="clarity" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
+          </Script>
         )}
       </body>
     </html>
