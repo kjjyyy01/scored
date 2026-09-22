@@ -749,3 +749,10 @@
 - 어떻게: 더미 ID로 `next build` 후 프리렌더 HTML(`index.html`·`how.html`)에 `clarity.ms/tag/` + ID 삽입 확인. tsc·eslint 통과. Vercel Production에는 ID가 이미 등록돼 있음(2026-09-22)
 - 왜: 히트맵·세션 리플레이로 랜딩→CLI 복사→결과 도달 구간의 이탈 지점을 보려고 (GA4 이벤트로는 "어디서 멈췄는지"가 안 보임)
 - 결과: 코드 반영 완료. **미해결 — 고지 불일치**: `/how` EL-HOW-003의 "화면 녹화는 쓰지 않습니다" 문장과 PRD-14 §5·6(외부 전송 = GA4+Sentry)이 현재 실제와 어긋남. PRD-14 "외부로 나가는 곳이 늘면 이 화면을 먼저 고친다" 원칙에 따라 SCR-006·PRD-14 개정(make-prd)이 후속 필수. 마스킹 수준(Strict / `data-clarity-mask`)도 미결정 — `/report`는 성적 데이터가 전부 화면 텍스트
+
+## 2026-09-22 — Clarity 미수집 원인 수정: `<Script id="clarity">` 전역 이름 충돌 (`fix/clarity-script-id`)
+
+- 무엇을: `layout.tsx`의 Clarity `<Script id>`를 `clarity` → `ms-clarity`로 변경
+- 어떻게: 실화면에서 `window.clarity`가 함수가 아니라 `HTMLScriptElement`인 것을 확인 — 브라우저는 id 있는 요소를 `window[id]`로 노출하므로 로더의 `c[a]=c[a]||function(){}`가 요소를 보고 함수 정의를 건너뛰고, 이어 `clarity.ms/tag`가 `clarity("metadata")`를 호출하다 TypeError → `clarity.js` 미로드·수집 0. id만 바꾸면 해결
+- 왜: 모든 기기에서 레코딩이 0이었던 실제 원인. "반영 지연"이라는 앞선 설명은 공식 문서(레코딩 즉시 표시) 기준으로 틀린 안내였음
+- 결과: 빌드 통과. 배포 후 `window.clarity` 함수·`scripts.clarity.ms/clarity.js` 로드 확인 예정
