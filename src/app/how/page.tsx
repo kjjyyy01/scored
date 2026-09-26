@@ -80,9 +80,9 @@ export default function HowPage() {
         </p>
       </section>
 
-      {/* EL-HOW-003 외부 전송 고지 — GA4 + 오류 수집 */}
+      {/* EL-HOW-003 외부 전송 고지 — GA4 + 오류 수집 + Clarity(/report 제외, 14 §6) */}
       <section className="mt-16 flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold">방문 통계와 오류 기록</h2>
+        <h2 className="text-2xl font-semibold">방문 통계, 사용 흐름, 오류 기록</h2>
         <p className="text-base leading-7">
           어떤 화면이 얼마나 쓰이는지 보려고 Google Analytics를 씁니다. 보내는 것은 &ldquo;명령어를 복사했다&rdquo;,
           &ldquo;결과에 도달했다&rdquo;, &ldquo;링크를 복사했다&rdquo; 같은 <strong>행동의 발생 사실</strong>뿐입니다.
@@ -91,7 +91,12 @@ export default function HowPage() {
         <p className="text-base leading-7">
           화면이 깨졌을 때 고치려고 오류 기록도 남깁니다(Sentry). 오류가 났을 때만, 무엇이 어디서 터졌는지가 갑니다.
           이때 <strong>주소의 <Code>#</Code> 뒤 조각은 떼고 보냅니다</strong> — 거기에 성적 데이터가 들어 있기 때문입니다.
-          화면 녹화는 쓰지 않습니다.
+          오류 기록에는 화면 녹화를 쓰지 않습니다.
+        </p>
+        <p className="text-base leading-7">
+          첫 화면과 이 안내 화면처럼 성적이 없는 화면에서는 Microsoft Clarity로 클릭·스크롤 흐름을 기록합니다(화면 모양을 다시 재생해 볼 수 있는 녹화).
+          <strong>성적표 화면(<Code>/report</Code>)에서는 Clarity를 아예 불러오지 않습니다</strong> — Clarity는 주소의 <Code>#</Code> 뒤 조각까지 가져가기 때문입니다.
+          방문을 구분하려고 쿠키(<Code>_clck</Code>, <Code>_clsk</Code>)를 남깁니다.
         </p>
       </section>
 
